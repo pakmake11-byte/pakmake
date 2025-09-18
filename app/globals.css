@@ -1,9 +1,9 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
-
+@plugin "daisyui";
 
 @theme {
-  /* colors (namespace: --color-*) */
+  /* Colors */
   --color-primary-50:  #f0f9ff;
   --color-primary-100: #e0f2fe;
   --color-primary-200: #bae6fd;
@@ -49,19 +49,17 @@
   --color-success-800: #166534;
   --color-success-900: #14532d;
 
-  /* fonts (namespace: --font-*) -> utilities become font-sans, font-heading, etc */
+  /* Fonts */
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-heading: 'Poppins', system-ui, sans-serif;
 
-  /* spacing: v4's spacing uses a single base unit (--spacing).
-     p-18 equals calc(var(--spacing) * 18). If you want p-18 -> 4.5rem,
-     set --spacing to 0.25rem (4.5rem / 18 = 0.25rem). */
-  --spacing: 0.25rem; /* -> p-18 ≈ 4.5rem, p-88 ≈ 22rem, p-128 ≈ 32rem */
+  /* Spacing base unit */
+  --spacing: 0.25rem;
 
-  /* backdrop blur (namespace: --blur-*) */
-  --blur-xs: 2px; /* -> backdrop-blur-xs */
+  /* Blur */
+  --blur-xs: 2px;
 
-  /* animations: define --animate-{name} variables, and matching @keyframes */
+  /* Animations */
   --animate-fade-in: fade-in 0.5s ease-in-out;
   --animate-slide-in: slide-in 0.5s ease-out;
   --animate-bounce-slow: bounce 3s infinite;
@@ -70,7 +68,7 @@
   --animate-float: float 6s ease-in-out infinite;
   --animate-glow: glow 2s ease-in-out infinite alternate;
 
-  /* keyframes (you can define them inside @theme so Tailwind will include them) */
+  /* Keyframes */
   @keyframes fade-in {
     0% { opacity: 0; }
     100% { opacity: 1; }
@@ -80,11 +78,16 @@
     100% { transform: translateY(0); opacity: 1; }
   }
   @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50%     { transform: translateY(-20px); }
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
   }
   @keyframes glow {
     0%   { box-shadow: 0 0 20px rgba(14,165,233,0.5); }
     100% { box-shadow: 0 0 40px rgba(14,165,233,0.8); }
   }
+}
+
+/* Utility for glowing button */
+.glow-primary {
+  animation: var(--animate-glow);
 }

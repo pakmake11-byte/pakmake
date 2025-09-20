@@ -1,48 +1,25 @@
-import { Inter, Poppins } from 'next/font/google';
-import './globals.css';
-import Header from '@/components/layout/Header';
-// import Footer from '@/components/layout/Footer';
-import { cn } from '@/lib/utils';
+import type { Metadata } from 'next'
+import './globals.css'
+import { Navigation } from '@/components/layout/Navigation'
+import { Footer } from '@/components/layout/Footer'
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-poppins',
-  display: 'swap',
-});
+export const metadata: Metadata = {
+  title: 'PakMake Packaging Inc® - Move More Products More Economically',
+  description: 'Sustainable slip sheet solutions replacing traditional wooden pallets. 80% cost reduction, 100% recyclable, ISPM 15 exempt.',
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body
-        className={cn(
-          'min-h-screen bg-white font-sans antialiased',
-          inter.variable,
-          poppins.variable
-        )}
-      >
-        <div className="relative flex min-h-screen flex-col">
-          <Header />
-          <main className="flex-1">
-            {children}
-          </main>
-          {/* <Footer /> */}
-        </div>
-
-        {/* Scroll to top button - placeholder */}
-        <div id="scroll-to-top-portal" />
-
+    <html lang="en">
+      <body>
+        <Navigation />
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
-  );
+  )
 }

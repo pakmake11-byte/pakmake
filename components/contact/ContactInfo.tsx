@@ -10,12 +10,12 @@ export function ContactInfo() {
   const offices = [
     {
       country: 'India',
-      city: 'Mumbai, Maharashtra',
+      city: 'Jaipur, Rajasthan',
       flag: '🇮🇳',
       email: 'india@pakmake.com',
       phone: '+91 XXX XXX XXXX',
-      address: 'Industrial Area, Mumbai - 400001',
-      languages: ['English', 'Hindi', 'Marathi'],
+      address: 'Jaipur',
+      languages: ['English', 'Hindi'],
       hours: 'Mon-Fri: 9:00 AM - 6:00 PM IST'
     },
     {

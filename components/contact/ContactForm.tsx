@@ -27,10 +27,10 @@ export function ContactForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    
+
     // Simulate form submission
     await new Promise(resolve => setTimeout(resolve, 2000))
-    
+
     setIsSubmitting(false)
     setSubmitted(true)
   }
@@ -94,7 +94,7 @@ export function ContactForm() {
             Get in Touch
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Ready to transform your logistics? Contact our team for a customized 
+            Ready to transform your logistics? Contact our team for a customized
             slip sheet solution that fits your specific needs.
           </p>
         </motion.div>
@@ -120,7 +120,7 @@ export function ContactForm() {
                   placeholder="John"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Last Name *
@@ -150,7 +150,7 @@ export function ContactForm() {
                   placeholder="Your Company Ltd."
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Email Address *
@@ -170,19 +170,15 @@ export function ContactForm() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Subject *
               </label>
-              <select
+              <input
                 required
                 value={formData.subject}
                 onChange={(e) => handleInputChange('subject', e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
+                placeholder="Request a Quote"
+
               >
-                <option value="">Select a subject</option>
-                <option value="quote">Request Quote</option>
-                <option value="product-info">Product Information</option>
-                <option value="partnership">Partnership Opportunity</option>
-                <option value="support">Technical Support</option>
-                <option value="other">Other</option>
-              </select>
+              </input>
             </div>
 
             <div>

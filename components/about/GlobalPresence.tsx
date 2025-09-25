@@ -10,7 +10,7 @@ export function GlobalPresence() {
   const offices = [
     {
       location: 'India HQ',
-      address: 'Mumbai, Maharashtra',
+      address: 'Jaipur, Rajasthan',
       details: 'Main manufacturing and R&D facility',
       icon: '🇮🇳'
     },

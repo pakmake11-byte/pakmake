@@ -7,31 +7,15 @@ export function ComparisonSection() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
 
-  const comparisons = [
-    {
-      metric: 'Cost per unit',
-      slipSheet: '$2-5',
-      pallet: '$15-25',
-      savings: '80%'
-    },
-    {
-      metric: 'Storage space (1,000 units)',
-      slipSheet: '1m³',
-      pallet: '70m³',
-      savings: '98.5%'
-    },
-    {
-      metric: 'Weight',
-      slipSheet: '<1kg',
-      pallet: '15-25kg',
-      savings: '95%'
-    },
-    {
-      metric: 'Loading time',
-      slipSheet: '40% faster',
-      pallet: 'Standard',
-      savings: '40%'
-    }
+  const comparisonData = [
+    { metric: 'Savings', slipSheet: '80%', pallet: 'Standard' },
+    { metric: 'Storage space (1000 units)', slipSheet: '1m³', pallet: '70m³' },
+    { metric: 'Weight', slipSheet: '<1kg', pallet: '15-25kg' },
+    { metric: 'Loading speed', slipSheet: '60% faster', pallet: 'Standard' },
+    { metric: 'Material handling containers', slipSheet: '12-15% more products', pallet: 'Standard capacity' },
+    { metric: 'Maintenance required', slipSheet: 'None', pallet: 'Regular upkeep' },
+    { metric: 'Environmental impact', slipSheet: '100% recyclable', pallet: 'Limited recyclability' },
+    { metric: 'Phytosanitary restrictions', slipSheet: 'Exempt', pallet: 'Subject to restrictions' }
   ]
 
   return (
@@ -51,75 +35,112 @@ export function ComparisonSection() {
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {comparisons.map((comparison, index) => (
-            <motion.div
-              key={comparison.metric}
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="bg-white rounded-xl shadow-lg p-6"
-            >
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                {comparison.metric}
-              </h3>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-4 bg-primary-50 rounded-lg">
-                  <div className="text-2xl font-bold text-primary-600 mb-2">
-                    {comparison.slipSheet}
-                  </div>
-                  <div className="text-sm text-gray-600">Slip Sheet</div>
-                </div>
-                
-                <div className="text-center p-4 bg-red-50 rounded-lg">
-                  <div className="text-2xl font-bold text-red-600 mb-2">
-                    {comparison.pallet}
-                  </div>
-                  <div className="text-sm text-gray-600">Wooden Pallet</div>
-                </div>
-              </div>
-              
-              <div className="mt-4 text-center">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                  {comparison.savings} savings
-                </span>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
+          {/* Comparison Table */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="bg-white rounded-xl shadow-lg p-6"
+          >
+            <div className="overflow-hidden">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b-2 border-gray-100">
+                    <th className="text-left py-4 px-2 font-semibold text-gray-700">Metric</th>
+                    <th className="text-center py-4 px-2 font-semibold text-primary-600">Slip Sheet</th>
+                    <th className="text-center py-4 px-2 font-semibold text-red-600">Wooden Pallet</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonData.map((row, index) => (
+                    <motion.tr
+                      key={row.metric}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={isInView ? { opacity: 1, y: 0 } : {}}
+                      transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
+                      className="border-b border-gray-50 hover:bg-gray-25"
+                    >
+                      <td className="py-3 px-2 text-sm font-medium text-gray-700">
+                        {row.metric}
+                      </td>
+                      <td className="py-3 px-2 text-center text-sm font-semibold text-primary-600">
+                        {row.slipSheet}
+                      </td>
+                      <td className="py-3 px-2 text-center text-sm font-semibold text-red-600">
+                        {row.pallet}
+                      </td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </motion.div>
 
-        {/* Animated Visual Representation */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 1, delay: 0.5 }}
-          className="mt-16 text-center"
-        >
-          <div className="inline-flex items-center space-x-8 p-8 bg-white rounded-2xl shadow-lg">
-            <div className="text-center">
-              <div className="w-20 h-20 bg-brown-200 rounded-lg mb-4 flex items-center justify-center text-4xl">
-                🏗️
+          {/* Visual Comparison */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="bg-white rounded-xl shadow-lg p-6"
+          >
+                        <div className="space-y-8">
+              {/* Storage Space Visualization */}
+              <div className="text-center">
+                <div className="flex justify-center items-end space-x-8 mb-4">
+                  <motion.div
+                    initial={{ height: 0 }}
+                    animate={isInView ? { height: 'auto' } : {}}
+                    transition={{ duration: 1, delay: 0.5 }}
+                    className="text-center"
+                  >
+                    <div className="w-16 h-4 bg-primary-600 rounded mb-2"></div>
+                    <p className="text-xs text-primary-600 font-semibold">1m³</p>
+                    <p className="text-xs text-gray-600">1000 Slip Sheets</p>
+                  </motion.div>
+                  
+                  <motion.div
+                    initial={{ height: 0 }}
+                    animate={isInView ? { height: 'auto' } : {}}
+                    transition={{ duration: 1, delay: 0.7 }}
+                    className="text-center"
+                  >
+                    <div className="w-16 h-56 bg-red-500 rounded mb-2"></div>
+                    <p className="text-xs text-red-600 font-semibold">70m³</p>
+                    <p className="text-xs text-gray-600">1000 Pallets</p>
+                  </motion.div>
+                </div>
               </div>
-              <p className="text-sm text-gray-600">Traditional Pallet</p>
-            </div>
-            
-            <motion.div
-              animate={{ x: [0, 20, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="text-primary-500 text-3xl"
-            >
-              →
-            </motion.div>
-            
-            <div className="text-center">
-              <div className="w-20 h-20 bg-primary-100 rounded-lg mb-4 flex items-center justify-center text-4xl">
-                📄
+
+              {/* Loading Speed Visualization */}
+              <div className="text-center">
+                <h4 className="text-sm font-medium text-gray-700 mb-3">Loading Speed</h4>
+                <div className="space-y-3">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={isInView ? { width: '100%' } : {}}
+                    transition={{ duration: 1.5, delay: 0.8 }}
+                    className="bg-primary-600 h-4 rounded-full"
+                  >
+                    <div className="text-xs text-white text-center leading-4 font-medium">
+                      Slip Sheets - 60% Faster
+                    </div>
+                  </motion.div>
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={isInView ? { width: '62%' } : {}}
+                    transition={{ duration: 1.5, delay: 1 }}
+                    className="bg-red-500 h-4 rounded-full"
+                  >
+                    <div className="text-xs text-white text-center leading-4 font-medium">
+                      Wooden Pallets
+                    </div>
+                  </motion.div>
+                </div>
               </div>
-              <p className="text-sm text-gray-600">Slip Sheet</p>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
     </section>
   )

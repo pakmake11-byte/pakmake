@@ -129,49 +129,6 @@ export function ProductVariants() {
             </div>
           </div>
         </motion.div>
-
-        {/* Material Comparison */}
-        <div className="grid lg:grid-cols-2 gap-8">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="bg-white rounded-xl shadow-lg p-6"
-          >
-            <h3 className="text-xl font-bold text-green-600 mb-4 flex items-center">
-              <span className="text-2xl mr-2">✅</span>
-              Slip Sheet Advantages
-            </h3>
-            <ul className="space-y-3">
-              {materialAdvantages.map((advantage, index) => (
-                <li key={index} className="flex items-start space-x-2">
-                  <span className="text-green-500 mt-1">•</span>
-                  <span className="text-gray-700">{advantage}</span>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="bg-white rounded-xl shadow-lg p-6"
-          >
-            <h3 className="text-xl font-bold text-red-600 mb-4 flex items-center">
-              <span className="text-2xl mr-2">❌</span>
-              Traditional Pallet Disadvantages
-            </h3>
-            <ul className="space-y-3">
-              {palletDisadvantages.map((disadvantage, index) => (
-                <li key={index} className="flex items-start space-x-2">
-                  <span className="text-red-500 mt-1">•</span>
-                  <span className="text-gray-700">{disadvantage}</span>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-        </div>
       </div>
     </section>
   )

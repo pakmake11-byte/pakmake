@@ -16,7 +16,7 @@ function SlipSheet() {
   })
 
   return (
-    <mesh ref={meshRef}>
+    <mesh ref={meshRef} scale={1.5}>
       <boxGeometry args={[2, 0.05, 1.5]} />
       <meshStandardMaterial color="#8B4513" />
       

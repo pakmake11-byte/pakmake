@@ -6,7 +6,8 @@ import { motion } from 'framer-motion'
 export function Footer() {
   const quickLinks = [
     { label: 'Home', href: '/' },
-    { label: 'Products', href: '/products' },
+    { label: 'About Us', href: '/about' },
+    { label: 'Contact Us', href: '/contact' },
     { label: 'Calculator', href: '/calculator' },
     { label: 'Brochure Download', href: '/brochure' }
   ]

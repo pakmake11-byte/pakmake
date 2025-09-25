@@ -29,13 +29,13 @@ export function SocialProof() {
     }
   ]
 
-  const metrics = [
-    { label: 'Average Savings', value: '80%', icon: '💰' },
-    { label: 'Capacity Increase', value: '12-15%', icon: '📦' },
-    { label: 'Loading Speed', value: '60%', icon: '⚡' },
-    { label: 'Client Retention', value: '95%', icon: '🤝' },
-    { label: 'Countries Served', value: '25+', icon: '🌍' }
-  ]
+  // const metrics = [
+  //   { label: 'Average Savings', value: '80%', icon: '💰' },
+  //   { label: 'Capacity Increase', value: '12-15%', icon: '📦' },
+  //   { label: 'Loading Speed', value: '60%', icon: '⚡' },
+  //   { label: 'Client Retention', value: '95%', icon: '🤝' },
+  //   { label: 'Countries Served', value: '25+', icon: '🌍' }
+  // ]
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -111,7 +111,7 @@ export function SocialProof() {
         </motion.div>
 
         {/* Success Metrics */}
-        <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-6">
+        {/* <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-6">
           {metrics.map((metric, index) => (
             <motion.div
               key={metric.label}
@@ -127,10 +127,10 @@ export function SocialProof() {
               <p className="text-sm text-gray-600">{metric.label}</p>
             </motion.div>
           ))}
-        </div>
+        </div> */}
 
         {/* Certification Logos */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.5 }}
@@ -144,7 +144,7 @@ export function SocialProof() {
             <div className="text-2xl font-bold border-2 border-gray-300 px-4 py-2 rounded">ISO</div>
             <div className="text-2xl font-bold border-2 border-gray-300 px-4 py-2 rounded">Sedex</div>
           </div>
-        </motion.div>
+        </motion.div> */}
       </div>
     </section>
   )

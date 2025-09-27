@@ -8,7 +8,7 @@ export function TechnicalDeepDive() {
   const isInView = useInView(ref, { once: true, margin: "-100px" })
 
   return (
-    <section ref={ref} className="py-20 bg-white">
+    <section ref={ref} className="py-20 bg-primary-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -107,7 +107,7 @@ export function TechnicalDeepDive() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="bg-gray-50 rounded-2xl p-8"
+          className="rounded-2xl p-8"
         >
           <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
             Equipment Requirements

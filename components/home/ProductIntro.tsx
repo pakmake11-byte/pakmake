@@ -2,10 +2,8 @@
 
 import { motion, useInView } from 'framer-motion'
 import { useRef, Suspense, useState, useEffect } from 'react'
-// Assuming SlipSheetModel can be imported, otherwise an image can be used.
 import { SlipSheetModel } from '@/components/three/SlipSheetModel'
 
-// A helper component for each feature point to keep the main component clean
 const FeaturePoint = ({
   label,
   icon,
@@ -79,7 +77,7 @@ export function ProductIntro() {
           transition={{ duration: 0.8 }}
           className="text-center mb-20"
         >
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+          <h2 className="text-4xl lg:text-5xl  font-bold text-gray-900 my-6">
             Why Choose Slip Sheets?
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">

@@ -14,7 +14,7 @@ export function IndustriesServed() {
     { name: 'Retail', icon: '🛒', description: 'Store-ready packaging' },
     { name: 'Automotive', icon: '🚗', description: 'Parts & components' },
     { name: 'Electronics', icon: '📱', description: 'Static-free handling' },
-    { name: 'Textiles', icon: '👕', description: 'Gentle fabric care' },
+    // { name: 'Textiles', icon: '👕', description: 'Gentle fabric care' },
     { name: 'Chemicals', icon: '🧪', description: 'Resistant materials' },
     { name: 'Paper & Pulp', icon: '📰', description: 'Industry expertise' }
   ]
@@ -36,7 +36,7 @@ export function IndustriesServed() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {industries.map((industry, index) => (
             <motion.div
               key={industry.name}

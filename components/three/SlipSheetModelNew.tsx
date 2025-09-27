@@ -230,17 +230,14 @@ export function SlipSheetModel() {
     <div className="w-full h-full">
       <Canvas camera={{ position: [10, 6, 10], fov: 50 }}>
         <ambientLight intensity={0.6} />
-        <directionalLight
-          position={[8, 12, 6]}
-          intensity={0.8}
-        />
+        <directionalLight position={[8, 12, 6]} intensity={0.8} />
         <pointLight position={[-5, 4, 6]} intensity={0.4} />
         <SlipSheet />
         <OrbitControls 
           enablePan={false} 
           enableZoom={false} 
           autoRotate 
-          autoRotateSpeed={0.5} 
+          autoRotateSpeed={0.3} 
         />
       </Canvas>
     </div>

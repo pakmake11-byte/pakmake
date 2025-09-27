@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { SlipSheetModel } from '@/components/three/SlipSheetModelNew'
+import { SlipSheetModel } from '@/components/three/SlipSheetModel'
 import { StatsCounter } from '@/components/ui/StatsCounter'
 
 export function HeroSection() {
@@ -13,12 +13,9 @@ export function HeroSection() {
   ]
 
   return (
-    <section className="relative bg-gradient-to-br from-primary-50 to-white overflow-hidden top-12">
-      {/* Background pattern */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=&quot;40&quot; height=&quot;40&quot; viewBox=&quot;0 0 40 40&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cg fill=&quot;%23f3f4f6&quot; fill-opacity=&quot;0.4&quot;%3E%3Cpath d=&quot;M0 40L40 0H20L0 20M40 40V20L20 40&quot;/&gt;%3C/g%3E%3C/svg%3E')] opacity-30"></div>
-
+    <section className="relative min-h-[calc(100vh-5rem)]  bg-primary-50  overflow-hidden top-20">
       {/* Main content wrapper */}
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-25">
         {/* Hero grid */}
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Hero text */}
@@ -43,7 +40,14 @@ export function HeroSection() {
                 whileTap={{ scale: 0.95 }}
                 className="border-2 border-primary-600 text-primary-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-primary-50 transition-colors"
               >
-                Get Quote
+                Request Quote
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="border-2 border-primary-600 text-primary-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-primary-50 transition-colors"
+              >
+                Get Brochure
               </motion.button>
             </div>
           </motion.div>
@@ -53,14 +57,14 @@ export function HeroSection() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative h-96 lg:h-full"
+            className="relative h-100 lg:h-full"
           >
             <SlipSheetModel />
           </motion.div>
         </div>
 
         {/* Stats Section */}
-        <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-6 text-center pb-2">
+        <div className="mt-12 grid grid-cols-2 lg:grid-cols-4 gap-6 text-center pb-2">
           {stats.map((stat, index) => (
             <motion.div
               key={stat.label}

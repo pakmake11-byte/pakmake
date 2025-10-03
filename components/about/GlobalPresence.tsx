@@ -82,9 +82,6 @@ export function GlobalPresence() {
               Explore our global reach and discover how we&apos;re transforming 
               logistics operations across continents.
             </p>
-            <button className="bg-primary-600 text-white px-6 py-3 rounded-full hover:bg-primary-700 transition-colors">
-              View Interactive Map
-            </button>
           </div>
         </motion.div>
 

@@ -9,14 +9,14 @@ export function TeamShowcase() {
 
   const team = [
     {
-      name: 'Rajesh Kumar',
+      name: 'Sandeep Jajoo',
       role: 'Founder & CEO',
-      bio: 'With 15+ years in packaging industry, Rajesh pioneered the slip sheet revolution in Asia.',
+      bio: 'With 15+ years in packaging industry.',
       image: '👨‍💼',
       linkedin: '#'
     },
     {
-      name: 'Priya Sharma',
+      name: 'ABC',
       role: 'Co-Founder & CTO',
       bio: 'Technical expert in sustainable materials, leading our innovation in eco-friendly solutions.',
       image: '👩‍💼',

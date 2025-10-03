@@ -83,12 +83,12 @@ export function ProductVariants() {
                     <th className="px-8 py-6 text-left font-bold text-white text-lg">Specifications</th>
                     <th className="px-8 py-6 text-center font-bold text-white text-lg">
                       <div className="flex items-center justify-center space-x-3">
-                        <span>KK Kraft Paper</span>
+                        <span>Kraft Paper Slip Sheet</span>
                       </div>
                     </th>
                     <th className="px-8 py-6 text-center font-bold text-white text-lg">
                       <div className="flex items-center justify-center space-x-3">
-                        <span>PP Plastic</span>
+                        <span>PP Plastic Slip Sheet</span>
                       </div>
                     </th>
                   </tr>
@@ -173,8 +173,8 @@ export function ProductVariants() {
                     </div>
                     
                     <div className="relative z-10">
-                      <div className="text-6xl mb-4 group-hover:animate-bounce">{variant.icon}</div>
-                      <h4 className="font-bold text-xl mb-3">{variant.title}</h4>
+                      {/* <div className="text-6xl mb-4 group-hover:animate-bounce">{variant.icon}</div> */}
+                      <h4 className="font-bold text-4xl my-4">{variant.title}</h4>
                       <p className={`text-sm mb-4 ${
                         selectedVariant === variant.id ? 'text-blue-100' : 'text-gray-600'
                       }`}>
@@ -183,8 +183,8 @@ export function ProductVariants() {
                       <div className={`text-xs space-y-1 ${
                         selectedVariant === variant.id ? 'text-blue-200' : 'text-gray-500'
                       }`}>
-                        <div><strong>Capacity:</strong> {variant.specs.capacity}</div>
-                        <div><strong>Thickness:</strong> {variant.specs.thickness}</div>
+                        {/* <div><strong>Capacity:</strong> {variant.specs.capacity}</div> */}
+                        {/* <div><strong>Thickness:</strong> {variant.specs.thickness}</div> */}
                       </div>
                     </div>
 

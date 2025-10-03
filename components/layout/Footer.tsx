@@ -8,7 +8,6 @@ export function Footer() {
     { label: 'Home', href: '/' },
     { label: 'About Us', href: '/about' },
     { label: 'Contact Us', href: '/contact' },
-    { label: 'Calculator', href: '/calculator' },
     { label: 'Brochure Download', href: '/brochure' }
   ]
 

@@ -23,7 +23,7 @@ export function AboutHero() {
           <div className="flex justify-center items-center space-x-8 text-sm text-gray-500">
             <div className="flex items-center space-x-2">
               <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
-              <span>Est. 2020</span>
+              <span>Est. 2021</span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="w-2 h-2 bg-primary-500 rounded-full"></span>

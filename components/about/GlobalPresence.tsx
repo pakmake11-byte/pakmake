@@ -23,7 +23,7 @@ export function GlobalPresence() {
   ]
 
   const countries = [
-    'India', 'UAE', 'Saudi Arabia', 'Qatar', 'Kuwait', 'Oman', 
+    'India', 'UAE', 'Saudi Arabia', 'Qatar', 'Austra', 'Oman',
     'Singapore', 'Malaysia', 'Thailand', 'Vietnam', 'Philippines',
     'Indonesia', 'Bangladesh', 'Sri Lanka', 'Nepal', 'Myanmar',
     'Egypt', 'Jordan', 'Lebanon', 'Turkey', 'Kenya', 'Tanzania',
@@ -43,7 +43,7 @@ export function GlobalPresence() {
             Global Presence
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            From our headquarters in India to offices across the globe, 
+            From our headquarters in India to offices across the globe,
             we serve customers in over 25 countries worldwide.
           </p>
         </motion.div>
@@ -79,7 +79,7 @@ export function GlobalPresence() {
               Interactive World Map
             </h3>
             <p className="text-gray-600 mb-6">
-              Explore our global reach and discover how we&apos;re transforming 
+              Explore our global reach and discover how we&apos;re transforming
               logistics operations across continents.
             </p>
           </div>

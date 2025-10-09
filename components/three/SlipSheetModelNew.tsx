@@ -10,16 +10,11 @@ type Lip = {
   sign: number
 }
 
-type VariantType = 'single-lip' | 'double-lip-opposite' | 'double-lip-adjacent' | 'multi-lip'
+type SlipSheetVariant = 'single-lip' | 'double-lip-opposite' | 'double-lip-adjacent' | 'multi-lip';
 
-interface SlipSheetProps {
-  variant?: VariantType
-}
-
-function SlipSheet({ variant = 'multi-lip' }: SlipSheetProps) {
+function SlipSheet({ variantId }: { variantId: SlipSheetVariant }) {
   const groupRef = useRef<THREE.Group>(null)
   const [lips, setLips] = useState<Lip[]>([])
-
   const createKraftTexture = () => {
     const canvas = document.createElement('canvas')
     const size = 512
@@ -83,9 +78,9 @@ function SlipSheet({ variant = 'multi-lip' }: SlipSheetProps) {
 
     for (let i = 0; i < data.length; i += 4) {
       const noise = (Math.random() - 0.5) * 40
-      data[i] = Math.max(0, Math.min(255, data[i] + noise))
-      data[i + 1] = Math.max(0, Math.min(255, data[i + 1] + noise))
-      data[i + 2] = Math.max(0, Math.min(255, data[i + 2] + noise))
+      data[i] = Math.max(0, Math.min(255, data[i] + noise))    
+      data[i + 1] = Math.max(0, Math.min(255, data[i + 1] + noise)) 
+      data[i + 2] = Math.max(0, Math.min(255, data[i + 2] + noise)) 
     }
 
     ctx.putImageData(imageData, 0, 0)
@@ -115,7 +110,7 @@ function SlipSheet({ variant = 'multi-lip' }: SlipSheetProps) {
       const x = Math.random() * size
       const y = Math.random() * size
       const radius = Math.random() * 4 + 1
-      const intensity = Math.random() * 15 + 5
+      const intensity = Math.random() * 15 + 5 
 
       const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius)
       gradient.addColorStop(0, `rgb(128, 128, ${255 + intensity})`)
@@ -149,7 +144,12 @@ function SlipSheet({ variant = 'multi-lip' }: SlipSheetProps) {
   useEffect(() => {
     if (!groupRef.current) return
     const slipGroup = groupRef.current
-    slipGroup.clear()
+
+    // Clear previous geometry
+    while (slipGroup.children.length > 0) {
+      slipGroup.remove(slipGroup.children[0])
+    }
+
     slipGroup.scale.set(1.3, 1.3, 1.3)
 
     const thickness = 0.04
@@ -164,10 +164,26 @@ function SlipSheet({ variant = 'multi-lip' }: SlipSheetProps) {
     slipGroup.add(mainMesh)
 
     const tempLips: Lip[] = []
+    
+    // Define which lips to add based on the variantId prop
+    const lipsToAdd: string[] = []
+    switch (variantId) {
+      case 'single-lip':
+        lipsToAdd.push('front')
+        break
+      case 'double-lip-opposite':
+        lipsToAdd.push('front', 'back')
+        break
+      case 'double-lip-adjacent':
+        lipsToAdd.push('front', 'right')
+        break
+      case 'multi-lip':
+      default:
+        lipsToAdd.push('front', 'back', 'left', 'right')
+        break
+    }
 
-    // Build lips based on variant type
-    if (variant === 'single-lip') {
-      // Front lip only
+    if (lipsToAdd.includes('front')) {
       const frontPivot = new THREE.Object3D()
       frontPivot.position.set(0, thickness / 2, mainHeight / 2)
       slipGroup.add(frontPivot)
@@ -175,16 +191,9 @@ function SlipSheet({ variant = 'multi-lip' }: SlipSheetProps) {
       frontLip.position.set(0, 0, lipLength / 2)
       frontPivot.add(frontLip)
       tempLips.push({ pivot: frontPivot, axis: 'x', sign: -1 })
-    } else if (variant === 'double-lip-opposite') {
-      // Front and back lips
-      const frontPivot = new THREE.Object3D()
-      frontPivot.position.set(0, thickness / 2, mainHeight / 2)
-      slipGroup.add(frontPivot)
-      const frontLip = new THREE.Mesh(new THREE.BoxGeometry(mainWidth, thickness, lipLength), cardboardMaterial)
-      frontLip.position.set(0, 0, lipLength / 2)
-      frontPivot.add(frontLip)
-      tempLips.push({ pivot: frontPivot, axis: 'x', sign: -1 })
+    }
 
+    if (lipsToAdd.includes('back')) {
       const backPivot = new THREE.Object3D()
       backPivot.position.set(0, thickness / 2, -mainHeight / 2)
       slipGroup.add(backPivot)
@@ -192,16 +201,9 @@ function SlipSheet({ variant = 'multi-lip' }: SlipSheetProps) {
       backLip.position.set(0, 0, -lipLength / 2)
       backPivot.add(backLip)
       tempLips.push({ pivot: backPivot, axis: 'x', sign: 1 })
-    } else if (variant === 'double-lip-adjacent') {
-      // Front and left lips
-      const frontPivot = new THREE.Object3D()
-      frontPivot.position.set(0, thickness / 2, mainHeight / 2)
-      slipGroup.add(frontPivot)
-      const frontLip = new THREE.Mesh(new THREE.BoxGeometry(mainWidth, thickness, lipLength), cardboardMaterial)
-      frontLip.position.set(0, 0, lipLength / 2)
-      frontPivot.add(frontLip)
-      tempLips.push({ pivot: frontPivot, axis: 'x', sign: -1 })
+    }
 
+    if (lipsToAdd.includes('left')) {
       const leftPivot = new THREE.Object3D()
       leftPivot.position.set(-mainWidth / 2, thickness / 2, 0)
       slipGroup.add(leftPivot)
@@ -209,32 +211,9 @@ function SlipSheet({ variant = 'multi-lip' }: SlipSheetProps) {
       leftLip.position.set(-lipLength / 2, 0, 0)
       leftPivot.add(leftLip)
       tempLips.push({ pivot: leftPivot, axis: 'z', sign: -1 })
-    } else if (variant === 'multi-lip') {
-      // All four lips
-      const frontPivot = new THREE.Object3D()
-      frontPivot.position.set(0, thickness / 2, mainHeight / 2)
-      slipGroup.add(frontPivot)
-      const frontLip = new THREE.Mesh(new THREE.BoxGeometry(mainWidth, thickness, lipLength), cardboardMaterial)
-      frontLip.position.set(0, 0, lipLength / 2)
-      frontPivot.add(frontLip)
-      tempLips.push({ pivot: frontPivot, axis: 'x', sign: -1 })
+    }
 
-      const backPivot = new THREE.Object3D()
-      backPivot.position.set(0, thickness / 2, -mainHeight / 2)
-      slipGroup.add(backPivot)
-      const backLip = new THREE.Mesh(new THREE.BoxGeometry(mainWidth, thickness, lipLength), cardboardMaterial)
-      backLip.position.set(0, 0, -lipLength / 2)
-      backPivot.add(backLip)
-      tempLips.push({ pivot: backPivot, axis: 'x', sign: 1 })
-
-      const leftPivot = new THREE.Object3D()
-      leftPivot.position.set(-mainWidth / 2, thickness / 2, 0)
-      slipGroup.add(leftPivot)
-      const leftLip = new THREE.Mesh(new THREE.BoxGeometry(lipLength, thickness, mainHeight), cardboardMaterial)
-      leftLip.position.set(-lipLength / 2, 0, 0)
-      leftPivot.add(leftLip)
-      tempLips.push({ pivot: leftPivot, axis: 'z', sign: -1 })
-
+    if (lipsToAdd.includes('right')) {
       const rightPivot = new THREE.Object3D()
       rightPivot.position.set(mainWidth / 2, thickness / 2, 0)
       slipGroup.add(rightPivot)
@@ -245,14 +224,16 @@ function SlipSheet({ variant = 'multi-lip' }: SlipSheetProps) {
     }
 
     setLips(tempLips)
-  }, [variant])
+  }, [variantId]) // Rerun effect when variantId changes
 
   useFrame(({ clock }) => {
     if (!groupRef.current) return
     const t = clock.getElapsedTime()
 
+    // Floating main sheet
     groupRef.current.position.y = Math.sin(t * 0.5) * 0.05
 
+    // Automatic lip wave
     lips.forEach((l, idx) => {
       const phase = idx * Math.PI / 6
       const angle = (Math.sin(t * 2 + phase) * 0.5 + 0.5) * (Math.PI / 2)
@@ -264,14 +245,14 @@ function SlipSheet({ variant = 'multi-lip' }: SlipSheetProps) {
   return <group ref={groupRef} />
 }
 
-export function SlipSheetModel({ variant = 'multi-lip' }: { variant?: VariantType }) {
+export function SlipSheetModel({ variantId = 'multi-lip' }: { variantId?: SlipSheetVariant }) {
   return (
     <div className="w-full h-full">
       <Canvas camera={{ position: [10, 6, 10], fov: 50 }}>
         <ambientLight intensity={0.6} />
         <directionalLight position={[8, 12, 6]} intensity={0.8} color={'#ffd8a0'} />
         <pointLight position={[-5, 4, 6]} intensity={0.5} color={'#ffcc88'} />
-        <SlipSheet variant={variant} />
+        <SlipSheet variantId={variantId} />
         <OrbitControls
           enablePan={false}
           enableZoom={false}

@@ -50,7 +50,7 @@ export function TechnicalDeepDive() {
             initial={{ opacity: 0, x: 50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-3xl p-8 h-96 flex items-center justify-center"
+            className="rounded-3xl p-8 h-96 flex items-center justify-center"
           >
             <motion.video
               initial={{ opacity: 0, scale: 0.95 }}

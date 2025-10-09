@@ -257,7 +257,7 @@ export function GlobalPresence() {
   }
 
   return (
-    <section ref={ref} className="py-20 bg-gradient-to-b from-white to-gray-50">
+    <section ref={ref} className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -286,7 +286,7 @@ export function GlobalPresence() {
               variants={itemVariants}
               whileHover={{ scale: 1.02 }}
               transition={{ type: "tween", duration: 0.2 }}
-              className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-8 text-center shadow-md hover:shadow-lg transition-shadow"
+              className="rounded-xl p-8 text-center shadow-md hover:shadow-lg transition-shadow"
             >
               <div className="text-5xl mb-4">{office.icon}</div>
               <h3 className="text-2xl font-bold text-gray-900 mb-2">{office.location}</h3>

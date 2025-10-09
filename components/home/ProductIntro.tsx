@@ -26,12 +26,26 @@ const FeaturePoint = ({
       animate={isInView ? 'visible' : 'hidden'}
       variants={variants}
       transition={{ duration: 0.6, delay }}
-      className={`flex items-center gap-4 w-full ${
+      className={`relative flex items-center gap-4 w-full ${
         align === 'right' ? 'flex-row-reverse text-right' : 'text-left'
       }`}
     >
+      {/* Label */}
       <div className="flex-grow">
-        <p className="text-lg text-gray-800">{label}</p>
+        <p className="text-lg font-semibold text-gray-800">{label}</p>
+      </div>
+
+      {/* Connector Dot + Line */}
+      <div
+        className={`absolute top-1/2 h-[2px] bg-gray-400 ${
+          align === 'right' ? 'right-full w-16' : 'left-full w-16'
+        }`}
+      >
+        <div
+          className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-gray-700 ${
+            align === 'right' ? '-right-1' : '-left-1'
+          }`}
+        />
       </div>
     </motion.div>
   )

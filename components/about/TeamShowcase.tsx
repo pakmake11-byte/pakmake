@@ -10,21 +10,21 @@ export function TeamShowcase() {
 
   const team = [
     {
-      name: 'ABC Jajoo',
+      name: 'Pramila Jaju',
       role: 'Co-Founder',
-      bio: 'BBA, BEED',
+      bio: 'MA(English), BSC, BEED(English)',
       linkedin: '#'
     },
     {
-      name: 'Sandeep Jajoo',
+      name: 'Sandeep Jaju',
       role: 'Founder',
-      bio: 'BBA, BCOM, MCOM',
+      bio: 'BCOM, MBA',
       linkedin: '#'
     },
     {
-      name: 'ABC Jajoo',
+      name: 'Pranav Jaju',
       role: 'Co-Founder',
-      bio: 'BBA, MBA, BSc',
+      bio: 'BBA, MBA',
       linkedin: '#'
     }
   ]

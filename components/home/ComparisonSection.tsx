@@ -84,59 +84,17 @@ export function ComparisonSection() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="bg-white rounded-xl shadow-lg p-6"
           >
-                        <div className="space-y-8">
+            <div className="space-y-8">
               {/* Storage Space Visualization */}
               <div className="text-center">
-                <div className="flex justify-center items-end space-x-8 mb-4">
-                  <motion.div
-                    initial={{ height: 0 }}
-                    animate={isInView ? { height: 'auto' } : {}}
-                    transition={{ duration: 1, delay: 0.5 }}
-                    className="text-center"
-                  >
-                    <div className="w-16 h-4 bg-primary-600 rounded mb-2"></div>
-                    <p className="text-xs text-primary-600 font-semibold">1m³</p>
-                    <p className="text-xs text-gray-600">1000 Slip Sheets</p>
-                  </motion.div>
-                  
-                  <motion.div
-                    initial={{ height: 0 }}
-                    animate={isInView ? { height: 'auto' } : {}}
-                    transition={{ duration: 1, delay: 0.7 }}
-                    className="text-center"
-                  >
-                    <div className="w-16 h-56 bg-red-500 rounded mb-2"></div>
-                    <p className="text-xs text-red-600 font-semibold">70m³</p>
-                    <p className="text-xs text-gray-600">1000 Pallets</p>
-                  </motion.div>
-                </div>
-              </div>
-
-              {/* Loading Speed Visualization */}
-              <div className="text-center">
-                <h4 className="text-sm font-medium text-gray-700 mb-3">Loading Speed</h4>
-                <div className="space-y-3">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={isInView ? { width: '100%' } : {}}
-                    transition={{ duration: 1.5, delay: 0.8 }}
-                    className="bg-primary-600 h-4 rounded-full"
-                  >
-                    <div className="text-xs text-white text-center leading-4 font-medium">
-                      Slip Sheets - 60% Faster
-                    </div>
-                  </motion.div>
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={isInView ? { width: '62%' } : {}}
-                    transition={{ duration: 1.5, delay: 1 }}
-                    className="bg-red-500 h-4 rounded-full"
-                  >
-                    <div className="text-xs text-white text-center leading-4 font-medium">
-                      Wooden Pallets
-                    </div>
-                  </motion.div>
-                </div>
+                <motion.img
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.8, delay: 0.5 }}
+                  src="/home/slip-vs-woorden.png"
+                  alt="Slip Sheets vs Wooden Pallets Storage Space Comparison"
+                  className="mx-auto rounded-lg shadow-md max-w-full h-auto"
+                />
               </div>
             </div>
           </motion.div>

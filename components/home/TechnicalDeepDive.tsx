@@ -52,13 +52,19 @@ export function TechnicalDeepDive() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-3xl p-8 h-96 flex items-center justify-center"
           >
-            <div className="text-center">
-              <div className="text-8xl mb-4">🔄</div>
-              <p className="text-lg text-primary-700 font-medium">
-                Push-Pull Process
-              </p>
-            </div>
+            <motion.video
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={isInView ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 1, delay: 0.4 }}
+              src="/home/video.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="rounded-2xl shadow-lg max-h-full max-w-full object-cover"
+            />
           </motion.div>
+
         </div>
 
         {/* Process Steps Images Section */}
@@ -71,12 +77,12 @@ export function TechnicalDeepDive() {
           <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
             Process Steps
           </h3>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             {/* Step 1 - Pull */}
             <div className="text-center">
               <div className="bg-gray-200 rounded-lg h-48 mb-4 flex items-center justify-center">
-                <span className="text-gray-500 text-sm">Step 1 Image</span>
+                <img src="/home/pull.png" alt="" />              
               </div>
               <h4 className="font-semibold text-gray-900 mb-2">1. Pull</h4>
               <p className="text-gray-600 text-sm">Draw the load onto the flat forks using the slip sheet</p>
@@ -85,8 +91,8 @@ export function TechnicalDeepDive() {
             {/* Step 2 - Transport */}
             <div className="text-center">
               <div className="bg-gray-200 rounded-lg h-48 mb-4 flex items-center justify-center">
-                <span className="text-gray-500 text-sm">Step 2 Image</span>
-              </div>
+                <img src="/home/lift.png" alt="" />              
+                </div>
               <h4 className="font-semibold text-gray-900 mb-2">2. Lift & Transport</h4>
               <p className="text-gray-600 text-sm">Raise and position the load at its destination</p>
             </div>
@@ -94,7 +100,7 @@ export function TechnicalDeepDive() {
             {/* Step 3 - Push */}
             <div className="text-center">
               <div className="bg-gray-200 rounded-lg h-48 mb-4 flex items-center justify-center">
-                <span className="text-gray-500 text-sm">Step 3 Image</span>
+                <img src="/home/push.png" alt="" />              
               </div>
               <h4 className="font-semibold text-gray-900 mb-2">3. Push</h4>
               <p className="text-gray-600 text-sm">Eject the load by pushing the slip sheet off the forks</p>
@@ -112,26 +118,26 @@ export function TechnicalDeepDive() {
           <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
             Equipment Requirements
           </h3>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="text-center p-4">
               <div className="text-3xl mb-3">🔧</div>
               <h4 className="font-semibold text-gray-900 mb-2">Push-pull attachment</h4>
               <p className="text-sm text-gray-600">Supplied by Cascade</p>
             </div>
-            
+
             <div className="text-center p-4">
               <div className="text-3xl mb-3">🚛</div>
               <h4 className="font-semibold text-gray-900 mb-2">Standard forklifts</h4>
               <p className="text-sm text-gray-600">Compatible with existing equipment</p>
             </div>
-            
+
             <div className="text-center p-4">
               <div className="text-3xl mb-3">💰</div>
               <h4 className="font-semibold text-gray-900 mb-2">Initial investment</h4>
               <p className="text-sm text-gray-600">Consideration required</p>
             </div>
-            
+
             <div className="text-center p-4">
               <div className="text-3xl mb-3">📈</div>
               <h4 className="font-semibold text-gray-900 mb-2">ROI timeline</h4>

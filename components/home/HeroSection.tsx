@@ -1,10 +1,10 @@
 'use client'
 
+import { forwardRef } from 'react'
 import { motion } from 'framer-motion'
-import { SlipSheetModel } from '@/components/three/SlipSheetModelNew'
 import { StatsCounter } from '@/components/ui/StatsCounter'
 
-export function HeroSection() {
+export const HeroSection = forwardRef<HTMLDivElement>(function HeroSection(props, ref) {
   const stats = [
     { label: 'CO₂ Saved', value: 15240, suffix: 'tons' },
     { label: 'Storage Space Saved', value: 85, suffix: '%' },
@@ -51,16 +51,8 @@ export function HeroSection() {
               </motion.button>
             </div>
           </motion.div>
+          <div ref={ref} className="relative h-96 lg:h-full min-h-[450px]" />
 
-          {/* Hero 3D model */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative h-100 lg:h-full"
-          >
-            <SlipSheetModel />
-          </motion.div>
         </div>
 
         {/* Stats Section */}
@@ -97,4 +89,4 @@ export function HeroSection() {
       </div>
     </section>
   )
-}
+})

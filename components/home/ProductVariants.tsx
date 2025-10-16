@@ -2,8 +2,7 @@
 
 import { motion, useInView } from 'framer-motion'
 import { useRef, useState } from 'react'
-// Assuming the path to your modified component is correct
-import { SlipSheetModel } from '@/components/three/SlipSheetModelNew' 
+import { SlipSheetModel } from '@/components/three/SlipSheetModel' 
 
 // Define a specific type for variant IDs for better type safety
 type SlipSheetVariant = 'single-lip' | 'double-lip-opposite' | 'double-lip-adjacent' | 'multi-lip';

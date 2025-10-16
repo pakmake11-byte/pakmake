@@ -12,17 +12,19 @@ export function ContactInfo() {
       country: 'India',
       city: 'Jaipur, Rajasthan',
       flag: '🇮🇳',
-      email: 'india@pakmake.com',
-      phone: '+91 XXX XXX XXXX',
-      address: 'Jaipur',
+      email: 'sandeepjaju@yahoo.com',
+      phone: '+91 98291-87167',
+      address: 'Plt. 52, Soni Ka Bagh, Behind Alka Cinema, Sikar Road, Jaipur-302039 (Rajasthan)',
+      mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3564.178212556248!2d75.7718!3d26.9482!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396db6f3cb0d52d7%3A0xa5c5e8e7d5432f0e!2sAlka%20Cinema!5e0!3m2!1sen!2sin!4v1697041234567!5m2!1sen!2sin'
     },
     {
       country: 'UAE',
-      city: 'Dubai, United Arab Emirates',
+      city: 'Ajman, United Arab Emirates',
       flag: '🇦🇪',
-      email: 'uae@pakmake.com',
-      phone: '+971 XXX XXX XXXX',
-      address: 'Business Bay, Dubai - 00000',
+      email: 'sandeepjaju@yahoo.com',
+      phone: '+971 558570247',
+      address: '308, Garden City, Jurf, Ajman, UAE',
+      mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3625.0102048171023!2d55.4820!3d25.4112!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ef5f72e2a4e7ef9%3A0x37b55c123d6f7f2b!2sGarden%20City%20Residences!5e0!3m2!1sen!2sae!4v1697044567890!5m2!1sen!2sae'
     }
   ]
 
@@ -50,7 +52,7 @@ export function ContactInfo() {
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: index * 0.2 }}
-              className="bg-gray-50 rounded-2xl p-8"
+              className="bg-gray-50 rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex items-center mb-6">
                 <div className="text-4xl mr-4">{office.flag}</div>
@@ -61,32 +63,33 @@ export function ContactInfo() {
               </div>
 
               <div className="space-y-4 mb-6">
-                <div className="flex items-start space-x-3">
-                  <div>
-                    <p className="font-medium text-gray-900">Email: </p>
-                    <span className="text-gray-600">{office.email}</span>
-                  </div>
+                <div>
+                  <p className="font-medium text-gray-900">Email</p>
+                  <p className="text-gray-600">{office.email}</p>
                 </div>
 
-                <div className="flex items-start space-x-3">
-                  <div>
-                    <p className="font-medium text-gray-900">Phone</p>
-                    <p className="text-gray-600">{office.phone}</p>
-                  </div>
+                <div>
+                  <p className="font-medium text-gray-900">Phone</p>
+                  <p className="text-gray-600">{office.phone}</p>
                 </div>
 
-                <div className="flex items-start space-x-3">
-                  <div>
-                    <p className="font-medium text-gray-900">Address</p>
-                    <p className="text-gray-600">{office.address}</p>
-                  </div>
+                <div>
+                  <p className="font-medium text-gray-900">Address</p>
+                  <p className="text-gray-600">{office.address}</p>
                 </div>
               </div>
 
-              {/* Interactive Map Placeholder */}
-              <div className="bg-primary-100 rounded-lg p-6 text-center">
-                <p className="text-primary-700 font-medium">Interactive Map</p>
-                <p className="text-sm text-primary-600">Click to view location</p>
+              {/* Embedded Google Map */}
+              <div className="rounded-lg overflow-hidden border border-gray-200">
+                <iframe
+                  src={office.mapSrc}
+                  width="100%"
+                  height="250"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                ></iframe>
               </div>
             </motion.div>
           ))}

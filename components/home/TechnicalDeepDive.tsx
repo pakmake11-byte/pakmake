@@ -82,7 +82,7 @@ export function TechnicalDeepDive() {
             {/* Step 1 - Pull */}
             <div className="text-center">
               <div className="bg-gray-200 rounded-lg h-48 mb-4 flex items-center justify-center">
-                <img src="/home/pull.png" alt="" />              
+                <img src="/home/pull.webp" alt="" />              
               </div>
               <h4 className="font-semibold text-gray-900 mb-2">1. Pull</h4>
               <p className="text-gray-600 text-sm">Draw the load onto the flat forks using the slip sheet</p>
@@ -91,7 +91,7 @@ export function TechnicalDeepDive() {
             {/* Step 2 - Transport */}
             <div className="text-center">
               <div className="bg-gray-200 rounded-lg h-48 mb-4 flex items-center justify-center">
-                <img src="/home/lift.png" alt="" />              
+                <img src="/home/lift.webp" alt="" />              
                 </div>
               <h4 className="font-semibold text-gray-900 mb-2">2. Lift & Transport</h4>
               <p className="text-gray-600 text-sm">Raise and position the load at its destination</p>
@@ -100,7 +100,7 @@ export function TechnicalDeepDive() {
             {/* Step 3 - Push */}
             <div className="text-center">
               <div className="bg-gray-200 rounded-lg h-48 mb-4 flex items-center justify-center">
-                <img src="/home/push.png" alt="" />              
+                <img src="/home/push.webp" alt="" />              
               </div>
               <h4 className="font-semibold text-gray-900 mb-2">3. Push</h4>
               <p className="text-gray-600 text-sm">Eject the load by pushing the slip sheet off the forks</p>

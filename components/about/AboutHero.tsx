@@ -27,11 +27,11 @@ export function AboutHero() {
             </div>
             <div className="flex items-center space-x-2">
               <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
-              <span>150+ Customers</span>
+              <span>50+ Customers</span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
-              <span>20+ Countries</span>
+              <span>10+ Countries</span>
             </div>
           </div>
         </motion.div>

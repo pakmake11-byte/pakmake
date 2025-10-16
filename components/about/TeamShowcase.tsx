@@ -19,7 +19,7 @@ export function TeamShowcase() {
       name: 'Sandeep Jaju',
       role: 'Founder',
       bio: 'BCOM, MBA',
-      linkedin: '#'
+      linkedin: 'https://www.linkedin.com/in/sandeep-jaju-b8a3743a/'
     },
     {
       name: 'Pranav Jaju',

@@ -1,8 +1,7 @@
 'use client'
 
 import { motion, useInView } from 'framer-motion'
-import { useRef, forwardRef, useState, useEffect } from 'react'
-// import { SlipSheetModel } from '@/components/three/SlipSheetModel'
+import { useRef, forwardRef } from 'react'
 
 const FeaturePoint = ({
   label,

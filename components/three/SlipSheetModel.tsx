@@ -1,5 +1,5 @@
 'use client'
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
@@ -15,131 +15,132 @@ type SlipSheetVariant = 'single-lip' | 'double-lip-opposite' | 'double-lip-adjac
 function SlipSheet({ variantId }: { variantId: SlipSheetVariant }) {
   const groupRef = useRef<THREE.Group>(null)
   const [lips, setLips] = useState<Lip[]>([])
-  const createKraftTexture = () => {
-    const canvas = document.createElement('canvas')
-    const size = 512
-    canvas.width = size
-    canvas.height = size
-    const ctx = canvas.getContext('2d')
 
-    if (!ctx) return null
+  // Memoize textures and material so they are stable across renders
+  const cardboardMaterial = useMemo(() => {
+    const createKraftTexture = () => {
+      const canvas = document.createElement('canvas')
+      const size = 512
+      canvas.width = size
+      canvas.height = size
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return null
 
-    ctx.fillStyle = '#D4A055'
-    ctx.fillRect(0, 0, size, size)
+      ctx.fillStyle = '#D4A055'
+      ctx.fillRect(0, 0, size, size)
 
-    for (let i = 0; i < 100; i++) {
-      const x = Math.random() * size
-      const y = Math.random() * size
-      const radius = Math.random() * 30 + 10
-      const opacity = Math.random() * 0.3 + 0.1
+      for (let i = 0; i < 100; i++) {
+        const x = Math.random() * size
+        const y = Math.random() * size
+        const radius = Math.random() * 30 + 10
+        const opacity = Math.random() * 0.3 + 0.1
 
-      const colors = ['#C8923C', '#DAA052', '#B77E36', '#E0B060']
-      const color = colors[Math.floor(Math.random() * colors.length)]
+        const colors = ['#C8923C', '#DAA052', '#B77E36', '#E0B060']
+        const color = colors[Math.floor(Math.random() * colors.length)]
 
-      ctx.fillStyle = color + Math.floor(opacity * 255).toString(16).padStart(2, '0')
-      ctx.beginPath()
-      ctx.arc(x, y, radius, 0, Math.PI * 2)
-      ctx.fill()
+        ctx.fillStyle = color + Math.floor(opacity * 255).toString(16).padStart(2, '0')
+        ctx.beginPath()
+        ctx.arc(x, y, radius, 0, Math.PI * 2)
+        ctx.fill()
+      }
+
+      for (let i = 0; i < 1500; i++) {
+        const x = Math.random() * size
+        const y = Math.random() * size
+        const length = Math.random() * 20 + 8
+        const angle = Math.random() * Math.PI * 2
+        const opacity = Math.random() * 0.4 + 0.2
+
+        ctx.save()
+        ctx.translate(x, y)
+        ctx.rotate(angle)
+        ctx.strokeStyle = `rgba(200, 160, 80, ${opacity})`
+        ctx.lineWidth = Math.random() * 2 + 0.5
+        ctx.beginPath()
+        ctx.moveTo(0, 0)
+        ctx.lineTo(length, 0)
+        ctx.stroke()
+        ctx.restore()
+      }
+
+      for (let i = 0; i < 80; i++) {
+        const x = Math.random() * size
+        const y = Math.random() * size
+        const radius = Math.random() * 4 + 1
+        const opacity = Math.random() * 0.6 + 0.3
+
+        ctx.fillStyle = `rgba(150, 120, 60, ${opacity})`
+        ctx.beginPath()
+        ctx.arc(x, y, radius, 0, Math.PI * 2)
+        ctx.fill()
+      }
+
+      const imageData = ctx.getImageData(0, 0, size, size)
+      const data = imageData.data
+
+      for (let i = 0; i < data.length; i += 4) {
+        const noise = (Math.random() - 0.5) * 40
+        data[i] = Math.max(0, Math.min(255, data[i] + noise))    
+        data[i + 1] = Math.max(0, Math.min(255, data[i + 1] + noise)) 
+        data[i + 2] = Math.max(0, Math.min(255, data[i + 2] + noise)) 
+      }
+
+      ctx.putImageData(imageData, 0, 0)
+
+      const texture = new THREE.CanvasTexture(canvas)
+      texture.wrapS = THREE.RepeatWrapping
+      texture.wrapT = THREE.RepeatWrapping
+      texture.repeat.set(1.5, 1.5)
+      return texture
     }
 
-    for (let i = 0; i < 1500; i++) {
-      const x = Math.random() * size
-      const y = Math.random() * size
-      const length = Math.random() * 20 + 8
-      const angle = Math.random() * Math.PI * 2
-      const opacity = Math.random() * 0.4 + 0.2
+    const createNormalMap = () => {
+      const canvas = document.createElement('canvas')
+      const size = 512
+      canvas.width = size
+      canvas.height = size
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return null
 
-      ctx.save()
-      ctx.translate(x, y)
-      ctx.rotate(angle)
-      ctx.strokeStyle = `rgba(200, 160, 80, ${opacity})`
-      ctx.lineWidth = Math.random() * 2 + 0.5
-      ctx.beginPath()
-      ctx.moveTo(0, 0)
-      ctx.lineTo(length, 0)
-      ctx.stroke()
-      ctx.restore()
+      ctx.fillStyle = '#8080FF'
+      ctx.fillRect(0, 0, size, size)
+
+      for (let i = 0; i < 80; i++) {
+        const x = Math.random() * size
+        const y = Math.random() * size
+        const radius = Math.random() * 4 + 1
+        const intensity = Math.random() * 15 + 5 
+
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius)
+        gradient.addColorStop(0, `rgb(128, 128, ${255 + intensity})`)
+        gradient.addColorStop(1, `rgb(128, 128, ${255 - intensity})`)
+
+        ctx.fillStyle = gradient
+        ctx.beginPath()
+        ctx.arc(x, y, radius, 0, Math.PI * 2)
+        ctx.fill()
+      }
+
+      const texture = new THREE.CanvasTexture(canvas)
+      texture.wrapS = THREE.RepeatWrapping
+      texture.wrapT = THREE.RepeatWrapping
+      texture.repeat.set(3, 3)
+      return texture
     }
 
-    for (let i = 0; i < 80; i++) {
-      const x = Math.random() * size
-      const y = Math.random() * size
-      const radius = Math.random() * 4 + 1
-      const opacity = Math.random() * 0.6 + 0.3
+    const kraftTexture = createKraftTexture()
+    const normalMap = createNormalMap()
 
-      ctx.fillStyle = `rgba(150, 120, 60, ${opacity})`
-      ctx.beginPath()
-      ctx.arc(x, y, radius, 0, Math.PI * 2)
-      ctx.fill()
-    }
-
-    const imageData = ctx.getImageData(0, 0, size, size)
-    const data = imageData.data
-
-    for (let i = 0; i < data.length; i += 4) {
-      const noise = (Math.random() - 0.5) * 40
-      data[i] = Math.max(0, Math.min(255, data[i] + noise))    
-      data[i + 1] = Math.max(0, Math.min(255, data[i + 1] + noise)) 
-      data[i + 2] = Math.max(0, Math.min(255, data[i + 2] + noise)) 
-    }
-
-    ctx.putImageData(imageData, 0, 0)
-
-    const texture = new THREE.CanvasTexture(canvas)
-    texture.wrapS = THREE.RepeatWrapping
-    texture.wrapT = THREE.RepeatWrapping
-    texture.repeat.set(1.5, 1.5)
-    return texture
-  }
-
-  const kraftTexture = createKraftTexture()
-
-  const createNormalMap = () => {
-    const canvas = document.createElement('canvas')
-    const size = 512
-    canvas.width = size
-    canvas.height = size
-    const ctx = canvas.getContext('2d')
-
-    if (!ctx) return null
-
-    ctx.fillStyle = '#8080FF'
-    ctx.fillRect(0, 0, size, size)
-
-    for (let i = 0; i < 80; i++) {
-      const x = Math.random() * size
-      const y = Math.random() * size
-      const radius = Math.random() * 4 + 1
-      const intensity = Math.random() * 15 + 5 
-
-      const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius)
-      gradient.addColorStop(0, `rgb(128, 128, ${255 + intensity})`)
-      gradient.addColorStop(1, `rgb(128, 128, ${255 - intensity})`)
-
-      ctx.fillStyle = gradient
-      ctx.beginPath()
-      ctx.arc(x, y, radius, 0, Math.PI * 2)
-      ctx.fill()
-    }
-
-    const texture = new THREE.CanvasTexture(canvas)
-    texture.wrapS = THREE.RepeatWrapping
-    texture.wrapT = THREE.RepeatWrapping
-    texture.repeat.set(3, 3)
-    return texture
-  }
-
-  const normalMap = createNormalMap()
-
-  const cardboardMaterial = new THREE.MeshStandardMaterial({
-    map: kraftTexture,
-    normalMap: normalMap,
-    normalScale: new THREE.Vector2(0.2, 0.2),
-    roughness: 0.7,
-    metalness: 0.0,
-    side: THREE.DoubleSide,
-    color: new THREE.Color('#FFD080')
-  })
+    return new THREE.MeshStandardMaterial({
+      map: kraftTexture,
+      normalMap: normalMap,
+      normalScale: new THREE.Vector2(0.2, 0.2),
+      roughness: 0.7,
+      metalness: 0.0,
+      side: THREE.DoubleSide,
+      color: new THREE.Color('#FFD080')
+    })
+  }, [])
 
   useEffect(() => {
     if (!groupRef.current) return
@@ -164,7 +165,7 @@ function SlipSheet({ variantId }: { variantId: SlipSheetVariant }) {
     slipGroup.add(mainMesh)
 
     const tempLips: Lip[] = []
-    
+
     // Define which lips to add based on the variantId prop
     const lipsToAdd: string[] = []
     switch (variantId) {
@@ -224,7 +225,7 @@ function SlipSheet({ variantId }: { variantId: SlipSheetVariant }) {
     }
 
     setLips(tempLips)
-  }, [variantId]) // Rerun effect when variantId changes
+  }, [variantId, cardboardMaterial])
 
   useFrame(({ clock }) => {
     if (!groupRef.current) return
@@ -258,7 +259,6 @@ export function SlipSheetModel({ variantId = 'multi-lip' }: { variantId?: SlipSh
           enableZoom={false}
           autoRotate
           autoRotateSpeed={0.8}
-          
         />
       </Canvas>
     </div>

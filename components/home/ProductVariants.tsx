@@ -68,8 +68,6 @@ export function ProductVariants() {
     }
   }
 
-  const selectedVariantData = variants.find(v => v.id === selectedVariant)
-
   return (
     <section ref={ref} className="py-12 sm:py-16 lg:py-24 bg-gradient-to-b from-white to-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -80,14 +78,6 @@ export function ProductVariants() {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="text-center mb-12 sm:mb-16 lg:mb-20"
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="inline-block mb-4 px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-semibold tracking-wide"
-          >
-            Product Range
-          </motion.div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 text-gray-900 leading-tight">
             Product Variants & Specifications
           </h2>
@@ -187,7 +177,7 @@ export function ProductVariants() {
                 animate={isInView ? "visible" : "hidden"}
                 className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6"
               >
-                {variants.map((variant, index) => (
+                {variants.map((variant) => (
                   <motion.button
                     key={variant.id}
                     variants={itemVariants}

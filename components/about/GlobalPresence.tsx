@@ -3,10 +3,6 @@
 import { motion, useInView, Variants } from 'framer-motion'
 import { useRef, useEffect } from 'react'
 
-// ============================================================================
-// Types & Constants
-// ============================================================================
-
 interface Office {
   location: string
   address: string
@@ -22,6 +18,137 @@ interface MapLocation {
 
 interface MapOffice extends MapLocation {
   title: string
+}
+
+// Type definitions for amCharts5
+type Root = {
+  setThemes: (themes: unknown[]) => void
+  container: {
+    children: {
+      push: (chart: unknown) => MapChart
+    }
+  }
+  dispose: () => void
+}
+
+type MapChart = {
+  series: {
+    push: (series: unknown) => MapPolygonSeries | MapPointSeries | MapLineSeries
+  }
+  appear: (duration: number, delay: number) => void
+}
+
+type MapPolygonSeries = {
+  mapPolygons: {
+    template: {
+      setAll: (config: unknown) => void
+      states: {
+        create: (state: string, config: unknown) => void
+      }
+    }
+    each: (callback: (polygon: MapPolygon) => void) => void
+  }
+  events: {
+    on: (event: string, callback: () => void) => void
+  }
+}
+
+type MapPolygon = {
+  dataItem?: {
+    dataContext?: {
+      id: string
+    }
+  }
+  set: (key: string, value: unknown) => void
+  states: {
+    create: (state: string, config: unknown) => void
+  }
+}
+
+type MapPointSeries = {
+  bullets: {
+    push: (callback: () => Bullet) => void
+  }
+  data: {
+    push: (data: unknown) => void
+  }
+}
+
+type MapLineSeries = {
+  mapLines: {
+    template: {
+      setAll: (config: unknown) => void
+    }
+  }
+  data: {
+    push: (data: unknown) => void
+  }
+}
+
+type Bullet = unknown
+
+type AmChartsModule = {
+  Root: {
+    new: (element: HTMLElement) => Root
+  }
+  Container: {
+    new: (root: Root, config: unknown) => Container
+  }
+  Circle: {
+    new: (root: Root, config: unknown) => Circle
+  }
+  Bullet: {
+    new: (root: Root, config: { sprite: unknown }) => Bullet
+  }
+  color: (value: number) => unknown
+  ease: {
+    out: (easing: unknown) => unknown
+    cubic: unknown
+  }
+}
+
+type Container = {
+  children: {
+    push: (child: unknown) => Circle
+  }
+}
+
+type Circle = {
+  animate: (config: AnimateConfig) => void
+  states: {
+    create: (state: string, config: unknown) => void
+  }
+}
+
+type AnimateConfig = {
+  key: string
+  from: number
+  to: number
+  duration: number
+  easing: unknown
+  loops: number
+}
+
+type AmMapModule = {
+  MapChart: {
+    new: (root: Root, config: unknown) => MapChart
+  }
+  MapPolygonSeries: {
+    new: (root: Root, config: { geoJSON: unknown }) => MapPolygonSeries
+  }
+  MapPointSeries: {
+    new: (root: Root, config: object) => MapPointSeries
+  }
+  MapLineSeries: {
+    new: (root: Root, config: object) => MapLineSeries
+  }
+  geoMercator: () => unknown
+}
+
+type AmThemesModule = {
+  default: {
+    new: (root: Root) => unknown
+  }
 }
 
 const OFFICES: Office[] = [
@@ -63,8 +190,8 @@ const SERVICE_LOCATIONS: MapLocation[] = [
 const SERVED_COUNTRIES = ['LK', 'BD', 'AE', 'OM', 'JO', 'SA', 'AU', 'DK', 'PL', 'DE', 'ZA', 'JP', 'TH', 'TR']
 
 const COUNTRIES = [
-  'India', 'Sri Lanka', 'Bangladesh', 'UAE', 'Oman', 'Jordan', 
-  'Saudi Arabia', 'Australia', 'Denmark', 'Poland', 'Germany', 
+  'India', 'Sri Lanka', 'Bangladesh', 'UAE', 'Oman', 'Jordan',
+  'Saudi Arabia', 'Australia', 'Denmark', 'Poland', 'Germany',
   'South Africa', 'Japan', 'Thailand', 'Turkey'
 ]
 
@@ -98,16 +225,12 @@ const containerVariants: Variants = {
 
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 10 },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
-    transition: { type: 'tween', duration: 0.4, ease: 'easeOut' } 
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: 'tween', duration: 0.4, ease: 'easeOut' }
   }
 }
-
-// ============================================================================
-// Component
-// ============================================================================
 
 export function GlobalPresence() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -117,23 +240,23 @@ export function GlobalPresence() {
   useEffect(() => {
     if (!isInView || !mapRef.current) return
 
-    let root: any
+    let root: Root | null = null
 
     const initializeMap = async () => {
       try {
         const [am5, am5map, am5geodata, am5themes] = await Promise.all([
-          import('@amcharts/amcharts5'),
-          import('@amcharts/amcharts5/map'),
+          import('@amcharts/amcharts5') as unknown as AmChartsModule,
+          import('@amcharts/amcharts5/map') as unknown as AmMapModule,
           import('@amcharts/amcharts5-geodata/worldIndiaLow'),
-          import('@amcharts/amcharts5/themes/Animated')
+          import('@amcharts/amcharts5/themes/Animated') as unknown as AmThemesModule
         ])
 
         root = am5.Root.new(mapRef.current!)
         root.setThemes([am5themes.default.new(root)])
 
         const chart = createMapChart(root, am5, am5map)
-        const polygonSeries = createPolygonSeries(root, chart, am5, am5map, am5geodata.default)
-        
+        createPolygonSeries(root, chart, am5, am5map, am5geodata.default)
+
         createOfficeSeries(root, chart, am5, am5map)
         createLineSeries(root, chart, am5, am5map)
         createServiceSeries(root, chart, am5, am5map)
@@ -171,7 +294,7 @@ export function GlobalPresence() {
         </motion.div>
 
         {/* Office Cards */}
-        <motion.div 
+        <motion.div
           className="grid md:grid-cols-2 gap-8 mb-20"
           variants={containerVariants}
           initial="hidden"
@@ -215,7 +338,7 @@ export function GlobalPresence() {
             role="img"
             aria-label="Interactive world map showing global office locations and service areas"
           />
-          
+
           {/* Map Legend */}
           <div className="mt-8 flex flex-wrap justify-center gap-8 text-sm">
             <LegendItem color="bg-red-500" label="Headquarters" />
@@ -237,7 +360,7 @@ export function GlobalPresence() {
           <h3 className="text-3xl font-bold text-gray-900 mb-10">
             Countries We Serve
           </h3>
-          <motion.div 
+          <motion.div
             className="flex flex-wrap justify-center gap-4"
             variants={containerVariants}
             initial="hidden"
@@ -261,10 +384,6 @@ export function GlobalPresence() {
   )
 }
 
-// ============================================================================
-// Helper Components
-// ============================================================================
-
 function LegendItem({ color, label }: { color: string; label: string }) {
   return (
     <div className="flex items-center gap-3">
@@ -274,11 +393,7 @@ function LegendItem({ color, label }: { color: string; label: string }) {
   )
 }
 
-// ============================================================================
-// Map Creation Helpers
-// ============================================================================
-
-function createMapChart(root: any, am5: any, am5map: any) {
+function createMapChart(root: Root, am5: AmChartsModule, am5map: AmMapModule) {
   return root.container.children.push(
     am5map.MapChart.new(root, {
       panX: 'rotateX',
@@ -290,15 +405,15 @@ function createMapChart(root: any, am5: any, am5map: any) {
       minZoomLevel: MAP_CONFIG.minZoomLevel,
       wheelY: 'zoom'
     })
-  )
+  ) as MapChart
 }
 
-function createPolygonSeries(root: any, chart: any, am5: any, am5map: any, geoData: any) {
+function createPolygonSeries(root: Root, chart: MapChart, am5: AmChartsModule, am5map: AmMapModule, geoData: unknown) {
   const series = chart.series.push(
     am5map.MapPolygonSeries.new(root, {
       geoJSON: geoData
     })
-  )
+  ) as MapPolygonSeries
 
   series.mapPolygons.template.setAll({
     tooltipText: '{name}',
@@ -314,8 +429,8 @@ function createPolygonSeries(root: any, chart: any, am5: any, am5map: any, geoDa
   })
 
   series.events.on('datavalidated', () => {
-    series.mapPolygons.each((polygon: any) => {
-      const dataContext = polygon.dataItem?.dataContext as any
+    series.mapPolygons.each((polygon: MapPolygon) => {
+      const dataContext = polygon.dataItem?.dataContext
       if (dataContext && SERVED_COUNTRIES.includes(dataContext.id)) {
         polygon.set('fill', am5.color(MAP_CONFIG.colors.served))
         polygon.states.create('hover', {
@@ -328,8 +443,8 @@ function createPolygonSeries(root: any, chart: any, am5: any, am5map: any, geoDa
   return series
 }
 
-function createOfficeSeries(root: any, chart: any, am5: any, am5map: any) {
-  const series = chart.series.push(am5map.MapPointSeries.new(root, {}))
+function createOfficeSeries(root: Root, chart: MapChart, am5: AmChartsModule, am5map: AmMapModule) {
+  const series = chart.series.push(am5map.MapPointSeries.new(root, {})) as MapPointSeries
 
   series.bullets.push(() => {
     const container = am5.Container.new(root, {})
@@ -372,9 +487,9 @@ function createOfficeSeries(root: any, chart: any, am5: any, am5map: any) {
   return series
 }
 
-function createLineSeries(root: any, chart: any, am5: any, am5map: any) {
-  const series = chart.series.push(am5map.MapLineSeries.new(root, {}))
-  
+function createLineSeries(root: Root, chart: MapChart, am5: AmChartsModule, am5map: AmMapModule) {
+  const series = chart.series.push(am5map.MapLineSeries.new(root, {})) as MapLineSeries
+
   series.mapLines.template.setAll({
     stroke: am5.color(MAP_CONFIG.colors.line),
     strokeOpacity: 0.3,
@@ -397,8 +512,8 @@ function createLineSeries(root: any, chart: any, am5: any, am5map: any) {
   return series
 }
 
-function createServiceSeries(root: any, chart: any, am5: any, am5map: any) {
-  const series = chart.series.push(am5map.MapPointSeries.new(root, {}))
+function createServiceSeries(root: Root, chart: MapChart, am5: AmChartsModule, am5map: AmMapModule) {
+  const series = chart.series.push(am5map.MapPointSeries.new(root, {})) as MapPointSeries
 
   series.bullets.push(() => {
     const circle = am5.Circle.new(root, {

@@ -1,8 +1,7 @@
 'use client'
 
-import { useRef, useState, useLayoutEffect, useCallback } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
-
+import { useRef, useState, useLayoutEffect, useCallback, useEffect } from 'react'
+import { motion, useScroll, useTransform, useMotionValue, animate } from 'framer-motion'
 import { HeroSection } from '../components/home/HeroSection'
 import { ProductIntro } from '../components/home/ProductIntro'
 import { ComparisonSection } from '../components/home/ComparisonSection'
@@ -13,51 +12,54 @@ import { IndustriesServed } from '../components/home/IndustriesServed'
 import { SocialProof } from '../components/home/SocialProof'
 import { SlipSheetModel } from '../components/three/SlipSheetModel'
 
-const getDimensions = (el: HTMLElement) => {
-  if (!el) return { height: 0, width: 0, top: 0, left: 0 }
-  
-  const rect = el.getBoundingClientRect()
-  const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-  
-  // Get absolute page position
-  return {
-    height: rect.height,
-    width: rect.width,
-    top: rect.top + scrollTop,
-    left: rect.left,
-  }
-}
-
 export default function Home() {
   const heroModelRef = useRef<HTMLDivElement>(null)
   const introModelRef = useRef<HTMLDivElement>(null)
   const animationContainerRef = useRef<HTMLDivElement>(null)
 
-  const [modelDimensions, setModelDimensions] = useState({
-    start: { height: 0, width: 0, top: 0, left: 0 },
-    end: { height: 0, width: 0, top: 0, left: 0 },
-  })
+  const startX = useMotionValue(0)
+  const startY = useMotionValue(0)
+  const startWidth = useMotionValue(0)
+  const startHeight = useMotionValue(0)
+  
+  const endX = useMotionValue(0)
+  const endY = useMotionValue(0)
+  const endWidth = useMotionValue(0)
+  const endHeight = useMotionValue(0)
 
   const { scrollYProgress } = useScroll({
     target: animationContainerRef,
     offset: ['start start', 'end end'],
   })
 
+  const progress = useTransform(scrollYProgress, (v) => Math.max(0, Math.min(1, v)))
+
   const updateDimensions = useCallback(() => {
     if (heroModelRef.current && introModelRef.current) {
-      const start = getDimensions(heroModelRef.current)
-      const end = getDimensions(introModelRef.current)
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
       
-      setModelDimensions({ start, end })
+      const heroRect = heroModelRef.current.getBoundingClientRect()
+      const introRect = introModelRef.current.getBoundingClientRect()
+      
+      animate(startX, heroRect.left, { duration: 0 })
+      animate(startY, heroRect.top + scrollTop, { duration: 0 })
+      animate(startWidth, heroRect.width, { duration: 0 })
+      animate(startHeight, heroRect.height, { duration: 0 })
+      
+      animate(endX, introRect.left, { duration: 0 })
+      animate(endY, introRect.top + scrollTop, { duration: 0 })
+      animate(endWidth, introRect.width, { duration: 0 })
+      animate(endHeight, introRect.height, { duration: 0 })
     }
-  }, [])
+  }, [startX, startY, startWidth, startHeight, endX, endY, endWidth, endHeight])
 
   useLayoutEffect(() => {
     updateDimensions()
 
-    const resizeObserver = new ResizeObserver(updateDimensions)
-    
-    // Observe all relevant elements
+    const resizeObserver = new ResizeObserver(() => {
+      requestAnimationFrame(updateDimensions)
+    })
+
     if (animationContainerRef.current) {
       resizeObserver.observe(animationContainerRef.current)
     }
@@ -69,7 +71,6 @@ export default function Home() {
     }
 
     window.addEventListener('resize', updateDimensions)
-    // Also update on load to catch any late-loading content
     window.addEventListener('load', updateDimensions)
 
     return () => {
@@ -79,24 +80,45 @@ export default function Home() {
     }
   }, [updateDimensions])
 
-  const modelX = useTransform(scrollYProgress, [0, 1], [modelDimensions.start.left, modelDimensions.end.left])
-  const modelY = useTransform(scrollYProgress, [0, 1], [modelDimensions.start.top, modelDimensions.end.top])
-  const modelWidth = useTransform(scrollYProgress, [0, 1], [modelDimensions.start.width, modelDimensions.end.width])
-  const modelHeight = useTransform(scrollYProgress, [0, 1], [modelDimensions.start.height, modelDimensions.end.height])
+  const modelX = useTransform(() => {
+    const p = progress.get()
+    return startX.get() + (endX.get() - startX.get()) * p
+  })
+  
+  const modelY = useTransform(() => {
+    const p = progress.get()
+    return startY.get() + (endY.get() - startY.get()) * p
+  })
+  
+  const modelWidth = useTransform(() => {
+    const p = progress.get()
+    return startWidth.get() + (endWidth.get() - startWidth.get()) * p
+  })
+  
+  const modelHeight = useTransform(() => {
+    const p = progress.get()
+    return startHeight.get() + (endHeight.get() - startHeight.get()) * p
+  })
+
+  const [hasStarted, setHasStarted] = useState(false)
+  
+  useEffect(() => {
+    const timer = setTimeout(() => setHasStarted(true), 100)
+    return () => clearTimeout(timer)
+  }, [])
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Container with relative positioning */}
       <div ref={animationContainerRef} className="relative">
-        {/* Animated model - now absolute within container */}
-        {modelDimensions.start.width > 0 && (
+        {hasStarted && (
           <motion.div
-            className="absolute top-0 left-0 z-10 pointer-events-none"
+            className="fixed top-0 left-0 z-10 pointer-events-none"
             style={{
               x: modelX,
               y: modelY,
               width: modelWidth,
               height: modelHeight,
+              willChange: 'transform',
             }}
           >
             <SlipSheetModel />
@@ -106,6 +128,7 @@ export default function Home() {
         <HeroSection ref={heroModelRef} />
         <ProductIntro ref={introModelRef} />
       </div>
+
       <ComparisonSection />
       <EnvironmentalImpact />
       <TechnicalDeepDive />

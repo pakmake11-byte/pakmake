@@ -49,7 +49,7 @@ const FeaturePoint = ({
 
 export const ProductIntro = forwardRef<HTMLDivElement>(function ProductIntro(props, ref) {
   const sectionRef = useRef(null)
-  const isInView = useInView(sectionRef, { once: true, margin: '-100px' })
+  const isInView = useInView(sectionRef, { once: false, margin: '-100px' })
 
   const features = [
     { label: 'Durable & Puncture Resistant' }, { label: '100% Virgin Kraft Board' },

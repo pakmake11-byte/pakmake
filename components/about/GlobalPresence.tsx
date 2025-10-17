@@ -235,7 +235,7 @@ const itemVariants: Variants = {
 export function GlobalPresence() {
   const sectionRef = useRef<HTMLElement>(null)
   const mapRef = useRef<HTMLDivElement>(null)
-  const isInView = useInView(sectionRef, { once: true, margin: '-50px' })
+  const isInView = useInView(sectionRef, { once: false, margin: '-50px' })
 
   useEffect(() => {
     if (!isInView || !mapRef.current) return

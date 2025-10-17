@@ -5,7 +5,7 @@ import { useRef } from 'react'
 
 export function ComparisonSection() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
+  const isInView = useInView(ref, { once: false, margin: "-100px" })
 
   const comparisonData = [
     { metric: 'Savings', slipSheet: '80%', pallet: 'Standard' },

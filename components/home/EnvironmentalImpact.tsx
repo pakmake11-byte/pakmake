@@ -6,7 +6,7 @@ import { StatsCounter } from '@/components/ui/StatsCounter'
 
 export function EnvironmentalImpact() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
+  const isInView = useInView(ref, { once: false, margin: "-100px" })
 
   const impactStats = [
     {

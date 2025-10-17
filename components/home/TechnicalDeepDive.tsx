@@ -6,7 +6,7 @@ import Image from 'next/image'
 
 export function TechnicalDeepDive() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
+  const isInView = useInView(ref, { once: false, margin: "-100px" })
 
   return (
     <section ref={ref} className="py-20 bg-primary-50">

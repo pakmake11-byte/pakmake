@@ -5,7 +5,7 @@ import { useRef, useState, useEffect } from 'react'
 
 export function SocialProof() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
+  const isInView = useInView(ref, { once: false, margin: "-100px" })
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
 
   const testimonials = [

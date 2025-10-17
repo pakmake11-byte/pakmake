@@ -8,7 +8,7 @@ type SlipSheetVariant = 'single-lip' | 'double-lip-opposite' | 'double-lip-adjac
 
 export function ProductVariants() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
+  const isInView = useInView(ref, { once: false, margin: "-100px" })
 
   const [selectedVariant, setSelectedVariant] = useState<SlipSheetVariant>('multi-lip')
 

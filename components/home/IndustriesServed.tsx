@@ -5,7 +5,7 @@ import { useRef } from 'react'
 
 export function IndustriesServed() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
+  const isInView = useInView(ref, { once: false, margin: "-100px" })
 
   const industries = [
     { name: 'Food & Beverage', icon: '🍕', description: 'Safe, hygienic handling' },
@@ -14,7 +14,6 @@ export function IndustriesServed() {
     { name: 'Retail', icon: '🛒', description: 'Store-ready packaging' },
     { name: 'Automotive', icon: '🚗', description: 'Parts & components' },
     { name: 'Electronics', icon: '📱', description: 'Static-free handling' },
-    // { name: 'Textiles', icon: '👕', description: 'Gentle fabric care' },
     { name: 'Chemicals', icon: '🧪', description: 'Resistant materials' },
     { name: 'Paper & Pulp', icon: '📰', description: 'Industry expertise' }
   ]

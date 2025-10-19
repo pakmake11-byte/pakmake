@@ -1,8 +1,9 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -20,13 +21,13 @@ export function Navigation() {
   const navItems = [
     { label: 'Home', href: '/' },
     { label: 'About Us', href: '/about' },
+    { label: 'Contact Us', href: '/contact' },
   ]
 
   return (
     <motion.nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-white shadow-lg' : 'bg-white/90 backdrop-blur-sm'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-lg' : 'bg-white/90 backdrop-blur-sm'
+        }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
@@ -34,10 +35,14 @@ export function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex-shrink-0">
-            <span className="text-2xl font-bold text-primary-600">
-              PakMake Packaging Inc®
-            </span>
-          </Link>
+            <Image
+              src="/logo.png"
+              alt="Pakmake Packaging Inc"
+              width={448}
+              height={195}
+              priority
+              className="h-auto w-auto max-h-12"
+            />          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
@@ -50,14 +55,6 @@ export function Navigation() {
                 {item.label}
               </Link>
             ))}
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link
-                href="/contact"
-                className="bg-primary-600 text-white px-6 py-2 rounded-full hover:bg-primary-700 transition-colors"
-              >
-                Contact Us
-              </Link>
-            </motion.div>
           </div>
 
           {/* Mobile menu button */}
@@ -103,13 +100,6 @@ export function Navigation() {
                     {item.label}
                   </Link>
                 ))}
-                <Link
-                  href="/contact"
-                  className="block w-full text-left px-3 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Get Quote
-                </Link>
               </div>
             </motion.div>
           )}

@@ -31,8 +31,8 @@ export async function POST(request: NextRequest) {
 
     const companyMailOptions = {
       from: process.env.EMAIL_USER,
-      to: 'preettaparia@gamil.com',
-      subject: `New Contact Form: ${subject}`,
+      to: 'preettaparia@gmail.com',
+      subject: `Contact Form: ${subject}`,
       html: `
         <!DOCTYPE html>
         <html>
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
                 <div class="value" style="white-space: pre-wrap;">${message}</div>
               </div>
               <div class="footer">
-                <p>This message was sent from the PakMake contact form</p>
+                <p>This message was sent from the PakMake Website's contact form</p>
               </div>
             </div>
           </div>
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
 
               <p><strong>What happens next?</strong></p>
               <ul style="color: #475569;">
-                <li>Our team will review your inquiry within 24 hours</li>
+                <li>Our team will review your inquiry within 48 hours</li>
                 <li>We'll prepare a personalized response to your questions</li>
                 <li>You'll receive a detailed reply from our experts</li>
               </ul>

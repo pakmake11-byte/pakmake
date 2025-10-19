@@ -2,6 +2,7 @@
 
 import { motion, useInView, Variants } from 'framer-motion'
 import { useRef, useEffect } from 'react'
+import { Globe2, MapPin } from 'lucide-react'
 
 interface Office {
   location: string
@@ -20,7 +21,6 @@ interface MapOffice extends MapLocation {
   title: string
 }
 
-// Type definitions for amCharts5
 type Root = {
   setThemes: (themes: unknown[]) => void
   container: {
@@ -195,7 +195,6 @@ const COUNTRIES = [
   'South Africa', 'Japan', 'Thailand', 'Turkey'
 ]
 
-// Map configuration constants
 const MAP_CONFIG = {
   homeGeoPoint: { longitude: 20, latitude: 15 },
   homeZoomLevel: 1.5,
@@ -214,28 +213,50 @@ const MAP_CONFIG = {
   }
 }
 
-// Animation variants
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.05, delayChildren: 0.2 }
+    transition: { staggerChildren: 0.15, delayChildren: 0.3 }
   }
 }
 
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 10 },
+  hidden: { 
+    opacity: 0, 
+    y: 40,
+    scale: 0.95
+  },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { type: 'tween', duration: 0.4, ease: 'easeOut' }
+    scale: 1,
+    transition: { 
+      duration: 0.9,
+      ease: [0.65, 0, 0.35, 1]
+    }
+  }
+}
+
+const countryVariants: Variants = {
+  hidden: { 
+    opacity: 0, 
+    scale: 0.8
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { 
+      duration: 0.6,
+      ease: [0.65, 0, 0.35, 1]
+    }
   }
 }
 
 export function GlobalPresence() {
   const sectionRef = useRef<HTMLElement>(null)
   const mapRef = useRef<HTMLDivElement>(null)
-  const isInView = useInView(sectionRef, { once: false, margin: '-50px' })
+  const isInView = useInView(sectionRef, { once: false, margin: '-100px' })
 
   useEffect(() => {
     if (!isInView || !mapRef.current) return
@@ -256,7 +277,6 @@ export function GlobalPresence() {
 
         const chart = createMapChart(root, am5, am5map)
         createPolygonSeries(root, chart, am5, am5map, am5geodata.default)
-
         createOfficeSeries(root, chart, am5, am5map)
         createLineSeries(root, chart, am5, am5map)
         createServiceSeries(root, chart, am5, am5map)
@@ -275,19 +295,28 @@ export function GlobalPresence() {
   }, [isInView])
 
   return (
-    <section ref={sectionRef} className="py-24 bg-gradient-to-b from-white to-gray-50">
+    <section ref={sectionRef} className="py-20 sm:py-24 lg:py-32 bg-gradient-to-b from-white to-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
-          className="text-center mb-20"
+          initial={{ opacity: 0, y: 40 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+          transition={{ duration: 0.9, ease: [0.65, 0, 0.35, 1] }}
+          className="text-center mb-12 sm:mb-16"
         >
-          <h2 className="text-5xl font-bold text-gray-900 mb-6 tracking-tight">
-            Global Presence
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={isInView ? { scale: 1 } : { scale: 0 }}
+            transition={{ duration: 0.6, type: "spring", stiffness: 200, delay: 0.2 }}
+            className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl mb-6 shadow-lg"
+          >
+            <Globe2 className="w-10 h-10 text-blue-600" />
+          </motion.div>
+
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+            Global <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">Presence</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
             From our headquarters in India to offices across the globe,
             we serve customers in over 15 countries worldwide.
           </p>
@@ -295,7 +324,7 @@ export function GlobalPresence() {
 
         {/* Office Cards */}
         <motion.div
-          className="grid md:grid-cols-2 gap-8 mb-20"
+          className="grid sm:grid-cols-2 gap-8 mb-12 sm:mb-16"
           variants={containerVariants}
           initial="hidden"
           animate={isInView ? 'visible' : 'hidden'}
@@ -304,32 +333,40 @@ export function GlobalPresence() {
             <motion.div
               key={office.location}
               variants={itemVariants}
-              whileHover={{ scale: 1.02, y: -4 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              className="group bg-white rounded-2xl p-10 text-center shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100"
+              whileHover={{ y: -8, transition: { duration: 0.3 } }}
+              className="relative bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 border border-gray-200 overflow-hidden group"
             >
-              <div className="text-6xl mb-6 transform group-hover:scale-110 transition-transform duration-300">
-                {office.icon}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-50/0 via-blue-50/30 to-purple-50/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              
+              <div className="relative p-8 sm:p-10 text-center">
+                <motion.div
+                  whileHover={{ rotate: 360, scale: 1.1 }}
+                  transition={{ duration: 0.6 }}
+                  className="text-5xl drop-shadow-md mb-6"
+                >
+                  {office.icon}
+                </motion.div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                  {office.location}
+                </h3>
+                <div className="flex items-center justify-center gap-2 text-blue-600 font-semibold mb-3 text-lg">
+                  <MapPin className="w-5 h-5" />
+                  {office.address}
+                </div>
+                <p className="text-gray-600 text-base">
+                  {office.details}
+                </p>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                {office.location}
-              </h3>
-              <p className="text-blue-600 font-semibold mb-3 text-lg">
-                {office.address}
-              </p>
-              <p className="text-gray-600 leading-relaxed">
-                {office.details}
-              </p>
             </motion.div>
           ))}
         </motion.div>
 
         {/* Interactive World Map */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="bg-white rounded-2xl p-8 sm:p-10 mb-16 shadow-xl border border-gray-100"
+          initial={{ opacity: 0, y: 40 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+          transition={{ duration: 0.9, ease: [0.65, 0, 0.35, 1], delay: 0.2 }}
+          className="bg-white rounded-2xl p-6 sm:p-8 lg:p-10 mb-12 sm:mb-16 shadow-xl border border-gray-200"
         >
           <div
             ref={mapRef}
@@ -340,12 +377,12 @@ export function GlobalPresence() {
           />
 
           {/* Map Legend */}
-          <div className="mt-8 flex flex-wrap justify-center gap-8 text-sm">
+          <div className="mt-8 flex flex-wrap justify-center gap-6 sm:gap-8">
             <LegendItem color="bg-red-500" label="Headquarters" />
             <LegendItem color="bg-blue-500" label="Service Locations" />
             <div className="flex items-center gap-3">
               <div className="w-10 h-0.5 bg-blue-400 opacity-50"></div>
-              <span className="text-gray-700 font-medium">Distribution Network</span>
+              <span className="text-gray-700 font-semibold text-sm">Distribution Network</span>
             </div>
           </div>
         </motion.div>
@@ -353,15 +390,15 @@ export function GlobalPresence() {
         {/* Countries Served */}
         <motion.div
           initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: 0.9, ease: [0.65, 0, 0.35, 1], delay: 0.3 }}
           className="text-center"
         >
-          <h3 className="text-3xl font-bold text-gray-900 mb-10">
-            Countries We Serve
+          <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8 sm:mb-10">
+            Countries We <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">Serve</span>
           </h3>
           <motion.div
-            className="flex flex-wrap justify-center gap-4"
+            className="flex flex-wrap justify-center gap-3 sm:gap-4"
             variants={containerVariants}
             initial="hidden"
             animate={isInView ? 'visible' : 'hidden'}
@@ -369,10 +406,9 @@ export function GlobalPresence() {
             {COUNTRIES.map((country) => (
               <motion.span
                 key={country}
-                variants={itemVariants}
-                whileHover={{ scale: 1.08, y: -3 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 15 }}
-                className="bg-white text-gray-700 px-6 py-3 rounded-full text-sm font-semibold hover:bg-blue-50 hover:text-blue-700 hover:shadow-md transition-all duration-200 shadow-sm cursor-pointer border border-gray-200"
+                variants={countryVariants}
+                whileHover={{ scale: 1.08, y: -3, transition: { duration: 0.3 } }}
+                className="bg-white text-gray-700 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-sm font-semibold hover:bg-blue-50 hover:text-blue-700 hover:shadow-lg transition-all duration-300 shadow-md cursor-pointer border border-gray-200"
               >
                 {country}
               </motion.span>
@@ -388,7 +424,7 @@ function LegendItem({ color, label }: { color: string; label: string }) {
   return (
     <div className="flex items-center gap-3">
       <div className={`w-4 h-4 rounded-full ${color} shadow-sm`}></div>
-      <span className="text-gray-700 font-medium">{label}</span>
+      <span className="text-gray-700 font-semibold text-sm">{label}</span>
     </div>
   )
 }

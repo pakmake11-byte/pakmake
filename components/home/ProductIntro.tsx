@@ -1,7 +1,9 @@
 'use client'
 
-import { motion, useInView } from 'framer-motion'
-import { useRef, forwardRef } from 'react'
+import { motion, useInView, Variants } from 'framer-motion'
+import { useRef } from 'react'
+import { fadeInUpVariants, createContainerVariants, connectorLineVariants } from '@/lib/animations/variants'
+import { SlipSheetModel } from '@/components/three/SlipSheetModel'
 
 const FeaturePoint = ({
   label,
@@ -14,9 +16,17 @@ const FeaturePoint = ({
   delay: number
   isInView: boolean
 }) => {
-  const variants = {
-    hidden: { opacity: 0, x: align === 'right' ? -50 : 50 },
-    visible: { opacity: 1, x: 0 },
+  const variants: Variants = {
+    hidden: { opacity: 0, x: align === 'right' ? -30 : 30 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.5,
+        delay,
+        ease: [0.65, 0, 0.35, 1],
+      },
+    },
   }
 
   return (
@@ -24,84 +34,115 @@ const FeaturePoint = ({
       initial="hidden"
       animate={isInView ? 'visible' : 'hidden'}
       variants={variants}
-      transition={{ duration: 0.6, delay }}
-      className={`relative flex items-center gap-4 w-full ${align === 'right' ? 'flex-row-reverse text-right' : 'text-left'
-        }`}
+      className={`relative flex items-center gap-4 w-full ${
+        align === 'right' ? 'flex-row-reverse text-right' : 'text-left'
+      }`}
     >
-      {/* Label */}
-      <div className="flex-grow">
-        <p className="text-lg font-semibold text-gray-800">{label}</p>
+      <div className="flex-grow bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 border border-[#B3E5FC]">
+        <div className={`flex items-center gap-3 ${align === 'right' ? 'flex-row-reverse' : ''}`}>
+          {/* Changed CheckCircle to a simple div to render a dot */}
+          <div className="w-2.5 h-2.5 bg-[#00A0E3] rounded-full flex-shrink-0"></div>
+          <p className="text-base lg:text-lg font-semibold text-[#003E5C]">{label}</p>
+        </div>
       </div>
 
-      {/* Connector Dot + Line */}
-      <div
-        className={`absolute top-1/2 h-[2px] bg-gray-400 ${align === 'right' ? 'right-full w-16' : 'left-full w-16'
-          }`}
-      >
-        <div
-          className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-gray-700 ${align === 'right' ? '-right-1' : '-left-1'
-            }`}
-        />
-      </div>
+      <motion.div
+        className={`absolute top-1/2 h-[3px] ${
+          align === 'right'
+            ? 'right-full bg-gradient-to-l from-[#80D4F8] to-transparent'
+            : 'left-full bg-gradient-to-r from-[#80D4F8] to-transparent'
+        } w-8 lg:w-16`}
+        variants={connectorLineVariants(align)}
+        initial="hidden"
+        animate={isInView ? 'visible' : 'hidden'}
+      />
     </motion.div>
   )
 }
 
-export const ProductIntro = forwardRef<HTMLDivElement>(function ProductIntro(props, ref) {
+export const ProductIntro = function ProductIntro() {
   const sectionRef = useRef(null)
   const isInView = useInView(sectionRef, { once: false, margin: '-100px' })
 
   const features = [
-    { label: 'Durable & Puncture Resistant' }, { label: '100% Virgin Kraft Board' },
-    { label: 'No Maintenance' }, { label: 'High Tensile Strength' },
-    { label: 'Custom Sizes Available' }, { label: '12-15% More Products/Load' },
-    { label: '60% - 75% Cost Reduction' }, { label: '100% Recyclable' },
-    { label: '60% Faster Loading' }, { label: '1/20th Weight of Wood Pallets' },
+    { label: 'Durable & Puncture Resistant' },
+    { label: '100% Virgin Kraft Board' },
+    { label: 'No Maintenance Required' },
+    { label: 'High Tensile Strength' },
+    { label: 'Custom Sizes Available' },
+    { label: '12-15% More Products/Load' },
+    { label: '60-75% Cost Reduction' },
+    { label: '100% Recyclable Material' },
+    { label: '60% Faster Loading Time' },
+    { label: '1/20th Weight of Wood Pallets' },
   ]
 
   const midIndex = Math.ceil(features.length / 2)
   const leftFeatures = features.slice(0, midIndex)
   const rightFeatures = features.slice(midIndex)
 
+  const containerVariants = createContainerVariants()
+
   return (
-    <section ref={sectionRef} className="pt-24 pb-14 bg-white overflow-hidden">
+    <section ref={sectionRef} className="py-20 sm:py-24 lg:py-32 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-10"
+          variants={fadeInUpVariants}
+          initial="hidden"
+          animate={isInView ? 'visible' : 'hidden'}
+          className="text-center mb-12 lg:mb-16"
         >
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 my-6">
-            Why Choose Slip Sheets?
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#003E5C] mb-6">
+            Why Choose{' '}
+            <span className="bg-gradient-to-r from-[#00A0E3] to-[#007CB8] bg-clip-text text-transparent">
+              Slip Sheets
+            </span>
+            ?
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg lg:text-xl text-[#334155] max-w-3xl mx-auto leading-relaxed text-center">
             Experience a paradigm shift in logistics. Our slip sheets outperform
             traditional pallets in every key metric.
           </p>
         </motion.div>
 
-        <div className="relative grid grid-cols-[1fr_auto_1fr] md:grid-cols-[2fr_3fr_2fr] gap-x-4 lg:gap-x-8 items-center">
-          <div className="space-y-10">
+        <motion.div
+          className="relative grid grid-cols-[1fr_auto_1fr] md:grid-cols-[2fr_3fr_2fr] gap-x-4 lg:gap-x-8 items-center"
+          variants={containerVariants}
+          initial="hidden"
+          animate={isInView ? 'visible' : 'hidden'}
+        >
+          {/* Left Features */}
+          <div className="space-y-6 lg:space-y-8">
             {leftFeatures.map((feature, index) => (
-              <FeaturePoint key={feature.label} {...feature} align="left" delay={index * 0.1} isInView={isInView} />
+              <FeaturePoint
+                key={feature.label}
+                {...feature}
+                align="left"
+                delay={index * 0.1}
+                isInView={isInView}
+              />
             ))}
           </div>
-          <div ref={ref} className="relative h-96 lg:h-full min-h-[450px]" />
-          {/* <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="relative h-100 lg:h-full">
+
+          {/* Center 3D Model */}
+          <div className="relative h-96 lg:h-full min-h-[450px] flex items-center justify-center">
             <SlipSheetModel />
-          </motion.div> */}
-          <div className="space-y-10">
+          </div>
+
+          {/* Right Features */}
+          <div className="space-y-6 lg:space-y-8">
             {rightFeatures.map((feature, index) => (
-              <FeaturePoint key={feature.label} {...feature} align="right" delay={index * 0.1} isInView={isInView} />
+              <FeaturePoint
+                key={feature.label}
+                {...feature}
+                align="right"
+                delay={index * 0.1}
+                isInView={isInView}
+              />
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   )
-})
+}

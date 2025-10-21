@@ -9,7 +9,7 @@ export function Footer() {
     { label: 'Home', href: '/' },
     { label: 'About Us', href: '/about' },
     { label: 'Contact Us', href: '/contact' },
-    { label: 'Brochure Download', href: '/brochure' }
+    { label: 'Download Brochure', href: '/home/brochure.pdf' }
   ]
 
   const certifications = [
@@ -28,7 +28,7 @@ export function Footer() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: false }}
               transition={{ duration: 0.6 }}
             >
               <h3 className="text-2xl font-bold text-white mb-4">
@@ -46,7 +46,7 @@ export function Footer() {
                     key={cert.name}
                     initial={{ opacity: 0, scale: 0.8 }}
                     whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: false }}
                     transition={{ duration: 0.4, delay: index * 0.1 }}
                     className="border border-gray-600 px-4 py-2 rounded-lg text-sm hover:border-primary-500 transition-colors"
                     title={cert.fullName}
@@ -63,7 +63,7 @@ export function Footer() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: false }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
               <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
@@ -73,7 +73,7 @@ export function Footer() {
                     key={link.label}
                     initial={{ opacity: 0, x: -10 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: false }}
                     transition={{ duration: 0.4, delay: 0.1 + index * 0.05 }}
                   >
                     <Link
@@ -93,7 +93,7 @@ export function Footer() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: false }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
@@ -105,7 +105,8 @@ export function Footer() {
                     <h5 className="font-medium text-white">India Office</h5>
                   </div>
                   <p className="text-sm text-gray-300 ml-6">
-                    Plt. 52, Soni Ka Bagh, Behind Alka Cinema,<br />
+                    Plt. 52, Soni Ka Bagh,<br />
+                    Behind Alka Cinema,<br />
                     Sikar Road, Jaipur-302039 (Rajasthan)
                   </p>
                   <div className="mt-2 ml-6 space-y-1">
@@ -157,7 +158,7 @@ export function Footer() {
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
+          viewport={{ once: false }}
           transition={{ duration: 0.6, delay: 0.3 }}
           className="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center"
         >

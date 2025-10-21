@@ -28,7 +28,7 @@ export function SectionHeader({
       variants={fadeInUpVariants}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
-      className="text-center mb-12 sm:mb-16"
+      className="text-center mb-4 sm:mb-8"
     >
       {icon && (
         <div className="mb-6">

@@ -1,6 +1,5 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface CountryBadgesProps {
@@ -43,7 +42,7 @@ export function CountryBadges({ countries }: CountryBadgesProps) {
         <div
           key={rowIndex}
           className={cn(
-            "scroller relative w-full overflow-hidden",
+            "scroller relative w-full py-1 overflow-hidden",
           )}
         >
           <ul

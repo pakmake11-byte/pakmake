@@ -28,6 +28,7 @@ export type MapControlHandlers = {
   moveDown: () => void
   moveLeft: () => void
   moveRight: () => void
+  getZoomLevel?: () => number
 }
 
 // -------------------- Utils --------------------
@@ -76,10 +77,23 @@ export async function initializeMap(mapRef: HTMLDivElement | null) {
     const chart = createMapChart(root, am5Module, am5mapModule)
     const polygonSeries = createPolygonSeries(root, chart, am5Module, am5mapModule, am5geodataModule)
 
-    // Regular service lines (includes India-UAE)
-    createLineSeries(root, chart, am5Module, am5mapModule)
+    const lineSeries = createLineSeries(root, chart, am5Module, am5mapModule)
     createServiceSeries(root, chart, am5Module, am5mapModule)
     createOfficeSeries(root, chart, am5Module, am5mapModule)
+
+    if (MAP_OFFICES && MAP_OFFICES.length >= 2) {
+      const a = MAP_OFFICES[0]
+      const b = MAP_OFFICES[1]
+      lineSeries.data.push({
+        geometry: {
+          type: 'LineString',
+          coordinates: [
+            [a.lng, a.lat],
+            [b.lng, b.lat]
+          ]
+        }
+      })
+    }
 
     chart.appear(1000, 100)
 
@@ -87,48 +101,89 @@ export async function initializeMap(mapRef: HTMLDivElement | null) {
       chart.zoomToGeoPoint({ longitude: 78.9629, latitude: 22.5937 }, 3.2, true)
     })
 
+    // Track current position properly
     type GeoPoint = { longitude: number; latitude: number }
+    let currentCenter: GeoPoint = { longitude: 78.9629, latitude: 22.5937 }
 
-    function getCurrentGeoPoint(chart: am5map.MapChart): GeoPoint {
-      const gp = (chart as any).get('geoPoint') as GeoPoint | undefined
-      const home = (chart as any).get('homeGeoPoint') as GeoPoint | undefined
-      return gp ?? home ?? { longitude: 78.9629, latitude: 22.5937 }
+    // Update center whenever map moves
+    const updateCenter = () => {
+      const centerPoint = chart.get('centerMapOnZoomOut') !== false
+        ? chart.get('centerGeoPoint' as keyof am5map.IMapChartSettings)
+        : chart.get('geoPoint' as keyof am5map.IMapChartSettings)
+
+      if (centerPoint && typeof centerPoint.longitude === 'number' && typeof centerPoint.latitude === 'number') {
+        currentCenter = {
+          longitude: centerPoint.longitude,
+          latitude: centerPoint.latitude
+        }
+      }
     }
-    // Map control handlers with proper animation
+
+    chart.events.on('zoomended' as keyof am5map.IMapChartEvents, updateCenter)
+    chart.events.on('panended' as keyof am5map.IMapChartEvents, updateCenter)
+
+    const seriesContainer = chart.seriesContainer
+
+    if (seriesContainer?.events) {
+      seriesContainer.events.on('positionchanged', updateCenter)
+    }
+
     const controls: MapControlHandlers = {
       zoomIn: () => {
-        const currentZoom = chart.get('zoomLevel', 1)
-        const currentGeoPoint = getCurrentGeoPoint(chart)
-        chart.zoomToGeoPoint(currentGeoPoint, currentZoom * 1.5, true)
+        updateCenter()
+        const currentZoom = (chart.get('zoomLevel') as number) ?? 1
+        chart.zoomToGeoPoint(currentCenter, currentZoom * 1.5, true)
       },
       zoomOut: () => {
-        const currentZoom = chart.get('zoomLevel', 1)
-        const currentGeoPoint = getCurrentGeoPoint(chart)
-        chart.zoomToGeoPoint(currentGeoPoint, currentZoom / 1.5, true)
+        updateCenter()
+        const currentZoom = (chart.get('zoomLevel') as number) ?? 1
+        chart.zoomToGeoPoint(currentCenter, currentZoom / 1.5, true)
       },
       reset: () => {
+        currentCenter = { longitude: 78.9629, latitude: 22.5937 }
         chart.goHome()
       },
       moveUp: () => {
-        const currentGeoPoint = getCurrentGeoPoint(chart)
-        const currentZoom = chart.get('zoomLevel', 1)
-        chart.zoomToGeoPoint({ longitude: currentGeoPoint.longitude, latitude: currentGeoPoint.latitude + 5 }, currentZoom, true)
+        updateCenter()
+        const currentZoom = (chart.get('zoomLevel') as number) ?? 1
+        const delta = Math.max(2, 8 / Math.sqrt(currentZoom))
+        currentCenter = {
+          longitude: currentCenter.longitude,
+          latitude: currentCenter.latitude + delta
+        }
+        chart.zoomToGeoPoint(currentCenter, currentZoom, true)
       },
       moveDown: () => {
-        const currentGeoPoint = getCurrentGeoPoint(chart)
-        const currentZoom = chart.get('zoomLevel', 1)
-        chart.zoomToGeoPoint({ longitude: currentGeoPoint.longitude, latitude: currentGeoPoint.latitude - 5 }, currentZoom, true)
+        updateCenter()
+        const currentZoom = (chart.get('zoomLevel') as number) ?? 1
+        const delta = Math.max(2, 8 / Math.sqrt(currentZoom))
+        currentCenter = {
+          longitude: currentCenter.longitude,
+          latitude: currentCenter.latitude - delta
+        }
+        chart.zoomToGeoPoint(currentCenter, currentZoom, true)
       },
       moveLeft: () => {
-        const currentGeoPoint = getCurrentGeoPoint(chart)
-        const currentZoom = chart.get('zoomLevel', 1)
-        chart.zoomToGeoPoint({ longitude: currentGeoPoint.longitude - 5, latitude: currentGeoPoint.latitude }, currentZoom, true)
+        updateCenter()
+        const currentZoom = (chart.get('zoomLevel') as number) ?? 1
+        const delta = Math.max(2, 8 / Math.sqrt(currentZoom))
+        currentCenter = {
+          longitude: currentCenter.longitude - delta,
+          latitude: currentCenter.latitude
+        }
+        chart.zoomToGeoPoint(currentCenter, currentZoom, true)
       },
       moveRight: () => {
-        const currentGeoPoint = getCurrentGeoPoint(chart)
-        const currentZoom = chart.get('zoomLevel', 1)
-        chart.zoomToGeoPoint({ longitude: currentGeoPoint.longitude + 5, latitude: currentGeoPoint.latitude }, currentZoom, true)
-      }
+        updateCenter()
+        const currentZoom = (chart.get('zoomLevel') as number) ?? 1
+        const delta = Math.max(2, 8 / Math.sqrt(currentZoom))
+        currentCenter = {
+          longitude: currentCenter.longitude + delta,
+          latitude: currentCenter.latitude
+        }
+        chart.zoomToGeoPoint(currentCenter, currentZoom, true)
+      },
+      getZoomLevel: () => (chart.get('zoomLevel') as number) ?? 1
     }
 
     return { root, controls }
@@ -155,6 +210,7 @@ function createMapChart(
       minZoomLevel: 1.5,
       wheelY: 'zoom',
       pinchZoom: true,
+      centerMapOnZoomOut: false
     })
   )
 }
@@ -197,12 +253,6 @@ function createPolygonSeries(
           fill: am5.color(0xB3E5FC),
           fillOpacity: 0.7
         })
-
-        const hoverState = polygon.states.create('hover', {
-          fill: am5.color(0x80D4F8),
-          strokeWidth: 2,
-          fillOpacity: 0.9
-        })
       }
     })
   })
@@ -221,13 +271,13 @@ function createLineSeries(
 
   lineSeries.mapLines.template.setAll({
     stroke: am5.color(0x00A0E3),
-    strokeOpacity: 0.4,
+    strokeOpacity: 0.45,
     strokeWidth: 1.5,
     cursorOverStyle: 'pointer'
   })
 
   lineSeries.mapLines.template.states.create('hover', {
-    strokeOpacity: 0.8,
+    strokeOpacity: 0.9,
     strokeWidth: 2.5
   })
 
@@ -244,6 +294,8 @@ function createLineSeries(
       }
     })
   })
+
+  return lineSeries
 }
 
 // -------------------- Service Series --------------------
@@ -257,11 +309,15 @@ function createServiceSeries(
     am5map.MapPointSeries.new(root, {})
   )
 
-  serviceSeries.bullets.push((root, series, dataItem) => {
+  serviceSeries.bullets.push((root) => {
     const container = am5.Container.new(root, {
       interactive: true,
-      tooltipText: '{name}'
+      tooltipText: '{name}',
+      cursorOverStyle: 'pointer',
+      focusable: true
     })
+
+    container.set('tooltip', am5.Tooltip.new(root, {}))
 
     const circle = container.children.push(
       am5.Circle.new(root, {
@@ -271,12 +327,6 @@ function createServiceSeries(
         strokeWidth: 2
       })
     )
-
-    const hoverState = circle.states.create('hover', {
-      scale: 1.8,
-      fill: am5.color(0x0080C0),
-      strokeWidth: 3
-    })
 
     container.events.on('pointerover', () => {
       circle.hover()
@@ -308,18 +358,23 @@ function createOfficeSeries(
     am5map.MapPointSeries.new(root, {})
   )
 
-  officeSeries.bullets.push((root, series, dataItem) => {
+  officeSeries.bullets.push((root) => {
     const container = am5.Container.new(root, {
       interactive: true,
-      tooltipText: '{title}'
+      tooltipText: '{title}',
+      cursorOverStyle: 'pointer',
+      focusable: true
     })
+
+    container.set('tooltip', am5.Tooltip.new(root, {}))
 
     // Pulsing effect
     const pulse = container.children.push(
       am5.Circle.new(root, {
         radius: 18,
         fill: am5.color(0xef4444),
-        fillOpacity: 0.3
+        fillOpacity: 0.25,
+        interactive: false
       })
     )
     pulse.animate({
@@ -347,12 +402,6 @@ function createOfficeSeries(
         strokeWidth: 2.5
       })
     )
-
-    const hoverState = circle.states.create('hover', {
-      scale: 1.6,
-      fill: am5.color(0xdc2626),
-      strokeWidth: 3.5
-    })
 
     container.events.on('pointerover', () => {
       circle.hover()

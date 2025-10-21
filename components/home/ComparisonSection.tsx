@@ -2,6 +2,8 @@
 
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
+import { SectionHeader } from '@/components/ui/SectionHeader'
+import { Truck } from 'lucide-react'
 
 export function ComparisonSection() {
   const ref = useRef(null)
@@ -19,62 +21,51 @@ export function ComparisonSection() {
   ]
 
   return (
-    <section ref={ref} className="py-20 bg-primary-50">
+    <section ref={ref} className="py-20 sm:py-24 lg:py-32 bg-primary-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            Slip Sheets vs. Wooden Pallets
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            See the dramatic difference our slip sheets make compared to traditional pallets
-          </p>
-        </motion.div>
+        
+        <SectionHeader
+          title="Slip Sheets vs."
+          highlightedText="Wooden Pallets"
+          subtitle="See the dramatic difference our slip sheets make compared to traditional pallets"
+          isInView={isInView}
+          icon={Truck}
+        />
 
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
+        {/* Table + Image */}
+        <div className="grid lg:grid-cols-2 gap-12 items-stretch">
+          
           {/* Comparison Table */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
-            className="bg-white rounded-xl shadow-lg p-6"
+            className="bg-white rounded-xl shadow-lg p-2 overflow-hidden h-full"
           >
-            <div className="overflow-hidden">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b-2 border-gray-100">
-                    <th className="text-left py-4 px-2 font-semibold text-gray-700">Metric</th>
-                    <th className="text-center py-4 px-2 font-semibold text-primary-600">Slip Sheet</th>
-                    <th className="text-center py-4 px-2 font-semibold text-red-600">Wooden Pallet</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {comparisonData.map((row, index) => (
-                    <motion.tr
-                      key={row.metric}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={isInView ? { opacity: 1, y: 0 } : {}}
-                      transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-                      className="border-b border-gray-50 hover:bg-gray-25"
-                    >
-                      <td className="py-3 px-2 text-sm font-medium text-gray-700">
-                        {row.metric}
-                      </td>
-                      <td className="py-3 px-2 text-center text-sm font-semibold text-primary-600">
-                        {row.slipSheet}
-                      </td>
-                      <td className="py-3 px-2 text-center text-sm font-semibold text-red-600">
-                        {row.pallet}
-                      </td>
-                    </motion.tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <table className="w-full h-full table-fixed">
+              <thead>
+                <tr className="border-b-2 border-gray-100">
+                  <th className="text-left py-3 px-2 font-semibold text-gray-700">Metric</th>
+                  <th className="text-center py-3 px-2 font-semibold text-primary-600">Slip Sheet</th>
+                  <th className="text-center py-3 px-2 font-semibold text-red-600">Wooden Pallet</th>
+                </tr>
+              </thead>
+              <tbody className="h-full">
+                {comparisonData.map((row, index) => (
+                  <motion.tr
+                    key={row.metric}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
+                    className="border-b border-gray-50 hover:bg-gray-25"
+                  >
+                    <td className="py-3 px-2 text-sm font-medium text-gray-700">{row.metric}</td>
+                    <td className="py-3 px-2 text-center text-sm font-semibold text-primary-600">{row.slipSheet}</td>
+                    <td className="py-3 px-2 text-center text-sm font-semibold text-red-600">{row.pallet}</td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
           </motion.div>
 
           {/* Visual Comparison */}
@@ -82,21 +73,16 @@ export function ComparisonSection() {
             initial={{ opacity: 0, x: 50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="bg-white rounded-xl shadow-lg p-6"
+            className="bg-white rounded-xl shadow-lg p-6 flex items-center justify-center h-full"
           >
-            <div className="space-y-8">
-              {/* Storage Space Visualization */}
-              <div className="text-center">
-                <motion.img
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.8, delay: 0.5 }}
-                  src="/home/slip-vs-woorden.png"
-                  alt="Slip Sheets vs Wooden Pallets Storage Space Comparison"
-                  className="mx-auto rounded-lg shadow-md max-w-full h-auto"
-                />
-              </div>
-            </div>
+            <motion.img
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              src="/home/slip-vs-woorden.png"
+              alt="Slip Sheets vs Wooden Pallets Storage Space Comparison"
+              className="rounded-lg shadow-md w-full h-full object-cover"
+            />
           </motion.div>
         </div>
       </div>

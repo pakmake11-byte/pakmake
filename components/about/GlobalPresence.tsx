@@ -24,15 +24,25 @@ export function GlobalPresence() {
   const containerVariants = createContainerVariants(scrollDirection)
   const [mapControls, setMapControls] = useState<MapControlHandlers | null>(null)
 
-  useEffect(() => {
-    if (!isInView || !mapRef.current) return
+  const initializedRef = useRef(false)
+  const rootRef = useRef<{ dispose?: () => void } | null>(null)
 
-    let root: { dispose?: () => void } | null = null
+  useEffect(() => {
+    if (initializedRef.current) return
+    if (!mapRef.current) return
+
+    initializedRef.current = true
+
+    let mounted = true
 
     const setupMap = async () => {
       const result = await initializeMap(mapRef.current!)
+      if (!mounted) {
+        result?.root?.dispose?.()
+        return
+      }
       if (result) {
-        root = result.root
+        rootRef.current = result.root
         setMapControls(result.controls)
       }
     }
@@ -40,10 +50,11 @@ export function GlobalPresence() {
     setupMap()
 
     return () => {
-      root?.dispose?.()
+      mounted = false
+      rootRef.current?.dispose?.()
       setMapControls(null)
     }
-  }, [isInView])
+  }, [])
 
   return (
     <section
@@ -72,7 +83,7 @@ export function GlobalPresence() {
         </motion.div>
 
         <InteractiveMap mapRef={mapRef} isInView={isInView} mapControls={mapControls} />
-        <CountriesServed isInView={isInView} scrollDirection={scrollDirection} />
+        <CountriesServed isInView={isInView} />
       </div>
     </section>
   )
@@ -121,10 +132,9 @@ function InteractiveMap({ mapRef, isInView, mapControls }: InteractiveMapProps) 
 // -------------------- Countries Served --------------------
 interface CountriesServedProps {
   isInView: boolean
-  scrollDirection: number
 }
 
-function CountriesServed({ isInView, scrollDirection }: CountriesServedProps) {
+function CountriesServed({ isInView }: CountriesServedProps) {
   return (
     <motion.div
       initial={{ opacity: 0 }}

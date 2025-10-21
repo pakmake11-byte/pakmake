@@ -23,27 +23,53 @@ export function GlobalPresence() {
   const scrollDirection = useScrollDirection()
   const containerVariants = createContainerVariants(scrollDirection)
   const [mapControls, setMapControls] = useState<MapControlHandlers | null>(null)
+  const [mapLoading, setMapLoading] = useState(true)
+  const [mapError, setMapError] = useState(false)
 
-  const initializedRef = useRef(false)
+  const initializingRef = useRef(false)
   const rootRef = useRef<{ dispose?: () => void } | null>(null)
 
   useEffect(() => {
-    if (initializedRef.current) return
+    // Skip if already initializing or initialized successfully
+    if (initializingRef.current || rootRef.current) return
     if (!mapRef.current) return
 
-    initializedRef.current = true
-
     let mounted = true
+    initializingRef.current = true
 
     const setupMap = async () => {
-      const result = await initializeMap(mapRef.current!)
-      if (!mounted) {
-        result?.root?.dispose?.()
-        return
-      }
-      if (result) {
-        rootRef.current = result.root
-        setMapControls(result.controls)
+      try {
+        // Add small delay to ensure DOM is fully ready
+        await new Promise(resolve => setTimeout(resolve, 100))
+        
+        if (!mounted || !mapRef.current) return
+
+        const result = await initializeMap(mapRef.current)
+        
+        if (!mounted) {
+          result?.root?.dispose?.()
+          return
+        }
+
+        if (result) {
+          rootRef.current = result.root
+          setMapControls(result.controls)
+          setMapLoading(false)
+          setMapError(false)
+          console.log('Map initialized successfully')
+        } else {
+          console.error('Map initialization returned null')
+          setMapLoading(false)
+          setMapError(true)
+          // Reset flag to allow retry on next mount
+          initializingRef.current = false
+        }
+      } catch (error) {
+        console.error('Map setup error:', error)
+        setMapLoading(false)
+        setMapError(true)
+        // Reset flag to allow retry
+        initializingRef.current = false
       }
     }
 
@@ -51,8 +77,12 @@ export function GlobalPresence() {
 
     return () => {
       mounted = false
-      rootRef.current?.dispose?.()
+      if (rootRef.current) {
+        rootRef.current.dispose?.()
+        rootRef.current = null
+      }
       setMapControls(null)
+      initializingRef.current = false
     }
   }, [])
 
@@ -82,7 +112,13 @@ export function GlobalPresence() {
           ))}
         </motion.div>
 
-        <InteractiveMap mapRef={mapRef} isInView={isInView} mapControls={mapControls} />
+        <InteractiveMap 
+          mapRef={mapRef} 
+          isInView={isInView} 
+          mapControls={mapControls}
+          loading={mapLoading}
+          error={mapError}
+        />
         <CountriesServed isInView={isInView} />
       </div>
     </section>
@@ -94,9 +130,11 @@ interface InteractiveMapProps {
   mapRef: React.RefObject<HTMLDivElement | null>
   isInView: boolean
   mapControls: MapControlHandlers | null
+  loading: boolean
+  error: boolean
 }
 
-function InteractiveMap({ mapRef, isInView, mapControls }: InteractiveMapProps) {
+function InteractiveMap({ mapRef, isInView, mapControls, loading, error }: InteractiveMapProps) {
   return (
     <motion.div
       variants={fadeInUpVariants}
@@ -120,10 +158,28 @@ function InteractiveMap({ mapRef, isInView, mapControls }: InteractiveMapProps) 
       <div
         ref={mapRef}
         style={{ width: '100%', height: '500px' }}
-        className="rounded-xl overflow-hidden border border-[#B3E5FC]"
+        className="rounded-xl overflow-hidden border border-[#B3E5FC] relative"
         role="img"
         aria-label="Interactive world map showing global office locations and service areas"
-      />
+      >
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
+            <div className="text-center">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-[#B3E5FC] border-t-[#00A0E3] mb-4"></div>
+              <p className="text-gray-600 font-medium">Loading map...</p>
+            </div>
+          </div>
+        )}
+        {error && !loading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
+            <div className="text-center px-4">
+              <div className="text-red-500 text-4xl mb-4">⚠️</div>
+              <p className="text-gray-900 font-semibold mb-2">Unable to load map</p>
+              <p className="text-gray-600 text-sm">Please refresh the page to try again</p>
+            </div>
+          </div>
+        )}
+      </div>
       <MapLegend />
     </motion.div>
   )

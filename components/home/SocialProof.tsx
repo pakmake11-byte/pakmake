@@ -101,7 +101,7 @@ export function SocialProof() {
   return (
     <section
       ref={ref}
-      className="py-20 sm:py-24 lg:py-32 bg-gradient-to-b from-white to-[#E6F7FF]"
+      className="py-20 sm:py-24 lg:py-32"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader

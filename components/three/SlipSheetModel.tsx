@@ -154,8 +154,8 @@ function SlipSheet({ variantId }: { variantId: SlipSheetVariant }) {
     slipGroup.scale.set(1.3, 1.3, 1.3)
 
     const thickness = 0.04
-    const mainWidth = 8
-    const mainHeight = 6
+    const mainWidth = 6.5
+    const mainHeight = 6.5
     const lipLength = 0.6
 
     const mainMesh = new THREE.Mesh(
@@ -246,7 +246,7 @@ function SlipSheet({ variantId }: { variantId: SlipSheetVariant }) {
   return <group ref={groupRef} />
 }
 
-export function SlipSheetModel({ variantId = 'multi-lip' }: { variantId?: SlipSheetVariant }) {
+export function SlipSheetModel({ variantId = 'double-lip-adjacent' }: { variantId?: SlipSheetVariant }) {
   return (
     <div className="w-full h-full">
       <Canvas camera={{ position: [10, 6, 10], fov: 50 }}>

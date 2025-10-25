@@ -12,7 +12,7 @@ const TEAM_MEMBERS = [
     name: 'Pramila Jaju',
     role: 'Co-Founder',
     bio: 'MA(English), BSC, BEED(English)',
-    linkedin: '#'
+    linkedin: 'https://www.linkedin.com/in/pramila-jaju-3b0a571a5/'
   },
   {
     name: 'Sandeep Jaju',
@@ -24,7 +24,7 @@ const TEAM_MEMBERS = [
     name: 'Pranav Jaju',
     role: 'Co-Founder',
     bio: 'BBA, MBA',
-    linkedin: '#'
+    linkedin: 'https://www.linkedin.com/in/pranav-jaju-34a9b52b6/'
   }
 ]
 

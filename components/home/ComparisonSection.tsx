@@ -25,7 +25,7 @@ export function ComparisonSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <SectionHeader
-          title="Slip Sheets vs."
+          title="Slip Sheets vs"
           highlightedText="Wooden Pallets"
           subtitle="See the dramatic difference our slip sheets make compared to traditional pallets"
           isInView={isInView}

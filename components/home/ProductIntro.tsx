@@ -40,7 +40,6 @@ const FeaturePoint = ({
     >
       <div className="flex-grow bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 border border-[#B3E5FC]">
         <div className={`flex items-center gap-3 ${align === 'right' ? 'flex-row-reverse' : ''}`}>
-          {/* Changed CheckCircle to a simple div to render a dot */}
           <div className="w-2.5 h-2.5 bg-[#00A0E3] rounded-full flex-shrink-0"></div>
           <p className="text-base lg:text-lg font-semibold text-[#003E5C]">{label}</p>
         </div>
@@ -125,7 +124,7 @@ export const ProductIntro = function ProductIntro() {
           </div>
 
           {/* Center 3D Model */}
-          <div className="relative h-96 lg:h-full min-h-[450px] flex items-center justify-center">
+          <div className="relative h-96 lg:h-full max-h-[400px] flex items-center justify-center">
             <SlipSheetModel />
           </div>
 

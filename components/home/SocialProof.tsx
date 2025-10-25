@@ -14,23 +14,71 @@ export function SocialProof() {
 
   const testimonials = [
     {
-      quote: "PakMake's slip sheets transformed our logistics. We've seen 75% cost reduction and significantly faster loading times.",
-      author: "Sarah Johnson",
-      company: "Global Foods Inc",
-      role: "Supply Chain Director",
+      quote: "PakMake's slip sheets have greatly improved the efficiency and convenience of our logistics process.",
+      author: "Qaid Ali Yousafzai",
+      role: "Sr. Purchase Executive",
+      company: "Trofina Food",
     },
     {
-      quote: "The environmental benefits align perfectly with our sustainability goals. 100% recyclable and massive space savings.",
-      author: "Michael Chen",
-      company: "EcoTech Solutions",
-      role: "Sustainability Manager",
+      quote: "The quality and service from PakMake have consistently met our export requirements and expectations.",
+      author: "Pitor Bakowski",
+      role: "Export Manager",
+      company: "Hortex",
     },
     {
-      quote: "Switching to slip sheets was the best decision for our export operations. ISPM 15 exemption saves us weeks of processing.",
-      author: "Ahmed Al-Rashid",
-      company: "Middle East Trading Co",
-      role: "Operations Manager",
-    }
+      quote: "We appreciate PakMake's reliability and commitment to providing sustainable packaging solutions.",
+      author: "Mijgona Khaidarzoda",
+      role: "Sales Executive",
+      company: "Gulf Flavours",
+    },
+    {
+      quote: "PakMake has proven to be a dependable partner with excellent quality and professional service.",
+      author: "Ashok Geddam",
+      role: "Global Procurement Manager",
+      company: "Caremoli",
+    },
+    {
+      quote: "A trusted partner that consistently delivers quality products and great customer support.",
+      author: "Arshod Saiyed",
+      role: "Vice President Supply Chain Management",
+      company: "Barakat Group",
+    },
+    {
+      quote: "We value PakMake's professionalism, innovation, and consistent product performance.",
+      author: "Ander S. Nielsen",
+      role: "Managing Director",
+      company: "Quantum",
+    },
+    {
+      quote: "PakMake's products have added great value to our purchasing and supply operations.",
+      author: "Abdulrahman Mohamed",
+      role: "Purchasing Manager",
+      company: "Fregento",
+    },
+    {
+      quote: "Their dedication to quality and customer satisfaction makes them a pleasure to work with.",
+      author: "AG Saleem",
+      role: "Sales Executive",
+      company: "Fregento",
+    },
+    {
+      quote: "Reliable service, consistent quality, and prompt responses — exactly what we look for in a supplier.",
+      author: "Arun Prem Pereia",
+      role: "Production Planner",
+      company: "Hadaf Foods Industry LLC",
+    },
+    {
+      quote: "Working with PakMake has been smooth and professional from start to finish.",
+      author: "AG Saleem",
+      role: "Sales Executive",
+      company: "Express Pack Print",
+    },
+    {
+      quote: "Excellent packaging solutions with a focus on sustainability and customer satisfaction.",
+      author: "Sandeep Neupane",
+      role: "Sales Executive",
+      company: "Europack Industries LLC",
+    },
   ]
 
   useEffect(() => {
@@ -50,13 +98,11 @@ export function SocialProof() {
   return (
     <section ref={ref} className="py-20 sm:py-24 lg:py-32 bg-gradient-to-b from-white to-[#E6F7FF]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* Section Header with Icon */}
         <SectionHeader
           icon={Users}
           title="Trusted by"
           highlightedText="Industry Leaders"
-          subtitle="Join hundreds of companies that have transformed their logistics with our solutions"
+          subtitle="Join companies that have transformed their logistics with our solutions"
           isInView={isInView}
         />
 
@@ -68,7 +114,6 @@ export function SocialProof() {
         >
           <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#00A0E3] via-[#4DC4F5] to-[#007CB8]" />
 
-          {/* Quote Icon */}
           <motion.div
             initial={{ scale: 0, rotate: -180 }}
             animate={isInView ? { scale: 1, rotate: 0 } : {}}
@@ -108,7 +153,6 @@ export function SocialProof() {
             </AnimatePresence>
           </div>
 
-          {/* Testimonial indicators */}
           <div className="flex justify-center mt-8 sm:mt-10 space-x-3">
             {testimonials.map((_, index) => (
               <button

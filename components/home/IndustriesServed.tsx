@@ -30,7 +30,7 @@ export function IndustriesServed() {
       color: 'from-cyan-400 to-cyan-600'
     },
     { 
-      name: 'Retail', 
+      name: 'FMCG', 
       icon: '🛒', 
       description: 'Store-ready packaging',
       color: 'from-purple-400 to-purple-600'

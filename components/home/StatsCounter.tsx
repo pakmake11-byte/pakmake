@@ -38,7 +38,6 @@ export function StatsCounter({ value, suffix = '', className = '', duration = 2 
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      {Math.floor(count).toLocaleString()}{suffix}
-    </motion.span>
+      {Math.floor(count).toLocaleString()}{suffix && ' '}{suffix}    </motion.span>
   )
 }

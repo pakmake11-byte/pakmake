@@ -110,8 +110,9 @@ export function TechnicalDeepDive() {
   const equipment = [
     {
       icon: Wrench,
-      title: 'Push-Pull Attachment',
-      description: 'Supplied by Cascade',
+      title: 'Initial Investment',
+      description: 'Consideration required',
+
       color: 'from-[#80D4F8] to-[#4DC4F5]'
     },
     {
@@ -122,8 +123,8 @@ export function TechnicalDeepDive() {
     },
     {
       icon: DollarSign,
-      title: 'Initial Investment',
-      description: 'Consideration required',
+      title: 'Push-Pull Attachment',
+      description: 'Supplied by Cascade',
       color: 'from-[#00A0E3] to-[#007CB8]'
     },
     {

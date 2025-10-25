@@ -67,7 +67,7 @@ export function CompanyMission() {
             {/* Heading */}
             <motion.h2
               variants={fadeInUpVariants}
-              transition={{ duration: 0.8, ease: EASE_CUBIC }}
+              transition={{ duration: 0.7, ease: EASE_CUBIC }}
               className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900"
             >
               Our <GradientText isInView={isInView}>Mission</GradientText>

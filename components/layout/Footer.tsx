@@ -62,7 +62,7 @@ export function Footer() {
           backgroundSize: '40px 40px'
         }}></div>
       </div>
-      
+
       {/* Gradient orbs */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary-500 rounded-full blur-3xl animate-pulse"></div>
@@ -80,7 +80,7 @@ export function Footer() {
         >
           {/* Company Info - Takes more space */}
           <motion.div variants={itemVariants} className="lg:col-span-4">
-            <motion.h3 
+            <motion.h3
               className="text-3xl font-bold mb-4 bg-gradient-to-r from-primary-400 via-primary-500 to-primary-600 bg-clip-text text-transparent"
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -88,13 +88,13 @@ export function Footer() {
             >
               PakMake Packaging Inc®
             </motion.h3>
-            <motion.p 
+            <motion.p
               className="text-gray-400 text-sm leading-relaxed mb-6"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              Leading provider of sustainable slip sheet solutions, helping businesses 
+              Leading provider of sustainable slip sheet solutions, helping businesses
               reduce costs and environmental impact while improving logistics efficiency.
             </motion.p>
 
@@ -119,7 +119,7 @@ export function Footer() {
             </h4>
             <ul className="space-y-3">
               {quickLinks.map((link, index) => (
-                <motion.li 
+                <motion.li
                   key={link.label}
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -145,7 +145,7 @@ export function Footer() {
             </h4>
             <ul className="space-y-3">
               {certificates.map((cert, index) => (
-                <motion.li 
+                <motion.li
                   key={cert.name}
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -173,7 +173,7 @@ export function Footer() {
             </h4>
             <div className="space-y-4">
               {offices.map((office, idx) => (
-                <motion.div 
+                <motion.div
                   key={office.name}
                   className="space-y-3 p-4 bg-white/5 rounded-xl backdrop-blur-sm border border-gray-800/50 hover:border-primary-500/30 hover:bg-white/10 transition-all duration-300"
                   initial={{ opacity: 0, y: 20 }}
@@ -189,7 +189,7 @@ export function Footer() {
                   </div>
                   <p className="text-xs text-gray-400 leading-relaxed">{office.address}</p>
                   <div className="space-y-2">
-                    <motion.a 
+                    <motion.a
                       href={`mailto:${office.email}`}
                       className="flex items-center gap-2 text-xs text-gray-400 hover:text-primary-400 transition-colors group"
                       whileHover={{ x: 2 }}
@@ -197,7 +197,7 @@ export function Footer() {
                       <Mail className="w-3 h-3 flex-shrink-0 group-hover:scale-110 transition-transform" />
                       <span className="break-all">{office.email}</span>
                     </motion.a>
-                    <motion.a 
+                    <motion.a
                       href={`tel:${office.phone.replace(/\s/g, '')}`}
                       className="flex items-center gap-2 text-xs text-gray-400 hover:text-primary-400 transition-colors group"
                       whileHover={{ x: 2 }}
@@ -224,42 +224,27 @@ export function Footer() {
               © 2025 PakMake Packaging Inc®. All rights reserved.
             </p>
             <div className="flex flex-wrap justify-center gap-6">
-              <Link href="/privacy" className="text-gray-400 hover:text-primary-400 text-sm transition-colors">
-                Privacy Policy
-              </Link>
-              <Link href="/terms" className="text-gray-400 hover:text-primary-400 text-sm transition-colors">
-                Terms of Service
-              </Link>
+              <p className="text-gray-500 text-sm">
+                Developed with{' '}
+                <motion.span
+                  className="text-red-500 inline-block"
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  ♥
+                </motion.span>
+                {' '}by{' '}
+                <a
+                  href="https://www.linkedin.com/in/preet-taparia"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary-400 hover:text-primary-300 font-medium transition-colors hover:underline"
+                >
+                  Preet Taparia
+                </a>
+              </p>
             </div>
           </div>
-          
-          {/* Developer Credit */}
-          <motion.div 
-            className="text-center pt-4 border-t border-gray-700/30"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-          >
-            <p className="text-gray-500 text-xs">
-              Developed with{' '}
-              <motion.span 
-                className="text-red-500 inline-block"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              >
-                ♥
-              </motion.span>
-              {' '}by{' '}
-              <a 
-                href="https://www.linkedin.com/in/preet-taparia" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-primary-400 hover:text-primary-300 font-medium transition-colors hover:underline"
-              >
-                Preet Taparia
-              </a>
-            </p>
-          </motion.div>
         </motion.div>
       </div>
     </footer>

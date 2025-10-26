@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useCallback } from 'react'
 import { ZoomIn, ZoomOut, RotateCcw, ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface MapControlsProps {
@@ -11,7 +11,7 @@ interface MapControlsProps {
   onMoveRight: () => void
 }
 
-export function MapControls({
+export const MapControls = React.memo(function MapControls({
   onZoomIn,
   onZoomOut,
   onReset,
@@ -23,18 +23,20 @@ export function MapControls({
   const repeatRef = useRef<number | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
 
-  const startRepeat = (fn: () => void) => {
+  const startRepeat = useCallback((fn: () => void) => {
     fn()
-    stopRepeat()
+    if (repeatRef.current !== null) {
+      window.clearInterval(repeatRef.current)
+    }
     repeatRef.current = window.setInterval(fn, 120)
-  }
+  }, [])
 
-  const stopRepeat = () => {
+  const stopRepeat = useCallback(() => {
     if (repeatRef.current !== null) {
       window.clearInterval(repeatRef.current)
       repeatRef.current = null
     }
-  }
+  }, [])
 
   useEffect(() => {
     const el = containerRef.current
@@ -51,8 +53,11 @@ export function MapControls({
     }
 
     el.addEventListener('keydown', onKey)
-    return () => el.removeEventListener('keydown', onKey)
-  }, [onMoveUp, onMoveDown, onMoveLeft, onMoveRight, onZoomIn, onZoomOut, onReset])
+    return () => {
+      el.removeEventListener('keydown', onKey)
+      stopRepeat()
+    }
+  }, [onMoveUp, onMoveDown, onMoveLeft, onMoveRight, onZoomIn, onZoomOut, onReset, stopRepeat])
 
   const buttonClass = `
     w-10 h-10 flex items-center justify-center rounded-lg
@@ -97,7 +102,7 @@ export function MapControls({
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
-        <div></div> {/* center left empty */}
+        <div></div>
         <button
           onClick={onMoveRight}
           onMouseDown={() => startRepeat(onMoveRight)}
@@ -156,4 +161,4 @@ export function MapControls({
       </div>
     </div>
   )
-}
+})

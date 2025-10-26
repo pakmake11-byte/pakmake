@@ -74,7 +74,7 @@ export const HeroSection = memo(function HeroSection() {
   return (
     <section
       ref={containerRef}
-      className="relative bg-primary-50 overflow-hidden"
+      className="relative bg-paper-texture overflow-hidden"
     >
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-14 md:py-12 lg:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-16 items-center">

@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { motion } from 'framer-motion'
 import { MapPin } from 'lucide-react'
 import { cardHoverVariants } from '@/lib/animations/variants'
@@ -13,7 +14,14 @@ interface OfficeCardProps {
   scrollDirection: number
 }
 
-export function OfficeCard({ location, address, details, icon, index, scrollDirection }: OfficeCardProps) {
+export const OfficeCard = React.memo(function OfficeCard({ 
+  location, 
+  address, 
+  details, 
+  icon, 
+  index, 
+  scrollDirection 
+}: OfficeCardProps) {
   return (
     <motion.div
       initial="rest"
@@ -54,4 +62,4 @@ export function OfficeCard({ location, address, details, icon, index, scrollDire
       </div>
     </motion.div>
   )
-}
+})

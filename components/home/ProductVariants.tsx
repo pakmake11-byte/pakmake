@@ -1,12 +1,13 @@
 'use client'
 
-import { AnimatePresence, motion } from 'framer-motion'
-import { useState } from 'react'
+import { AnimatePresence, motion, useInView } from 'framer-motion'
+import { useRef, useState } from 'react'
 import { SlipSheetModel } from '@/components/three/SlipSheetModel'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import { Package2 } from 'lucide-react'
 import { useScrollDirection } from '@/lib/hooks/useScrollDirection'
 import { useInViewAnimation } from '@/lib/hooks/useInViewAnimation'
+import { BackgroundElements } from '../ui/BackgroundElements'
 
 type SlipSheetVariant =
   | 'single-lip'
@@ -29,26 +30,10 @@ export function ProductVariants() {
   const [selectedVariant, setSelectedVariant] = useState<SlipSheetVariant>('multi-lip')
 
   const variants = [
-    {
-      id: 'single-lip',
-      title: 'Single-Lip',
-      description: 'Access from one side',
-    },
-    {
-      id: 'double-lip-opposite',
-      title: 'Double-Lip (Opposite)',
-      description: 'Access from two opposite sides',
-    },
-    {
-      id: 'double-lip-adjacent',
-      title: 'Double-Lip (Adjacent)',
-      description: 'Access from two adjacent sides',
-    },
-    {
-      id: 'multi-lip',
-      title: 'Multi-Lip',
-      description: 'Access from all four sides',
-    },
+    { id: 'single-lip', title: 'Single-Lip', description: 'Access from one side' },
+    { id: 'double-lip-opposite', title: 'Double-Lip (Opposite)', description: 'Access from two opposite sides' },
+    { id: 'double-lip-adjacent', title: 'Double-Lip (Adjacent)', description: 'Access from two adjacent sides' },
+    { id: 'multi-lip', title: 'Multi-Lip', description: 'Access from all four sides' },
   ]
 
   const dimensionsTable = [
@@ -71,36 +56,21 @@ export function ProductVariants() {
   ]
 
   const comparisonData = [
-    {
-      attribute: 'Primary Use',
-      kraft: 'Export Shipments Only',
-      plastic: 'Export & Internal Warehouse',
-    },
-    {
-      attribute: 'Cost Range',
-      kraft: '₹250-400 per sheet',
-      plastic: '₹300-500 per sheet',
-    },
+    { attribute: 'Primary Use', kraft: 'Export Shipments Only', plastic: 'Export & Internal Warehouse' },
+    { attribute: 'Cost Range', kraft: '₹250-400 per sheet', plastic: '₹300-500 per sheet' },
     { attribute: 'Load Capacity', kraft: '800-2000 Kg', plastic: '800-3500 Kg' },
     { attribute: 'Reusability', kraft: '4-5 times', plastic: '50-100 times' },
     { attribute: 'Moisture Resistance', kraft: 'Limited', plastic: 'Excellent' },
     { attribute: 'Storage Duration', kraft: '3 Months', plastic: 'Unlimited' },
     { attribute: 'Cost Saving', kraft: '60-65%', plastic: '70-75%' },
-    {
-      attribute: 'Recyclable',
-      kraft: '100% Recyclable',
-      plastic: '100% Recyclable',
-    },
+    { attribute: 'Recyclable', kraft: '100% Recyclable', plastic: '100% Recyclable' },
   ]
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.14,
-        when: 'beforeChildren',
-      },
+      transition: { staggerChildren: 0.14, when: 'beforeChildren' },
     },
     exit: { opacity: 0 },
   }
@@ -120,12 +90,29 @@ export function ProductVariants() {
     },
   })
 
+  const comparisonTableRef = useRef<HTMLTableElement | null>(null)
+  const dimensionsTableRef = useRef<HTMLTableElement | null>(null)
+  const thicknessTableRef = useRef<HTMLTableElement | null>(null)
+
+  const isComparisonInView = useInView(comparisonTableRef, { once: false, margin: '-40px' })
+  const isDimensionsInView = useInView(dimensionsTableRef, { once: false, margin: '-40px' })
+  const isThicknessInView = useInView(thicknessTableRef, { once: false, margin: '-40px' })
+
+  const rowContainerVariant = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.2, when: 'beforeChildren' } },
+  }
+
+  const rowItemVariant = {
+    hidden: { opacity: 0, x: -20 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: EASE_CUBIC } },
+  }
+
   return (
-    <section
-      ref={ref}
-      className="py-20 sm:py-24 lg:py-32 bg-gradient-to-b from-white to-[#F5F7FA]"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section ref={ref} className="relative overflow-hidden py-20 sm:py-24 lg:py-32">
+      <BackgroundElements isInView={isInView} />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
           icon={Package2}
           title="Product Variants"
@@ -148,7 +135,8 @@ export function ProductVariants() {
 
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-[#B3E5FC]">
             <div className="overflow-x-auto no-scrollbar min-w-0">
-              <motion.table className="w-full" variants={containerVariants}>
+              {/* Use motion.table & tbody with staggered children */}
+              <motion.table className="w-full" ref={comparisonTableRef}>
                 <thead>
                   <tr>
                     <th className="px-6 py-4 text-left font-bold text-[#003E5C] text-sm sm:text-base">
@@ -166,17 +154,18 @@ export function ProductVariants() {
                     </th>
                   </tr>
                 </thead>
-                <motion.tbody variants={containerVariants}>
-                  {comparisonData.map((row, i) => (
+
+                <motion.tbody
+                  variants={rowContainerVariant}
+                  initial="hidden"
+                  animate={isComparisonInView ? 'visible' : 'hidden'}
+                >
+                  {comparisonData.map((row) => (
                     <motion.tr
                       key={row.attribute}
-                      variants={getItemVariants(directionNum)}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      transition={{ delay: i * 0.08, duration: 0.7, ease: EASE_CUBIC }}
+                      variants={rowItemVariant}
                       className={`border-t border-[#E6F7FF] ${
-                        i % 2 === 0 ? 'bg-white' : 'bg-[#FAFDFF]'
+                        comparisonData.indexOf(row) % 2 === 0 ? 'bg-white' : 'bg-[#FAFDFF]'
                       } hover:bg-[#F0FBFF] transition-colors duration-200`}
                       style={{ willChange: 'transform, opacity' }}
                     >
@@ -213,7 +202,6 @@ export function ProductVariants() {
 
           {/* Variant Buttons and Model Grid */}
           <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 mb-8">
-            {/* Variant Buttons */}
             <div className="lg:col-span-2">
               <motion.div
                 variants={containerVariants}
@@ -281,7 +269,7 @@ export function ProductVariants() {
               </motion.div>
             </div>
 
-            {/* 3D Model - Static, smaller size */}
+            {/* 3D Model */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={isInView ? { opacity: 1, x: 0 } : {}}
@@ -302,7 +290,7 @@ export function ProductVariants() {
             </motion.div>
           </div>
 
-          {/* Tables Side by Side */}
+          {/* Tables */}
           <div className="grid lg:grid-cols-2 gap-6">
             {/* Dimensions */}
             <motion.div
@@ -311,33 +299,34 @@ export function ProductVariants() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="w-full bg-white rounded-2xl shadow-md border border-[#B3E5FC] p-4 sm:p-6"
             >
-              <h4 className="text-lg font-semibold text-[#005F8C] mb-3">
-                Dimensions
-              </h4>
+              <h4 className="text-lg font-semibold text-[#005F8C] mb-3">Dimensions</h4>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" ref={dimensionsTableRef}>
                   <thead>
                     <tr className="bg-gradient-to-r from-[#80D4F8] to-[#4DC4F5] text-white">
                       <th className="px-3 py-2 text-left font-semibold">Specification</th>
                       <th className="px-3 py-2 text-left font-semibold">Measurement</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {dimensionsTable.map((row, i) => (
+
+                  <motion.tbody
+                    variants={rowContainerVariant}
+                    initial="hidden"
+                    animate={isDimensionsInView ? 'visible' : 'hidden'}
+                  >
+                    {dimensionsTable.map((row) => (
                       <motion.tr
                         key={row.label}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={isInView ? { opacity: 1, x: 0 } : {}}
-                        transition={{ duration: 0.8, delay: 0.5 + i * 0.15 }}
+                        variants={rowItemVariant}
                         className={`border-t border-[#E6F7FF] ${
-                          i % 2 === 0 ? 'bg-white' : 'bg-[#FAFDFF]'
+                          dimensionsTable.indexOf(row) % 2 === 0 ? 'bg-white' : 'bg-[#FAFDFF]'
                         } hover:bg-[#F8FDFF] transition-colors duration-200`}
                       >
                         <td className="px-3 py-3 font-medium text-[#334155]">{row.label}</td>
                         <td className="px-3 py-3 text-[#334155]">{row.value}</td>
                       </motion.tr>
                     ))}
-                  </tbody>
+                  </motion.tbody>
                 </table>
               </div>
             </motion.div>
@@ -353,29 +342,32 @@ export function ProductVariants() {
                 Thickness & Pulling Strength
               </h4>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" ref={thicknessTableRef}>
                   <thead>
                     <tr className="bg-gradient-to-r from-[#4DC4F5] to-[#00A0E3] text-white">
                       <th className="px-3 py-2 text-left font-semibold">Thickness</th>
                       <th className="px-3 py-2 text-left font-semibold">Pulling Strength</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {thicknessTable.map((row, i) => (
+
+                  <motion.tbody
+                    variants={rowContainerVariant}
+                    initial="hidden"
+                    animate={isThicknessInView ? 'visible' : 'hidden'}
+                  >
+                    {thicknessTable.map((row) => (
                       <motion.tr
                         key={row.thickness}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={isInView ? { opacity: 1, x: 0 } : {}}
-                        transition={{ duration: 0.8, delay: 0.5 + i * 0.15 }}
+                        variants={rowItemVariant}
                         className={`border-t border-[#E6F7FF] ${
-                          i % 2 === 0 ? 'bg-white' : 'bg-[#FAFDFF]'
+                          thicknessTable.indexOf(row) % 2 === 0 ? 'bg-white' : 'bg-[#FAFDFF]'
                         } hover:bg-[#F8FDFF] transition-colors duration-200`}
                       >
                         <td className="px-3 py-3 font-medium text-[#334155]">{row.thickness}</td>
                         <td className="px-3 py-3 text-[#334155]">{row.pulling}</td>
                       </motion.tr>
                     ))}
-                  </tbody>
+                  </motion.tbody>
                 </table>
               </div>
             </motion.div>

@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Lightbulb, Leaf, Handshake, Star } from 'lucide-react'
 import { useInViewAnimation } from '@/lib/hooks/useInViewAnimation'
@@ -30,16 +31,16 @@ const CONTENT_SECTIONS = [
 export function CompanyMission() {
   const { ref, isInView } = useInViewAnimation({ amount: 0.25 })
   const scrollDirection = useScrollDirection()
-  const containerVariants = createContainerVariants(scrollDirection)
-  const itemVariants = createItemVariants(scrollDirection)
-  const leftSlideVariants = createSlideVariants('left')
-  const rightSlideVariants = createSlideVariants('right')
+  const containerVariants = useMemo(() => createContainerVariants(scrollDirection), [scrollDirection])
+  const itemVariants = useMemo(() => createItemVariants(scrollDirection), [scrollDirection])
+  const leftSlideVariants = useMemo(() => createSlideVariants('left'), [])
+  const rightSlideVariants = useMemo(() => createSlideVariants('right'), [])
 
   return (
     <AnimatePresence>
       <motion.section
         ref={ref}
-        className="relative py-20 sm:y-24 lg:py-32 overflow-hidden"
+        className="relative py-20 sm:py-24 lg:py-32 overflow-hidden"
       >
         {/* Background Layer */}
         <BackgroundElements isInView={isInView} />

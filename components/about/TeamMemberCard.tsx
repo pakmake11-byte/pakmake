@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
@@ -16,7 +17,7 @@ interface TeamMemberCardProps {
   scrollDirection?: number
 }
 
-export function TeamMemberCard({
+export const TeamMemberCard = React.memo(function TeamMemberCard({
   name,
   role,
   bio,
@@ -84,4 +85,4 @@ export function TeamMemberCard({
       </div>
     </motion.div>
   )
-}
+})

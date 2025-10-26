@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import { motion } from 'framer-motion'
+import React, { useEffect, useRef, useState, useMemo } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Globe2 } from 'lucide-react'
 import { useInViewAnimation } from '@/lib/hooks/useInViewAnimation'
 import { useScrollDirection } from '@/lib/hooks/useScrollDirection'
@@ -14,9 +14,7 @@ import { CountryBadges } from './CountryBadges'
 import { MapControls } from './MapControls'
 import { initializeMap } from './mapInitializer'
 import type { MapControlHandlers } from './mapInitializer'
-
 import { GLOBAL_OFFICES, COUNTRIES } from '@/data/globalPresenceData'
-// shared background component (as requested)
 import { BackgroundElements } from '../ui/BackgroundElements'
 
 export function GlobalPresence() {
@@ -24,36 +22,30 @@ export function GlobalPresence() {
   const mapRef = useRef<HTMLDivElement | null>(null)
   const scrollDirection = useScrollDirection()
   
-  // Remove useMemo - simpler is faster
-  const containerVariants = createContainerVariants(scrollDirection)
-  const itemVariants = createItemVariants(scrollDirection)
-  
+  // Memoize only the variants that depend on scrollDirection
+  const containerVariants = useMemo(() => createContainerVariants(scrollDirection), [scrollDirection])
+  const itemVariants = useMemo(() => createItemVariants(scrollDirection), [scrollDirection])
+
   const [mapControls, setMapControls] = useState<MapControlHandlers | null>(null)
   const [mapLoading, setMapLoading] = useState(true)
   const [mapError, setMapError] = useState(false)
-
   const initializingRef = useRef(false)
   const rootRef = useRef<{ dispose?: () => void } | null>(null)
 
   useEffect(() => {
     if (initializingRef.current || rootRef.current || !mapRef.current) return
-
     let mounted = true
     initializingRef.current = true
 
     const setupMap = async () => {
       try {
         await new Promise(resolve => setTimeout(resolve, 100))
-        
         if (!mounted || !mapRef.current) return
-
         const result = await initializeMap(mapRef.current)
-        
         if (!mounted) {
           result?.root?.dispose?.()
           return
         }
-
         if (result) {
           rootRef.current = result.root
           setMapControls(result.controls)
@@ -76,54 +68,55 @@ export function GlobalPresence() {
 
     return () => {
       mounted = false
-      if (rootRef.current) {
-        rootRef.current.dispose?.()
-        rootRef.current = null
-      }
+      rootRef.current?.dispose?.()
+      rootRef.current = null
       setMapControls(null)
       initializingRef.current = false
     }
   }, [])
 
   return (
-    <section ref={sectionRef} className="relative py-20 sm:py-24 lg:py-32 overflow-hidden">
-      {/* Background behind content */}
-      <BackgroundElements isInView={isInView} />
+    <AnimatePresence>
+      <section ref={sectionRef} className="relative py-20 sm:py-24 lg:py-32 overflow-hidden">
+        {/* Background */}
+        <BackgroundElements isInView={isInView} />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeader
-          icon={Globe2}
-          title="Global"
-          highlightedText="Presence"
-          subtitle="From our headquarters in India to offices across the globe, we serve customers in over 15 countries worldwide."
-          isInView={isInView}
-        />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            icon={Globe2}
+            title="Global"
+            highlightedText="Presence"
+            subtitle="From our headquarters in India to offices across the globe, we serve customers in over 15 countries worldwide."
+            isInView={isInView}
+          />
 
-        {/* Office Cards */}
-        <motion.div
-          className="grid sm:grid-cols-2 gap-8 mb-12 sm:mb-16"
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
-        >
-          {GLOBAL_OFFICES.map((office, index) => (
-            <motion.div key={office.location} variants={itemVariants}>
-              <OfficeCard {...office} index={index} scrollDirection={scrollDirection} />
-            </motion.div>
-          ))}
-        </motion.div>
+          {/* Office Cards */}
+          <motion.div
+            className="grid sm:grid-cols-2 gap-8 mb-12 sm:mb-16"
+            variants={containerVariants}
+            initial="hidden"
+            animate={isInView ? 'visible' : 'hidden'}
+          >
+            {GLOBAL_OFFICES.map((office, index) => (
+              <motion.div key={office.location} variants={itemVariants}>
+                <OfficeCard {...office} index={index} scrollDirection={scrollDirection} />
+              </motion.div>
+            ))}
+          </motion.div>
 
-        <InteractiveMap 
-          mapRef={mapRef} 
-          isInView={isInView} 
-          mapControls={mapControls}
-          loading={mapLoading}
-          error={mapError}
-          scrollDirection={scrollDirection}
-        />
-        <CountriesServed isInView={isInView} />
-      </div>
-    </section>
+          <InteractiveMap
+            mapRef={mapRef}
+            isInView={isInView}
+            mapControls={mapControls}
+            loading={mapLoading}
+            error={mapError}
+            scrollDirection={scrollDirection}
+          />
+
+          <CountriesServed isInView={isInView} />
+        </div>
+      </section>
+    </AnimatePresence>
   )
 }
 
@@ -137,7 +130,14 @@ interface InteractiveMapProps {
   scrollDirection: number
 }
 
-function InteractiveMap({ mapRef, isInView, mapControls, loading, error, scrollDirection }: InteractiveMapProps) {
+const InteractiveMap = React.memo(function InteractiveMap({ 
+  mapRef, 
+  isInView, 
+  mapControls, 
+  loading, 
+  error, 
+  scrollDirection 
+}: InteractiveMapProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: scrollDirection > 0 ? 30 : -30 }}
@@ -185,14 +185,14 @@ function InteractiveMap({ mapRef, isInView, mapControls, loading, error, scrollD
       <MapLegend />
     </motion.div>
   )
-}
+})
 
 // -------------------- Countries Served --------------------
 interface CountriesServedProps {
   isInView: boolean
 }
 
-function CountriesServed({ isInView }: CountriesServedProps) {
+const CountriesServed = React.memo(function CountriesServed({ isInView }: CountriesServedProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -209,4 +209,4 @@ function CountriesServed({ isInView }: CountriesServedProps) {
       <CountryBadges countries={COUNTRIES} />
     </motion.div>
   )
-}
+})

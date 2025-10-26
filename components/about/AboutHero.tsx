@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Building2 } from 'lucide-react'
 import { useInViewAnimation } from '@/lib/hooks/useInViewAnimation'
@@ -17,7 +18,7 @@ const STATS = [
 export function AboutHero() {
   const { ref, isInView } = useInViewAnimation({ margin: '-50px' })
   const scrollDirection = useScrollDirection()
-  const fadeVariants = createDirectionalFadeVariants(scrollDirection)
+  const fadeVariants = useMemo(() => createDirectionalFadeVariants(scrollDirection), [scrollDirection])
 
   return (
     <motion.section 

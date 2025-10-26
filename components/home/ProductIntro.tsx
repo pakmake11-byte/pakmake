@@ -2,8 +2,13 @@
 
 import { motion, useInView, Variants } from 'framer-motion'
 import { useRef } from 'react'
-import { fadeInUpVariants, createContainerVariants, connectorLineVariants } from '@/lib/animations/variants'
+import {
+  fadeInUpVariants,
+  createContainerVariants,
+  connectorLineVariants,
+} from '@/lib/animations/variants'
 import { SlipSheetModel } from '@/components/three/SlipSheetModel'
+import { BackgroundElements } from '../ui/BackgroundElements'
 
 const FeaturePoint = ({
   label,
@@ -39,12 +44,19 @@ const FeaturePoint = ({
       }`}
     >
       <div className="flex-grow bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 border border-[#B3E5FC]">
-        <div className={`flex items-center gap-3 ${align === 'right' ? 'flex-row-reverse' : ''}`}>
+        <div
+          className={`flex items-center gap-3 ${
+            align === 'right' ? 'flex-row-reverse' : ''
+          }`}
+        >
           <div className="w-2.5 h-2.5 bg-[#00A0E3] rounded-full flex-shrink-0"></div>
-          <p className="text-base lg:text-lg font-semibold text-[#003E5C]">{label}</p>
+          <p className="text-base lg:text-lg font-semibold text-[#003E5C]">
+            {label}
+          </p>
         </div>
       </div>
 
+      {/* Connector Line */}
       <motion.div
         className={`absolute top-1/2 h-[3px] ${
           align === 'right'
@@ -83,8 +95,16 @@ export const ProductIntro = function ProductIntro() {
   const containerVariants = createContainerVariants()
 
   return (
-    <section ref={sectionRef} className="py-20 sm:py-24 lg:py-32 bg-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section
+      ref={sectionRef}
+      className="relative py-20 sm:py-24 lg:py-32 bg-white overflow-hidden"
+    >
+      {/* Animated Background */}
+      <BackgroundElements isInView={isInView} />
+
+      {/* Foreground Content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Heading */}
         <motion.div
           variants={fadeInUpVariants}
           initial="hidden"
@@ -104,13 +124,14 @@ export const ProductIntro = function ProductIntro() {
           </p>
         </motion.div>
 
+        {/* 3-Column Layout */}
         <motion.div
           className="relative grid grid-cols-[1fr_auto_1fr] md:grid-cols-[2fr_3fr_2fr] gap-x-4 lg:gap-x-8 items-center"
           variants={containerVariants}
           initial="hidden"
           animate={isInView ? 'visible' : 'hidden'}
         >
-          {/* Left Features */}
+          {/* Left Feature List */}
           <div className="space-y-6 lg:space-y-8">
             {leftFeatures.map((feature, index) => (
               <FeaturePoint
@@ -128,7 +149,7 @@ export const ProductIntro = function ProductIntro() {
             <SlipSheetModel />
           </div>
 
-          {/* Right Features */}
+          {/* Right Feature List */}
           <div className="space-y-6 lg:space-y-8">
             {rightFeatures.map((feature, index) => (
               <FeaturePoint

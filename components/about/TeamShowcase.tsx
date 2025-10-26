@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useInViewAnimation } from '@/lib/hooks/useInViewAnimation'
 import { useScrollDirection } from '@/lib/hooks/useScrollDirection'
@@ -35,8 +36,8 @@ const TEAM_MEMBERS = [
 export function TeamShowcase() {
   const { ref, isInView } = useInViewAnimation({ margin: '-100px' })
   const scrollDirection = useScrollDirection()
-  const containerVariants = createContainerVariants(scrollDirection)
-  const itemVariants = createItemVariants(scrollDirection)
+  const containerVariants = useMemo(() => createContainerVariants(scrollDirection), [scrollDirection])
+  const itemVariants = useMemo(() => createItemVariants(scrollDirection), [scrollDirection])
 
   return (
     <section ref={ref} className="py-20 sm:py-24 lg:py-32 bg-paper-texture">

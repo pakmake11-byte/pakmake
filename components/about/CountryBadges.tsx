@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { cn } from "@/lib/utils";
 
 interface CountryBadgesProps {
@@ -34,7 +35,7 @@ function chunkArray<T>(array: T[], size: number): T[][] {
 }
 
 export function CountryBadges({ countries }: CountryBadgesProps) {
-  const rows = chunkArray(countries, 8);
+  const rows = useMemo(() => chunkArray(countries, 8), [countries])
 
   return (
     <div className="flex flex-col gap-4 overflow-hidden">
@@ -48,16 +49,16 @@ export function CountryBadges({ countries }: CountryBadgesProps) {
           <ul
             className={cn(
               "flex gap-3 sm:gap-4 w-max min-w-full flex-nowrap",
-              "animate-scroll", // apply keyframe animation
+              "animate-scroll",
               rowIndex % 2 === 0
                 ? "[--animation-direction:forwards]"
                 : "[--animation-direction:reverse]",
               rowIndex % 2 === 0
-                ? "[--animation-duration:20s]"
-                : "[--animation-duration:25s]"
+                ? "[--animation-duration:25s]"
+                : "[--animation-duration:30s]"
             )}
+            style={{ willChange: 'transform' }}
           >
-            {/** Duplicate items for seamless scroll */}
             {[...row, ...row].map((country, idx) => (
               <li
                 key={idx}
@@ -71,5 +72,5 @@ export function CountryBadges({ countries }: CountryBadgesProps) {
         </div>
       ))}
     </div>
-  );
+  )
 }

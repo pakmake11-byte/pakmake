@@ -1,4 +1,4 @@
-'use client'
+import React from 'react'
 
 interface LegendItemProps {
   color: string
@@ -7,7 +7,12 @@ interface LegendItemProps {
   size?: 'small' | 'medium' | 'large'
 }
 
-export function LegendItem({ color, label, type = 'circle', size = 'medium' }: LegendItemProps) {
+const LegendItem = React.memo(function LegendItem({ 
+  color, 
+  label, 
+  type = 'circle', 
+  size = 'medium' 
+}: LegendItemProps) {
   const sizeClasses = {
     small: 'w-3 h-3',
     medium: 'w-4 h-4',
@@ -29,13 +34,13 @@ export function LegendItem({ color, label, type = 'circle', size = 'medium' }: L
       <span className="text-[#334155] font-semibold text-sm">{label}</span>
     </div>
   )
-}
+})
 
 interface MapLegendProps {
   items?: Array<{ color: string; label: string; type?: 'circle' | 'line'; size?: 'small' | 'medium' | 'large' }>
 }
 
-export function MapLegend({ items }: MapLegendProps) {
+export const MapLegend = React.memo(function MapLegend({ items }: MapLegendProps) {
   const defaultItems = items || [
     { color: 'bg-[#ef4444]', label: 'Office', type: 'circle' as const, size: 'large' as const },
     { color: 'bg-[#00A0E3]', label: 'Service Locations', type: 'circle' as const, size: 'medium' as const },
@@ -44,7 +49,7 @@ export function MapLegend({ items }: MapLegendProps) {
   ]
 
   return (
-    <div className="mt-8 ">
+    <div className="mt-8">
       <div className="flex flex-wrap justify-center gap-6 sm:gap-8">
         {defaultItems.map((item, index) => (
           <LegendItem key={`${item.label}-${index}`} {...item} />
@@ -52,4 +57,4 @@ export function MapLegend({ items }: MapLegendProps) {
       </div>
     </div>
   )
-}
+})

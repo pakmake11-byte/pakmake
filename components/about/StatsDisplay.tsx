@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { createContainerVariants, createItemVariants } from '@/lib/animations/variants'
 
@@ -15,8 +16,8 @@ interface StatsDisplayProps {
 }
 
 export function StatsDisplay({ stats, isInView, scrollDirection }: StatsDisplayProps) {
-  const containerVariants = createContainerVariants(scrollDirection)
-  const itemVariants = createItemVariants(scrollDirection)
+  const containerVariants = useMemo(() => createContainerVariants(scrollDirection), [scrollDirection])
+  const itemVariants = useMemo(() => createItemVariants(scrollDirection), [scrollDirection])
   
   return (
     <motion.div 

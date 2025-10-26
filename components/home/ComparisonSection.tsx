@@ -21,7 +21,7 @@ export function ComparisonSection() {
   ]
 
   return (
-    <section ref={ref} className="py-20 sm:py-24 lg:py-32 bg-primary-50">
+    <section ref={ref} className="py-20 sm:py-24 lg:py-32 bg-paper-texture">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <SectionHeader

@@ -6,10 +6,11 @@ import { StatsCounter } from '@/components/home/StatsCounter'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import { cardVariants, createContainerVariants } from '@/lib/animations/variants'
 import { Leaf } from 'lucide-react'
+import { BackgroundElements } from '../ui/BackgroundElements'
 
 export function EnvironmentalImpact() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: false, margin: "-100px" })
+  const isInView = useInView(ref, { once: false, margin: '-100px' })
 
   const impactStats = [
     {
@@ -18,7 +19,7 @@ export function EnvironmentalImpact() {
       suffix: '%',
       icon: '🚛',
       description: 'Reduced shipping costs due to lighter weight',
-      gradient: 'from-[#80D4F8] to-[#4DC4F5]'
+      gradient: 'from-[#80D4F8] to-[#4DC4F5]',
     },
     {
       title: 'CO₂ Reduction vs Plastic',
@@ -26,7 +27,7 @@ export function EnvironmentalImpact() {
       suffix: '%',
       icon: '🌱',
       description: 'Lower carbon footprint than plastic alternatives',
-      gradient: 'from-[#10B981] to-[#059669]'
+      gradient: 'from-[#10B981] to-[#059669]',
     },
     {
       title: 'CO₂ Reduction vs Wood',
@@ -34,7 +35,7 @@ export function EnvironmentalImpact() {
       suffix: '%',
       icon: '🌳',
       description: 'Significant reduction compared to wooden pallets',
-      gradient: 'from-[#10B981] to-[#047857]'
+      gradient: 'from-[#10B981] to-[#047857]',
     },
     {
       title: 'Recycling Rate',
@@ -42,7 +43,7 @@ export function EnvironmentalImpact() {
       suffix: '%',
       icon: '♻️',
       description: 'Fully recyclable kraft paper material',
-      gradient: 'from-[#00A0E3] to-[#007CB8]'
+      gradient: 'from-[#00A0E3] to-[#007CB8]',
     },
     {
       title: 'Container Space Saved',
@@ -50,7 +51,7 @@ export function EnvironmentalImpact() {
       suffix: '%',
       icon: '📦',
       description: 'More products per container shipment',
-      gradient: 'from-[#4DC4F5] to-[#00A0E3]'
+      gradient: 'from-[#4DC4F5] to-[#00A0E3]',
     },
     {
       title: 'Weight Reduction',
@@ -58,16 +59,22 @@ export function EnvironmentalImpact() {
       suffix: '%',
       icon: '⚖️',
       description: 'Dramatically lighter than wooden pallets',
-      gradient: 'from-[#007CB8] to-[#005F8C]'
-    }
+      gradient: 'from-[#007CB8] to-[#005F8C]',
+    },
   ]
 
   const containerVariants = createContainerVariants()
 
   return (
-    <section ref={ref} className="py-20 sm:py-24 lg:py-32 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+    <section
+      ref={ref}
+      className="relative py-20 sm:py-24 lg:py-32 overflow-hidden bg-white"
+    >
+      {/* Animated Background */}
+      <BackgroundElements isInView={isInView} />
+
+      {/* Foreground Content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <SectionHeader
           title="Environmental"
@@ -92,7 +99,9 @@ export function EnvironmentalImpact() {
               className="bg-white rounded-2xl shadow-xl border border-[#B3E5FC] p-4 sm:p-6 hover:shadow-2xl transition-all duration-500"
             >
               <div className="flex items-center justify-center gap-4 mb-4">
-                <div className={`w-16 h-16 rounded-xl flex items-center justify-center bg-gradient-to-br ${stat.gradient}`}>
+                <div
+                  className={`w-16 h-16 rounded-xl flex items-center justify-center bg-gradient-to-br ${stat.gradient}`}
+                >
                   <span className="text-3xl">{stat.icon}</span>
                 </div>
 

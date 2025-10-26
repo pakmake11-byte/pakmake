@@ -5,6 +5,7 @@ import { useRef, useState, useEffect } from 'react'
 import { Quote, Users } from 'lucide-react'
 import { scaleInVariants, testimonialVariants } from '@/lib/animations/variants'
 import { SectionHeader } from '@/components/ui/SectionHeader'
+import { BackgroundElements } from '../ui/BackgroundElements'
 
 const TESTIMONIALS = [
   {
@@ -101,9 +102,12 @@ export function SocialProof() {
   return (
     <section
       ref={ref}
-      className="py-20 sm:py-24 lg:py-32"
+      className="relative overflow-hidden py-20 sm:py-24 lg:py-32"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Dynamic animated background */}
+      <BackgroundElements isInView={isInView} />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
           icon={Users}
           title="Trusted by"

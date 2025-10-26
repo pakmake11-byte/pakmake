@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { motion } from 'framer-motion'
 import { LucideIcon } from 'lucide-react'
 import { scaleInVariants, cardHoverVariants } from '@/lib/animations/variants'
@@ -13,7 +14,7 @@ interface ValueCardProps {
   scrollDirection?: number
 }
 
-export function ValueCard({ 
+export const ValueCard = React.memo(function ValueCard({ 
   title, 
   description, 
   icon: Icon, 
@@ -57,4 +58,4 @@ export function ValueCard({
       </div>
     </motion.div>
   )
-}
+})

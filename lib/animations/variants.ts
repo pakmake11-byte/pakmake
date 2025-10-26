@@ -36,16 +36,21 @@ export const createDirectionalFadeVariants = (scrollDirection: number) => ({
   hidden: {
     opacity: 0,
     y: scrollDirection > 0 ? 20 : -20,
+    transition: { 
+      duration: 0.5, 
+      ease: EASE_OUT
+    }
   },
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.4,
+    transition: { 
+      duration: 0.5, 
       ease: EASE_OUT
     }
   }
 })
+
 
 export const itemVariants = {
   hidden: { opacity: 0, y: 20 },

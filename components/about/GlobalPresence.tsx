@@ -16,6 +16,8 @@ import { initializeMap } from './mapInitializer'
 import type { MapControlHandlers } from './mapInitializer'
 
 import { GLOBAL_OFFICES, COUNTRIES } from '@/data/globalPresenceData'
+// shared background component (as requested)
+import { BackgroundElements } from '../ui/BackgroundElements'
 
 export function GlobalPresence() {
   const { ref: sectionRef, isInView } = useInViewAnimation({ margin: '-80px' })
@@ -84,8 +86,11 @@ export function GlobalPresence() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="py-20 sm:py-24 lg:py-32">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section ref={sectionRef} className="relative py-20 sm:py-24 lg:py-32 overflow-hidden">
+      {/* Background behind content */}
+      <BackgroundElements isInView={isInView} />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
           icon={Globe2}
           title="Global"

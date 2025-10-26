@@ -25,7 +25,7 @@ export function AboutHero() {
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
       variants={fadeVariants}
-      className="py-20 sm:py-24 lg:py-32 bg-primary-50"
+      className="py-20 sm:py-28 lg:py-40 bg-paper-texture"
     >
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader

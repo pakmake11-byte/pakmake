@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { useInViewAnimation } from '@/lib/hooks/useInViewAnimation'
 import { useScrollDirection } from '@/lib/hooks/useScrollDirection'
-import { createContainerVariants } from '@/lib/animations/variants'
+import { createContainerVariants, createItemVariants } from '@/lib/animations/variants'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import { TeamMemberCard } from './TeamMemberCard'
 
@@ -11,27 +11,32 @@ const TEAM_MEMBERS = [
   {
     name: 'Pramila Jaju',
     role: 'Co-Founder',
-    bio: 'MA(English), BSC, BEED(English)',
-    linkedin: 'https://www.linkedin.com/in/pramila-jaju-3b0a571a5/'
+    bio: 'MA (English), BSC (Science), BED (English)',
+    linkedin: 'https://www.linkedin.com/in/pramila-jaju-3b0a571a5/',
+    image: '/about/A.jpeg'
   },
   {
     name: 'Sandeep Jaju',
     role: 'Founder',
     bio: 'BCOM, MBA',
-    linkedin: 'https://www.linkedin.com/in/sandeep-jaju-b8a3743a/'
+    linkedin: 'https://www.linkedin.com/in/sandeep-jaju-b8a3743a/',
+    image: '/about/B.jpeg'
   },
   {
     name: 'Pranav Jaju',
     role: 'Co-Founder',
-    bio: 'BBA, MBA',
-    linkedin: 'https://www.linkedin.com/in/pranav-jaju-34a9b52b6/'
+    bio: 'BBA, Pursuing MBA',
+    linkedin: 'https://www.linkedin.com/in/pranav-jaju-34a9b52b6/',
+    image: '/about/C.jpeg'
   }
 ]
 
+
 export function TeamShowcase() {
-  const { ref, isInView } = useInViewAnimation()
+  const { ref, isInView } = useInViewAnimation({ margin: '-100px' })
   const scrollDirection = useScrollDirection()
   const containerVariants = createContainerVariants(scrollDirection)
+  const itemVariants = createItemVariants(scrollDirection)
 
   return (
     <section ref={ref} className="py-20 sm:py-24 lg:py-32 bg-primary-50">
@@ -50,12 +55,14 @@ export function TeamShowcase() {
           animate={isInView ? "visible" : "hidden"}
         >
           {TEAM_MEMBERS.map((member, index) => (
-            <TeamMemberCard
-              key={`${member.name}-${index}`}
-              {...member}
-              index={index}
-              isInView={isInView}
-            />
+            <motion.div key={`${member.name}-${index}`} variants={itemVariants}>
+              <TeamMemberCard
+                {...member}
+                index={index}
+                isInView={isInView}
+                scrollDirection={scrollDirection}
+              />
+            </motion.div>
           ))}
         </motion.div>
       </div>

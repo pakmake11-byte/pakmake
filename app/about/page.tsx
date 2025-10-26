@@ -5,7 +5,7 @@ import { GlobalPresence } from '@/components/about/GlobalPresence'
 
 export default function About() {
   return (
-    <div className="min-h-screen pt-16">
+    <div className="min-h-screen pt-16 overflow-x-hidden">
       <AboutHero />
       <CompanyMission />
       <TeamShowcase />

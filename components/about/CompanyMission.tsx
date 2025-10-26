@@ -6,9 +6,9 @@ import { useInViewAnimation } from '@/lib/hooks/useInViewAnimation'
 import { useScrollDirection } from '@/lib/hooks/useScrollDirection'
 import { 
   createContainerVariants, 
-  itemVariants, 
-  fadeInUpVariants, 
-  EASE_CUBIC 
+  createItemVariants,
+  createSlideVariants,
+  EASE_OUT 
 } from '@/lib/animations/variants'
 import { GradientText } from '@/components/ui/GradientText'
 import { ValueCard } from './ValueCard'
@@ -48,26 +48,30 @@ const CONTENT_SECTIONS = [
 ]
 
 export function CompanyMission() {
-  const { ref, isInView } = useInViewAnimation()
+  const { ref, isInView } = useInViewAnimation({ margin: '-100px' })
   const scrollDirection = useScrollDirection()
   const containerVariants = createContainerVariants(scrollDirection)
+  const itemVariants = createItemVariants(scrollDirection)
+  const leftSlideVariants = createSlideVariants('left')
+  const rightSlideVariants = createSlideVariants('right')
 
   return (
-    <section ref={ref} className="my-20 sm:my-24 lg:my-32">
+    <section ref={ref} className="my-20 sm:my-24 lg:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-stretch">
 
-          {/* ---------------- LEFT CONTENT ---------------- */}
+          {/* LEFT CONTENT - Slides in from left */}
           <motion.div
-            variants={containerVariants}
+            variants={leftSlideVariants}
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
-            className="flex flex-col justify-between h-full space-y-8"
+            className="space-y-8"
           >
             {/* Heading */}
             <motion.h2
-              variants={fadeInUpVariants}
-              transition={{ duration: 0.7, ease: EASE_CUBIC }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+              transition={{ duration: 0.4, ease: EASE_OUT }}
               className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900"
             >
               Our <GradientText isInView={isInView}>Mission</GradientText>
@@ -75,8 +79,10 @@ export function CompanyMission() {
 
             {/* Intro Paragraph */}
             <motion.p
-              variants={itemVariants}
-              className="text-base text-[#334155] text-justify"
+              initial={{ opacity: 0, x: -15 }}
+              animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -15 }}
+              transition={{ duration: 0.3, ease: EASE_OUT, delay: 0.05 }}
+              className="text-base text-[#334155] text-justify leading-relaxed"
             >
               PakMake Packaging Inc® specializes in providing innovative, sustainable 
               alternatives to traditional wooden pallets. We work closely with clients 
@@ -84,35 +90,50 @@ export function CompanyMission() {
               through our durable kraft paper slip sheets.
             </motion.p>
 
-            {/* Values & Why Choose Sections */}
-            {CONTENT_SECTIONS.map((section, index) => (
-              <motion.div 
-                key={index} 
-                variants={itemVariants} 
-                className="space-y-3"
-              >
-                <h3 className="text-2xl font-bold text-gray-900">{section.title}</h3>
-                <p className="text-base text-[#334155] text-justify">{section.text}</p>
-              </motion.div>
-            ))}
+            {/* Content Sections */}
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate={isInView ? "visible" : "hidden"}
+              className="space-y-6"
+            >
+              {CONTENT_SECTIONS.map((section, index) => (
+                <motion.div 
+                  key={index} 
+                  variants={itemVariants}
+                  className="space-y-3"
+                >
+                  <h3 className="text-2xl font-bold text-gray-900">{section.title}</h3>
+                  <p className="text-base text-[#334155] text-justify leading-relaxed">{section.text}</p>
+                </motion.div>
+              ))}
+            </motion.div>
           </motion.div>
 
-          {/* ---------------- RIGHT CONTENT ---------------- */}
+          {/* RIGHT CONTENT - Slides in from right */}
           <motion.div 
-            className="space-y-6 h-full flex flex-col justify-between"
-            variants={containerVariants}
+            variants={rightSlideVariants}
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
+            className="space-y-6"
           >
-            {VALUES.map((value, index) => (
-              <motion.div key={index} variants={itemVariants}>
-                <ValueCard
-                  {...value}
-                  index={index}
-                  isInView={isInView}
-                />
-              </motion.div>
-            ))}
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate={isInView ? "visible" : "hidden"}
+              className="space-y-6"
+            >
+              {VALUES.map((value, index) => (
+                <motion.div key={index} variants={itemVariants}>
+                  <ValueCard
+                    {...value}
+                    index={index}
+                    isInView={isInView}
+                    scrollDirection={scrollDirection}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
           </motion.div>
         </div>
       </div>

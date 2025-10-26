@@ -2,8 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { LucideIcon } from 'lucide-react'
-import { scaleInVariants } from '@/lib/animations/variants'
-import { AnimatedCard } from '@/components/ui/AnimatedCard'
+import { scaleInVariants, cardHoverVariants } from '@/lib/animations/variants'
 
 interface ValueCardProps {
   title: string
@@ -11,6 +10,7 @@ interface ValueCardProps {
   icon: LucideIcon
   index: number
   isInView: boolean
+  scrollDirection?: number
 }
 
 export function ValueCard({ 
@@ -18,32 +18,43 @@ export function ValueCard({
   description, 
   icon: Icon, 
   index, 
-  isInView 
+  isInView,
+  scrollDirection = 1
 }: ValueCardProps) {
   return (
-    <AnimatedCard>
+    <motion.div
+      initial="rest"
+      whileHover="hover"
+      variants={cardHoverVariants}
+      className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
+    >
       <div className="p-6 flex items-start gap-4">
         <motion.div
           variants={scaleInVariants}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
           transition={{ 
-            delay: 0.4 + index * 0.1
+            delay: 0.1 + index * 0.05
           }}
           whileHover={{ 
-            scale: 1.1,
-            transition: { duration: 0.3 }
+            rotate: 5,
+            transition: { duration: 0.2 }
           }}
-          className={`flex-shrink-0 w-20 h-20 bg-gradient-to-br from-[#80D4F8] to-[#4DC4F5] rounded-xl flex items-center justify-center shadow-lg`}
+          className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-[#80D4F8] to-[#00A0E3] rounded-xl flex items-center justify-center shadow-lg"
         >
-          <Icon className="w-8 h-8" />
+          <Icon className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
         </motion.div>
         
-        <div className="flex-1">
+        <motion.div 
+          className="flex-1"
+          initial={{ opacity: 0, x: scrollDirection > 0 ? 15 : -15 }}
+          animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: scrollDirection > 0 ? 15 : -15 }}
+          transition={{ delay: 0.15 + index * 0.05, duration: 0.3 }}
+        >
           <h4 className="text-xl font-bold text-gray-900 mb-2">{title}</h4>
-          <p className="text-base text-[#334155]">{description}</p>
-        </div>
+          <p className="text-base text-[#334155] leading-relaxed">{description}</p>
+        </motion.div>
       </div>
-    </AnimatedCard>
+    </motion.div>
   )
 }

@@ -1,17 +1,16 @@
 @import "tailwindcss";
 
-
 @theme {
-  --color-primary-50: #E6F7FF; 
-  --color-primary-100: #B3E5FC; 
-  --color-primary-200: #80D4F8; 
-  --color-primary-300: #4DC4F5;
-  --color-primary-400: #1AB3F2; 
-  --color-primary-500: #00A0E3;
-  --color-primary-600: #007CB8; 
-  --color-primary-700: #005F8C; 
+  --color-primary-50: #e6f7ff;
+  --color-primary-100: #b3e5fc;
+  --color-primary-200: #80d4f8;
+  --color-primary-300: #4dc4f5;
+  --color-primary-400: #1ab3f2;
+  --color-primary-500: #00a0e3;
+  --color-primary-600: #007cb8;
+  --color-primary-700: #005f8c;
   --color-primary-800: #004366;
-  --color-primary-900: #003E5C;  
+  --color-primary-900: #003e5c;
 }
 
 @layer base {
@@ -30,7 +29,8 @@
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px);
   }
   50% {
@@ -39,11 +39,24 @@
 }
 
 @theme inline {
-  --animate-scroll: scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite;
- 
+  --animate-scroll: scroll var(--animation-duration, 40s)
+    var(--animation-direction, forwards) linear infinite;
+
   @keyframes scroll {
     to {
       transform: translate(calc(-50% - 0.5rem));
     }
   }
+}
+
+.bg-paper-texture {
+  position: relative;
+  background-color: theme("colors.primary.50");
+
+  /* paper noise */
+  background-image:
+    radial-gradient(circle, rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    radial-gradient(circle, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 4px 4px, 8px 8px;
+  background-position: 0 0, 2px 3px;
 }

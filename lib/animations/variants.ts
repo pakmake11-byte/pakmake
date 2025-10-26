@@ -1,6 +1,8 @@
-import { Variants, Easing } from 'framer-motion'
+import { Variants } from 'framer-motion'
 
-export const EASE_CUBIC: Easing = [0.65, 0, 0.35, 1]
+export const EASE_CUBIC = [0.4, 0.0, 0.2, 1] as const
+export const EASE_OUT = [0.0, 0.0, 0.2, 1] as const
+
 
 export const createContainerVariants = (scrollDirection: number = 1): Variants => ({
   hidden: { opacity: 0 },
@@ -14,20 +16,43 @@ export const createContainerVariants = (scrollDirection: number = 1): Variants =
   }
 })
 
-export const itemVariants: Variants = {
-  hidden: { 
-    opacity: 0, 
-    y: 40,
-    scale: 0.95
+export const createItemVariants = (scrollDirection: number = 1) => ({
+  hidden: {
+    opacity: 0,
+    y: scrollDirection > 0 ? 15 : -15,
   },
   visible: {
     opacity: 1,
     y: 0,
-    scale: 1,
-    transition: { 
-      duration: 0.7,
-      ease: EASE_CUBIC
+    transition: {
+      duration: 0.3,
+      ease: EASE_OUT
     }
+  }
+})
+
+
+export const createDirectionalFadeVariants = (scrollDirection: number) => ({
+  hidden: {
+    opacity: 0,
+    y: scrollDirection > 0 ? 20 : -20,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: EASE_OUT
+    }
+  }
+})
+
+export const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.3, ease: EASE_OUT }
   }
 }
 
@@ -57,29 +82,38 @@ export const cardVariants: Variants = {
   }
 }
 
-export const fadeInUpVariants: Variants = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { 
-    opacity: 1, 
+export const fadeInUpVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
     y: 0,
-    transition: { 
-      duration: 0.8, 
-      ease: EASE_CUBIC 
-    }
+    transition: { duration: 0.4, ease: EASE_OUT }
   }
 }
 
-export const scaleInVariants: Variants = {
-  hidden: { scale: 0 },
-  visible: { 
+export const scaleInVariants = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: {
+    opacity: 1,
     scale: 1,
-    transition: { 
-      duration: 1.2, 
-      type: "spring", 
-      stiffness: 200 
-    }
+    transition: { duration: 0.3, ease: EASE_OUT }
   }
 }
+
+export const createSlideVariants = (from: 'left' | 'right' = 'left') => ({
+  hidden: {
+    opacity: 0,
+    x: from === 'left' ? -30 : 30,
+  },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.4,
+      ease: EASE_OUT
+    }
+  }
+})
 
 export const countryBadgeVariants: Variants = {
   hidden: { opacity: 0, scale: 0.8 },
@@ -266,4 +300,12 @@ export const certBadgeVariants: Variants = {
       ease: EASE_CUBIC
     }
   })
+}
+
+export const cardHoverVariants = {
+  rest: { scale: 1 },
+  hover: {
+    scale: 1.02,
+    transition: { duration: 0.2, ease: EASE_OUT }
+  }
 }

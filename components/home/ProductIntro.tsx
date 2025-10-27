@@ -37,13 +37,13 @@ const FeaturePoint = ({
         align === 'right' ? 'flex-row-reverse text-right' : 'text-left'
       }`}
     >
-      <div className="flex-grow bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 border border-[#B3E5FC]">
+      <div className="grow bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 border border-[#B3E5FC]">
         <div
           className={`flex items-center gap-3 ${
             align === 'right' ? 'flex-row-reverse' : ''
           }`}
         >
-          <div className="w-2.5 h-2.5 bg-[#00A0E3] rounded-full flex-shrink-0"></div>
+          <div className="w-2.5 h-2.5 bg-[#00A0E3] rounded-full shrink-0"></div>
           <p className="text-base lg:text-lg font-semibold text-[#003E5C]">
             {label}
           </p>
@@ -54,8 +54,8 @@ const FeaturePoint = ({
       <motion.div
         className={`absolute top-1/2 h-[3px] ${
           align === 'right'
-            ? 'right-full bg-gradient-to-l from-[#80D4F8] to-transparent'
-            : 'left-full bg-gradient-to-r from-[#80D4F8] to-transparent'
+            ? 'right-full bg-linear-to-l from-[#80D4F8] to-transparent'
+            : 'left-full bg-linear-to-r from-[#80D4F8] to-transparent'
         } w-8 lg:w-16`}
         variants={connectorLineVariants(align)}
       />

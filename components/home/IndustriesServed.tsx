@@ -99,12 +99,12 @@ function IndustryCard({
   }
 
   const shineVariants: Variants = {
-    hidden: { backgroundPosition: '150% 50%' },
+    hidden: { backgroundPosition: '50% 50%' },
     visible: {
       backgroundPosition: '-50% 50%',
       transition: {
         duration: 4,
-        delay: (index % columns) * 0.4,
+        delay: (index % columns) * 5,
         ease: 'easeIn',
       },
     },

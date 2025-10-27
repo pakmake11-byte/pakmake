@@ -2,146 +2,192 @@
 
 import { motion, useInView, Variants } from 'framer-motion'
 import { useRef } from 'react'
-import {
-  connectorLineVariants,
-} from '@/lib/animations/variants'
 import { SlipSheetModel } from '@/components/three/SlipSheetModel'
 import { BackgroundElements } from '../ui/BackgroundElements'
 import { Boxes } from 'lucide-react'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 
-// === FeaturePoint Component ===
-const FeaturePoint = ({
+const FeatureItem = ({
   label,
-  align,
+  description,
+  index,
 }: {
   label: string
-  align: 'left' | 'right'
+  description: string
+  index: number
 }) => {
-  const variants: Variants = {
-    hidden: { opacity: 0, x: align === 'right' ? -30 : 30 },
+  const ref = useRef<HTMLDivElement | null>(null)
+  const isInView = useInView(ref, { once: false, margin: '-80px', amount: 0.25 })
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, x: 40, y: -40, scale: 0.96 },
     visible: {
       opacity: 1,
       x: 0,
+      y: 0,
+      scale: 1,
       transition: {
-        duration: 0.6,
-        ease: [0.65, 0, 0.35, 1],
+        type: 'spring',
+        stiffness: 140,
+        damping: 18,
+        mass: 0.6,
+        delay: index * 0.08,
       },
     },
   }
 
   return (
     <motion.div
-      variants={variants}
-      className={`relative flex items-center gap-4 w-full ${
-        align === 'right' ? 'flex-row-reverse text-right' : 'text-left'
-      }`}
+      ref={ref}
+      variants={itemVariants}
+      initial="hidden"
+      animate={isInView ? 'visible' : 'hidden'}
+      className="w-full"
     >
-      <div className="grow bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 border border-[#B3E5FC]">
-        <div
-          className={`flex items-center gap-3 ${
-            align === 'right' ? 'flex-row-reverse' : ''
-          }`}
+      <div
+        className="group relative bg-white/30 dark:bg-black/30 rounded-2xl p-6 shadow-md hover:shadow-2xl transition-all duration-400 border border-white/30 backdrop-blur-md
+                   hover:-translate-y-2 transform will-change-transform
+                   overflow-hidden"
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,255,255,0.60))',
+          borderColor: 'rgba(179,229,252,0.28)',
+        }}
+      >
+        <h3 className="text-lg lg:text-xl font-semibold text-[#003E5C] mb-2 leading-tight">
+          {label}
+        </h3>
+        <p
+          className="text-sm md:text-base text-[#004F70]/85 leading-6"
+          style={{
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+          }}
         >
-          <div className="w-2.5 h-2.5 bg-[#00A0E3] rounded-full shrink-0"></div>
-          <p className="text-base lg:text-lg font-semibold text-[#003E5C]">
-            {label}
-          </p>
-        </div>
-      </div>
+          {description}
+        </p>
 
-      {/* Connector Line */}
-      <motion.div
-        className={`absolute top-1/2 h-[3px] ${
-          align === 'right'
-            ? 'right-full bg-linear-to-l from-[#80D4F8] to-transparent'
-            : 'left-full bg-linear-to-r from-[#80D4F8] to-transparent'
-        } w-8 lg:w-16`}
-        variants={connectorLineVariants(align)}
-      />
+        {/* Subtle hover glow */}
+        <div
+          className="pointer-events-none absolute inset-x-6 bottom-[-12px] h-6 blur-2xl opacity-0 group-hover:opacity-60 transition-opacity duration-500"
+          style={{
+            background:
+              'radial-gradient(closest-side, rgba(179,229,252,0.18), rgba(179,229,252,0))',
+            transform: 'translateY(6px)',
+          }}
+        />
+      </div>
     </motion.div>
   )
 }
 
-// === ProductIntro Section ===
 export const ProductIntro = function ProductIntro() {
-  const sectionRef = useRef(null)
-  const isInView = useInView(sectionRef, { once: false, margin: '-100px' })
+  const headerRef = useRef<HTMLDivElement | null>(null)
+  const isHeaderInView = useInView(headerRef, { once: false, margin: '-100px', amount: 0.2 })
 
   const features = [
-    { label: 'Durable & Puncture Resistant' },
-    { label: '100% Virgin Kraft Board' },
-    { label: 'No Maintenance Required' },
-    { label: 'High Tensile Strength' },
-    { label: 'Custom Sizes Available' },
-    { label: '12-15% More Products/Load' },
-    { label: '60-75% Cost Reduction' },
-    { label: '100% Recyclable Material' },
-    { label: '60% Faster Loading Time' },
-    { label: '1/20th Weight of Wood Pallets' },
+    {
+      label: 'Durable & Puncture Resistant',
+      description: 'Engineered to withstand rough handling and repeated use without tearing.',
+    },
+    {
+      label: '100% Virgin Kraft Board',
+      description: 'Made from high-quality virgin fibers for superior strength and reliability.',
+    },
+    {
+      label: 'No Maintenance Required',
+      description: 'Completely maintenance-free—no repairs, no treatments, no hassle.',
+    },
+    {
+      label: 'High Tensile Strength',
+      description: 'Built to handle heavy loads without deformation or failure.',
+    },
+    {
+      label: 'Custom Sizes Available',
+      description: 'Tailor-made to suit your specific packaging and logistics needs.',
+    },
+    {
+      label: '12–15% More Products per Load',
+      description: 'Optimize space and efficiency in every shipment with thinner profiles.',
+    },
+    {
+      label: '60–75% Cost Reduction',
+      description: 'Save drastically on material, transport, and storage costs.',
+    },
+    {
+      label: '100% Recyclable Material',
+      description: 'Sustainably sourced and fully recyclable, supporting circular logistics.',
+    },
+    {
+      label: '60% Faster Loading Time',
+      description: 'Simplified handling processes mean faster turnaround at every step.',
+    },
+    {
+      label: '1/20th Weight of Wood Pallets',
+      description: 'Lightweight yet strong—reducing freight costs and improving safety.',
+    },
   ]
 
-  const midIndex = Math.ceil(features.length / 2)
-  const leftFeatures = features.slice(0, midIndex)
-  const rightFeatures = features.slice(midIndex)
-
-  // === Master container with global stagger ===
-  const masterContainer: Variants = {
-    hidden: {},
+  const headerVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
     visible: {
-      transition: {
-        staggerChildren: 0.25, // 👈 Controls spacing between point animations
-        delayChildren: 0.2,    // 👈 Delay before first point
-      },
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: 'easeOut' },
     },
   }
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative py-20 sm:py-24 lg:py-32 bg-white overflow-hidden"
-    >
-      {/* Animated Background */}
-      <BackgroundElements isInView={isInView} />
+    <section className="relative py-20 sm:py-24 lg:py-32 bg-white">
+      <BackgroundElements isInView={isHeaderInView} />
 
-      {/* Foreground Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Heading */}
-        <SectionHeader
-          icon={Boxes}
-          title="Why Choose"
-          highlightedText="Slip Sheets?"
-          subtitle="Experience a paradigm shift in logistics. Our slip sheets outperform traditional pallets in every key metric."
-          isInView={isInView}
-          iconGradient="from-[#E0F7FA] to-[#B3E5FC]"
-        />
-
-        {/* Master animation container */}
         <motion.div
-          variants={masterContainer}
+          ref={headerRef}
+          variants={headerVariants}
           initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
-          className="relative grid grid-cols-[1fr_auto_1fr] md:grid-cols-[2fr_3fr_2fr] gap-x-4 lg:gap-x-8 items-center"
+          animate={isHeaderInView ? 'visible' : 'hidden'}
         >
-          {/* Left Feature List */}
-          <div className="space-y-6 lg:space-y-8">
-            {leftFeatures.map((feature) => (
-              <FeaturePoint key={feature.label} {...feature} align="left" />
-            ))}
-          </div>
-
-          {/* Center 3D Model */}
-          <div className="relative h-96 lg:h-full max-h-[400px] flex items-center justify-center">
-            <SlipSheetModel />
-          </div>
-
-          {/* Right Feature List */}
-          <div className="space-y-6 lg:space-y-8">
-            {rightFeatures.map((feature) => (
-              <FeaturePoint key={feature.label} {...feature} align="right" />
-            ))}
-          </div>
+          <SectionHeader
+            icon={Boxes}
+            title="Why Choose"
+            highlightedText="Slip Sheets?"
+            subtitle="Experience a paradigm shift in logistics. Our slip sheets outperform traditional pallets in every key metric."
+            isInView={isHeaderInView}
+            iconGradient="from-[#E0F7FA] to-[#B3E5FC]"
+          />
         </motion.div>
+
+        <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-y-20 gap-x-16 mt-20 items-start">
+          {/* Keep SlipSheetModel untouched */}
+          <div className="sticky top-28 h-[560px] flex items-center justify-center">
+            <div className="relative w-full h-full flex items-center justify-center rounded-3xl overflow-hidden shadow-2xl">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#DFF7FA] via-[#B3E5FC]/60 to-[#E0F7FA]/90">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_30%,rgba(255,255,255,0.9)_0%,rgba(179,229,252,0.3)_60%,transparent_100%)]"></div>
+              </div>
+              <div
+                className="relative w-full h-full flex items-center justify-center"
+                style={{ perspective: '1000px' }}
+              >
+                <SlipSheetModel />
+              </div>
+            </div>
+          </div>
+
+          {/* Features with slide-from-top-right animation */}
+          <div className="flex flex-col space-y-12 lg:space-y-14">
+            {features.map((feature, index) => (
+              <FeatureItem
+                key={feature.label}
+                label={feature.label}
+                description={feature.description}
+                index={index}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   )

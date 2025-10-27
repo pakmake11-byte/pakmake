@@ -1,13 +1,14 @@
 'use client'
 
 import { AnimatePresence, motion, useInView } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect, memo } from 'react'
 import { SlipSheetModel } from '@/components/three/SlipSheetModel'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import { Package2 } from 'lucide-react'
 import { useScrollDirection } from '@/lib/hooks/useScrollDirection'
 import { useInViewAnimation } from '@/lib/hooks/useInViewAnimation'
 import { BackgroundElements } from '../ui/BackgroundElements'
+import React from 'react'
 
 type SlipSheetVariant =
   | 'single-lip'
@@ -16,6 +17,115 @@ type SlipSheetVariant =
   | 'multi-lip'
 
 const EASE_CUBIC = [0.65, 0, 0.35, 1] as const
+
+type CombinationLockCellProps = {
+  children: React.ReactNode
+  isInView: boolean
+  delay: number
+  className?: string
+}
+
+const CombinationLockCell = memo(function CombinationLockCell({
+  children,
+  isInView,
+  delay,
+  className
+}: CombinationLockCellProps) {
+  const [displayValue, setDisplayValue] = useState('')
+  const intervalRef = useRef<number | null>(null)
+  const timeoutRef = useRef<number | null>(null)
+
+  const getTextFromChildren = (node: React.ReactNode): string => {
+    if (typeof node === 'string' || typeof node === 'number') {
+      return String(node)
+    }
+    if (React.isValidElement(node)) {
+      const element = node as React.ReactElement<{ children?: React.ReactNode }>
+      return getTextFromChildren(element.props.children)
+    }
+    if (Array.isArray(node)) {
+      return node.map(getTextFromChildren).join('')
+    }
+    return ''
+  }
+  
+  const targetText = getTextFromChildren(children)
+
+  useEffect(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    if (intervalRef.current) clearInterval(intervalRef.current)
+
+    if (!isInView) {
+      setDisplayValue('')
+      return
+    }
+
+    timeoutRef.current = window.setTimeout(() => {
+      const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*'
+      const duration = 600
+      const steps = 20
+      const stepDuration = duration / steps
+      let currentStep = 0
+
+      intervalRef.current = window.setInterval(() => {
+        if (currentStep < steps) {
+          const progress = currentStep / steps
+          const revealedLength = Math.floor(targetText.length * progress)
+
+          let newValue = ''
+          for (let i = 0; i < targetText.length; i++) {
+            if (i < revealedLength) {
+              newValue += targetText[i]
+            } else {
+              newValue += chars[Math.floor(Math.random() * chars.length)]
+            }
+          }
+          setDisplayValue(newValue)
+          currentStep++
+        } else {
+          setDisplayValue(targetText)
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current)
+            intervalRef.current = null
+          }
+        }
+      }, stepDuration)
+    }, delay * 1000)
+
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [isInView, delay, targetText])
+
+  const cloneWithText = (node: React.ReactNode, text: string): React.ReactNode => {
+    if (typeof node === 'string' || typeof node === 'number') {
+      return text
+    }
+    if (React.isValidElement(node)) {
+      const element = node as React.ReactElement<{ children?: React.ReactNode }>
+      return React.cloneElement(
+        element,
+        {},
+        cloneWithText(element.props.children, text)
+      )
+    }
+    return node
+  }
+
+  const content = cloneWithText(children, displayValue || targetText)
+
+  return (
+    <motion.td
+      initial={{ opacity: 0 }}
+      animate={{ opacity: isInView ? 1 : 0 }}
+      transition={{ duration: 0.3, delay }}
+      className={className}
+    >
+      {content}
+    </motion.td>
+  )
+})
 
 const variants = [
   { id: 'single-lip', title: 'Single-Lip', description: 'Access from one side' },
@@ -184,64 +294,75 @@ export function ProductVariants() {
             Material Comparison
           </h3>
 
-          <div 
+          <div
             ref={comparisonTableRef}
             className="bg-white rounded-2xl shadow-xl overflow-hidden border border-[#B3E5FC]"
           >
             <div className="overflow-x-auto no-scrollbar">
-              <table className="w-full min-w-[640px]">
+              <table className="w-full min-w-[640px]" style={{ tableLayout: 'fixed' }}>
+                <colgroup>
+                  <col style={{ width: '33.33%' }} />
+                  <col style={{ width: '33.33%' }} />
+                  <col style={{ width: '33.34%' }} />
+                </colgroup>
                 <thead>
                   <tr className="bg-[#00A0E3]">
-                    <th className=" w-1/3 px-4 sm:px-6 py-3 sm:py-4 text-center font-bold text-white text-sm sm:text-base">
+                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-center font-bold text-white text-sm sm:text-base">
                       Specifications
                     </th>
-                    <th className="w-1/3 px-4 sm:px-6 py-3 sm:py-4 text-center font-bold text-white text-sm sm:text-base">
+                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-center font-bold text-white text-sm sm:text-base">
                       Kraft Paper Slip Sheet
                     </th>
-                    <th className="w-1/3 px-4 sm:px-6 py-3 sm:py-4 text-center font-bold text-white text-sm sm:text-base">
+                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-center font-bold text-white text-sm sm:text-base">
                       PP Plastic Slip Sheet
                     </th>
                   </tr>
                 </thead>
 
                 <tbody>
-                  {comparisonData.map((row, index) => (
-                    <motion.tr
-                      key={row.attribute}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={isComparisonInView ? {
-                        opacity: 1,
-                        x: 0
-                      } : { opacity: 0, x: -20 }}
-                      transition={{
-                        duration: 0.6,
-                        delay: 0.08 * index,
-                        ease: EASE_CUBIC
-                      }}
-                      whileHover={{ 
-                        backgroundColor: '#F0FBFF',
-                        transition: { duration: 0.2 }
-                      }}
-                      className={`border-t border-[#E6F7FF] ${
-                        index % 2 === 0 ? 'bg-white' : 'bg-[#FAFDFF]'
-                      } transition-colors duration-200`}
-                      style={{ willChange: 'transform, opacity' }}
-                    >
-                      <td className="px-4 sm:px-6 py-3 sm:py-4 text-center font-semibold text-[#334155] text-xs sm:text-sm">
-                        {row.attribute}
-                      </td>
-                      <td className="px-4 sm:px-6 py-3 sm:py-4 text-center">
-                        <span className="inline-block font-bold text-[#005F8C] text-xs sm:text-sm bg-[#E6F7FF] px-2 py-1 rounded">
-                          {row.kraft}
-                        </span>
-                      </td>
-                      <td className="px-4 sm:px-6 py-3 sm:py-4 text-center">
-                        <span className="inline-block font-medium text-slate-700 text-xs sm:text-sm">
-                          {row.plastic}
-                        </span>
-                      </td>
-                    </motion.tr>
-                  ))}
+                  {comparisonData.map((row, index) => {
+                    const cellDelay = 0.15
+                    const rowDelay = index * (cellDelay * 3 + 0.1)
+
+                    return (
+                      <motion.tr
+                        key={row.attribute}
+                        whileHover={{
+                          backgroundColor: '#F0FBFF',
+                          transition: { duration: 0.2 }
+                        }}
+                        className={`border-t border-[#E6F7FF] ${
+                          index % 2 === 0 ? 'bg-white' : 'bg-[#FAFDFF]'
+                        } transition-colors duration-200`}
+                      >
+                        <CombinationLockCell
+                          isInView={isComparisonInView}
+                          delay={rowDelay}
+                          className="px-4 sm:px-6 py-3 sm:py-4 text-center font-semibold text-[#334155] text-xs sm:text-sm"
+                        >
+                          {row.attribute}
+                        </CombinationLockCell>
+                        <CombinationLockCell
+                          isInView={isComparisonInView}
+                          delay={rowDelay + cellDelay}
+                          className="px-4 sm:px-6 py-3 sm:py-4 text-center"
+                        >
+                          <span className="inline-block font-bold text-[#005F8C] text-xs sm:text-sm bg-[#E6F7FF] px-2 py-1 rounded min-w-[100px]">
+                            {row.kraft}
+                          </span>
+                        </CombinationLockCell>
+                        <CombinationLockCell
+                          isInView={isComparisonInView}
+                          delay={rowDelay + cellDelay * 2}
+                          className="px-4 sm:px-6 py-3 sm:py-4 text-center"
+                        >
+                          <span className="inline-block font-medium text-slate-700 text-xs sm:text-sm  min-w-[100px]">
+                            {row.plastic}
+                          </span>
+                        </CombinationLockCell>
+                      </motion.tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
@@ -278,7 +399,7 @@ export function ProductVariants() {
                     }
                     className={`relative p-6 sm:p-8 rounded-2xl transition-all duration-300 group overflow-hidden ${
                       selectedVariant === variant.id
-                        ? 'bg-gradient-to-br from-[#00A0E3] to-[#007CB8] text-white shadow-xl'
+                        ? 'bg-linear-to-br from-[#00A0E3] to-[#007CB8] text-white shadow-xl'
                         : 'bg-white text-[#334155] hover:shadow-lg border-2 border-[#B3E5FC]'
                     }`}
                   >
@@ -366,9 +487,17 @@ export function ProductVariants() {
                   Dimensions
                 </h4>
                 <div className="overflow-x-auto -mx-4 sm:mx-0">
-                  <table className="w-full text-sm min-w-[400px]" ref={dimensionsTableRef}>
+                  <table 
+                    className="w-full text-sm min-w-[400px]" 
+                    ref={dimensionsTableRef}
+                    style={{ tableLayout: 'fixed' }}
+                  >
+                    <colgroup>
+                      <col style={{ width: '60%' }} />
+                      <col style={{ width: '40%' }} />
+                    </colgroup>
                     <thead>
-                      <tr className="bg-gradient-to-r from-[#80D4F8] to-[#4DC4F5] text-white">
+                      <tr className="bg-linear-to-r from-[#80D4F8] to-[#4DC4F5] text-white">
                         <th className="px-3 sm:px-4 py-3 text-left font-semibold">
                           Specification
                         </th>
@@ -379,35 +508,38 @@ export function ProductVariants() {
                     </thead>
 
                     <tbody>
-                      {dimensionsTable.map((row, index) => (
-                        <motion.tr
-                          key={row.label}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={isDimensionsInView ? {
-                            opacity: 1,
-                            x: 0
-                          } : { opacity: 0, x: -20 }}
-                          transition={{
-                            duration: 0.6,
-                            delay: 0.08 * index,
-                            ease: EASE_CUBIC
-                          }}
-                          whileHover={{ 
-                            backgroundColor: '#F0FBFF',
-                            transition: { duration: 0.2 }
-                          }}
-                          className={`border-t border-[#E6F7FF] ${
-                            index % 2 === 0 ? 'bg-white' : 'bg-[#FAFDFF]'
-                          } transition-colors duration-200`}
-                        >
-                          <td className="px-3 sm:px-4 py-3 font-medium text-[#334155] text-xs sm:text-sm">
-                            {row.label}
-                          </td>
-                          <td className="px-3 sm:px-4 py-3 text-[#334155] text-xs sm:text-sm">
-                            {row.value}
-                          </td>
-                        </motion.tr>
-                      ))}
+                      {dimensionsTable.map((row, index) => {
+                        const cellDelay = 0.15
+                        const rowDelay = index * (cellDelay * 2 + 0.1)
+
+                        return (
+                          <motion.tr
+                            key={row.label}
+                            whileHover={{
+                              backgroundColor: '#F0FBFF',
+                              transition: { duration: 0.2 }
+                            }}
+                            className={`border-t border-[#E6F7FF] ${
+                              index % 2 === 0 ? 'bg-white' : 'bg-[#FAFDFF]'
+                            } transition-colors duration-200`}
+                          >
+                            <CombinationLockCell
+                              isInView={isDimensionsInView}
+                              delay={rowDelay}
+                              className="px-3 sm:px-4 py-3 font-medium text-[#334155] text-xs sm:text-sm"
+                            >
+                              {row.label}
+                            </CombinationLockCell>
+                            <CombinationLockCell
+                              isInView={isDimensionsInView}
+                              delay={rowDelay + cellDelay}
+                              className="px-3 sm:px-4 py-3 text-[#334155] text-xs sm:text-sm"
+                            >
+                              <span className="">{row.value}</span>
+                            </CombinationLockCell>
+                          </motion.tr>
+                        )
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -426,9 +558,17 @@ export function ProductVariants() {
                   Thickness & Pulling Strength
                 </h4>
                 <div className="overflow-x-auto -mx-4 sm:mx-0">
-                  <table className="w-full text-sm min-w-[400px]" ref={thicknessTableRef}>
+                  <table 
+                    className="w-full text-sm min-w-[400px]" 
+                    ref={thicknessTableRef}
+                    style={{ tableLayout: 'fixed' }}
+                  >
+                    <colgroup>
+                      <col style={{ width: '40%' }} />
+                      <col style={{ width: '60%' }} />
+                    </colgroup>
                     <thead>
-                      <tr className="bg-gradient-to-r from-[#4DC4F5] to-[#00A0E3] text-white">
+                      <tr className="bg-linear-to-r from-[#4DC4F5] to-[#00A0E3] text-white">
                         <th className="px-3 sm:px-4 py-3 text-left font-semibold">
                           Thickness
                         </th>
@@ -439,35 +579,38 @@ export function ProductVariants() {
                     </thead>
 
                     <tbody>
-                      {thicknessTable.map((row, index) => (
-                        <motion.tr
-                          key={row.thickness}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={isThicknessInView ? {
-                            opacity: 1,
-                            x: 0
-                          } : { opacity: 0, x: -20 }}
-                          transition={{
-                            duration: 0.6,
-                            delay: 0.08 * index,
-                            ease: EASE_CUBIC
-                          }}
-                          whileHover={{ 
-                            backgroundColor: '#F0FBFF',
-                            transition: { duration: 0.2 }
-                          }}
-                          className={`border-t border-[#E6F7FF] ${
-                            index % 2 === 0 ? 'bg-white' : 'bg-[#FAFDFF]'
-                          } transition-colors duration-200`}
-                        >
-                          <td className="px-3 sm:px-4 py-3 font-medium text-[#334155] text-xs sm:text-sm">
-                            {row.thickness}
-                          </td>
-                          <td className="px-3 sm:px-4 py-3 text-[#334155] text-xs sm:text-sm">
-                            {row.pulling}
-                          </td>
-                        </motion.tr>
-                      ))}
+                      {thicknessTable.map((row, index) => {
+                        const cellDelay = 0.15
+                        const rowDelay = index * (cellDelay * 2 + 0.1)
+
+                        return (
+                          <motion.tr
+                            key={row.thickness}
+                            whileHover={{
+                              backgroundColor: '#F0FBFF',
+                              transition: { duration: 0.2 }
+                            }}
+                            className={`border-t border-[#E6F7FF] ${
+                              index % 2 === 0 ? 'bg-white' : 'bg-[#FAFDFF]'
+                            } transition-colors duration-200`}
+                          >
+                            <CombinationLockCell
+                              isInView={isThicknessInView}
+                              delay={rowDelay}
+                              className="px-3 sm:px-4 py-3 font-medium text-[#334155] text-xs sm:text-sm"
+                            >
+                              <span className="">{row.thickness}</span>
+                            </CombinationLockCell>
+                            <CombinationLockCell
+                              isInView={isThicknessInView}
+                              delay={rowDelay + cellDelay}
+                              className="px-3 sm:px-4 py-3 text-[#334155] text-xs sm:text-sm"
+                            >
+                              <span className="">{row.pulling}</span>
+                            </CombinationLockCell>
+                          </motion.tr>
+                        )
+                      })}
                     </tbody>
                   </table>
                 </div>

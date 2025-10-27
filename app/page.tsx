@@ -13,7 +13,7 @@ import { PageAudioWrapper } from '@/components/ui/PageAudioWrapper'
 export default function Home() {
   return (
     <PageAudioWrapper>
-      <div className="min-h-screen overflow-x-hidden">
+      <div className="min-h-screen">
         <HeroSection />
         <ProductIntro />
         <ComparisonSection />

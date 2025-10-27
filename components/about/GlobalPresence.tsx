@@ -86,7 +86,7 @@ export function GlobalPresence() {
             icon={Globe2}
             title="Global"
             highlightedText="Presence"
-            subtitle="From our headquarters in India to offices across the globe, we serve customers in over 15 countries worldwide."
+            subtitle="Serving customers in 10+ countries from our Indian headquarters and global office."
             isInView={isInView}
           />
 

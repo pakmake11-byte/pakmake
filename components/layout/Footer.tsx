@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion, Variants } from 'framer-motion'
-import { Mail, Phone, MapPin, Award, Download, Home, Info, MessageSquare, Leaf, Recycle, TrendingUp } from 'lucide-react'
+import { Mail, Phone, MapPin, Award, Download, Home, Info, MessageSquare } from 'lucide-react'
 
 export function Footer() {
   const quickLinks = [
@@ -18,14 +18,14 @@ export function Footer() {
 
   const offices = [
     {
-      name: 'India Office',
-      country: 'India',
+      name: 'INDIA OFFICE',
+      country: 'INDIA',
       address: 'Plot No. H-109A, Badharna, V.K.I. Area, JAIPUR-302013(Rajasthan)',
       email: 'sandeepjaju@yahoo.com',
       phone: '+91 98291-87167'
     },
     {
-      name: 'UAE Office',
+      name: 'UAE OFFICE',
       country: 'UAE',
       address: '308, Garden City, Jurf, Ajman, UAE',
       email: 'sandeepjaju@yahoo.com',

@@ -45,7 +45,6 @@ export const HeroSection = memo(function HeroSection() {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const isInView = useInView(containerRef, { amount: 0.3, once: false })
   const [statsData, setStatsData] = useState<StatData[]>(FALLBACK_STATS)
-  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     async function fetchStats() {
@@ -62,9 +61,6 @@ export const HeroSection = memo(function HeroSection() {
         }
       } catch (error) {
         console.error('Error fetching stats:', error)
-        // Keep fallback data
-      } finally {
-        setIsLoading(false)
       }
     }
 

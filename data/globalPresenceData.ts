@@ -29,7 +29,7 @@ export const SERVED_COUNTRIES = ['LK', 'BD', 'AE', 'OM', 'JO', 'SA', 'AU', 'DK',
 
 export const GLOBAL_OFFICES = [
   {
-    location: 'India HQ',
+    location: 'INDIA HQ',
     address: 'Jaipur, Rajasthan',
     details: 'Main manufacturing and R&D facility',
     icon: '🇮🇳'

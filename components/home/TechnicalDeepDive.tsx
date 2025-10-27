@@ -4,16 +4,20 @@ import { motion, useInView } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { Wrench, Truck, DollarSign, TrendingUp, Play, Pause, Volume2, VolumeX, Maximize, SkipBack, SkipForward } from 'lucide-react'
-import { fadeInUpVariants, itemVariants, cardVariants, createContainerVariants, stepBadgeVariants, mediaRevealVariants } from '@/lib/animations/variants'
+import { fadeInUpVariants, itemVariants, mediaRevealVariants } from '@/lib/animations/variants'
 import { SectionHeader } from '@/components/ui/SectionHeader'
+import { useScrollDirection } from '@/lib/hooks/useScrollDirection'
+
+const EASE_CUBIC = [0.65, 0, 0.35, 1] as const
 
 export function TechnicalDeepDive() {
   const ref = useRef(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const isInView = useInView(ref, { once: false, margin: "-100px" })
+  const scrollDirection = useScrollDirection()
 
   const [isPlaying, setIsPlaying] = useState(true)
-  const [isMuted, setIsMuted] = useState(true)
+  const [isMuted, setIsMuted] = useState(false)
   const [volume, setVolume] = useState(1)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
@@ -39,8 +43,14 @@ export function TechnicalDeepDive() {
 
   const toggleMute = () => {
     if (videoRef.current) {
-      videoRef.current.muted = !isMuted
-      setIsMuted(!isMuted)
+      const newMutedState = !isMuted
+      videoRef.current.muted = newMutedState
+      setIsMuted(newMutedState)
+      if (newMutedState) {
+        setVolume(0)
+      } else {
+        setVolume(videoRef.current.volume || 1)
+      }
     }
   }
 
@@ -112,7 +122,6 @@ export function TechnicalDeepDive() {
       icon: Wrench,
       title: 'Initial Investment',
       description: 'Consideration required',
-
       color: 'from-[#80D4F8] to-[#4DC4F5]'
     },
     {
@@ -134,6 +143,11 @@ export function TechnicalDeepDive() {
       color: 'from-[#007CB8] to-[#005F8C]'
     }
   ]
+
+  const processStepsRef = useRef(null)
+  const equipmentRef = useRef(null)
+  const isProcessInView = useInView(processStepsRef, { once: false, margin: '-100px' })
+  const isEquipmentInView = useInView(equipmentRef, { once: false, margin: '-100px' })
 
   useEffect(() => {
     const video = videoRef.current
@@ -161,13 +175,11 @@ export function TechnicalDeepDive() {
       }
     }
 
-    // Add event listeners
     video.addEventListener('timeupdate', handleProgress)
     video.addEventListener('durationchange', handleDurationChange)
     video.addEventListener('loadedmetadata', handleLoadedMetadata)
     video.addEventListener('canplay', handleCanPlay)
 
-    // Check if duration is already available
     if (isFinite(video.duration) && !isNaN(video.duration) && video.duration > 0) {
       setDuration(video.duration)
     }
@@ -191,22 +203,23 @@ export function TechnicalDeepDive() {
     }
   }, [isPlaying, isInView])
 
-  // Auto-play when video comes into view
   useEffect(() => {
     if (isInView && videoRef.current) {
       setIsPlaying(true)
+      videoRef.current.muted = false
+      setIsMuted(false)
+      videoRef.current.volume = 1
+      setVolume(1)
       videoRef.current.play().catch(() => { })
     }
   }, [isInView])
 
-
-  const containerVariants = createContainerVariants()
+  const getDirection = () => (scrollDirection === 1 ? 1 : -1)
 
   return (
     <section ref={ref} className="py-20 sm:py-24 lg:py-32 bg-paper-texture">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* Section Header */}
         <SectionHeader
           title="Technical"
           highlightedText="Deep-Dive"
@@ -215,7 +228,6 @@ export function TechnicalDeepDive() {
           icon={Truck}
         />
 
-        {/* Push-Pull Process + Video */}
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start mb-16 sm:mb-20">
           <motion.div
             variants={itemVariants}
@@ -225,17 +237,23 @@ export function TechnicalDeepDive() {
           >
             <div className="bg-white rounded-2xl shadow-xl border border-[#B3E5FC] p-6 sm:p-8 hover:shadow-2xl transition-all duration-500 h-full flex flex-col">
               <h3 className="text-2xl sm:text-3xl font-bold text-[#003E5C] mb-6">
-                Push-Pull Process
+                Cascade Push-Pull Attachment
               </h3>
+
               <div className="space-y-4 text-[#334155] leading-relaxed text-justify flex-1">
                 <p className="text-base sm:text-lg">
-                  The push-pull attachment system is a highly efficient material handling solution that eliminates the need for traditional pallets. This innovative approach uses specialized slip sheets combined with push-pull attachments to streamline warehouse operations.
+                  The <strong>Cascade QFM Push Pull</strong> attachment offers a fast and efficient solution for switching between fork and slipsheet handling. Designed for convenience, it mounts directly onto forklift forks within a minute, enhancing workflow flexibility and productivity.
                 </p>
+
                 <p className="text-base sm:text-lg">
-                  The process begins by pulling loads onto flat forks using the slip sheet, then transporting them to the destination. Finally, the load is ejected forward by pushing the slip sheet off the forks, creating a seamless handling experience.
+                  Built for long-term performance, it protects products and slipsheets from damage while maintaining high visibility and operational precision. Its durable steel construction ensures dependable use in demanding industrial environments.
                 </p>
+
                 <p className="text-base sm:text-lg">
-                  This method significantly reduces storage space requirements, eliminates pallet management costs, and increases operational efficiency in high-volume warehouse environments.
+                  The <strong>total cost is ₹7.5 lakh (including installation)</strong>, with <strong>taxes and transportation charges applicable separately</strong>.
+                </p>
+                <p className="text-base sm:text-lg italic">
+                  <strong>Note:</strong> This attachment is essential for all material lifting and handling operations. Without it, accessing or moving materials will not be possible.
                 </p>
               </div>
             </div>
@@ -255,12 +273,10 @@ export function TechnicalDeepDive() {
                 animate={isInView ? 'visible' : 'hidden'}
                 src="/home/video.mp4"
                 loop
-                muted
                 playsInline
                 className="rounded-xl shadow-lg w-full object-cover flex-1"
               />
 
-              {/* Video Progress Bar */}
               <div className="mt-4 flex items-center gap-3">
                 <span className="text-[#003E5C] text-sm font-medium min-w-[45px]">
                   {formatTime(currentTime)}
@@ -285,7 +301,6 @@ export function TechnicalDeepDive() {
                 </span>
               </div>
 
-              {/* Video Controls */}
               <div className="mt-4 flex items-center justify-center gap-2 sm:gap-4 bg-primary-700 rounded-xl p-3">
                 <button
                   onClick={skipBackward}
@@ -321,7 +336,6 @@ export function TechnicalDeepDive() {
                   {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                 </button>
 
-                {/* Volume Control */}
                 <div className="hidden sm:flex items-center gap-2">
                   <input
                     type="range"
@@ -354,37 +368,58 @@ export function TechnicalDeepDive() {
 
         {/* Process Steps */}
         <motion.div
+          ref={processStepsRef}
           variants={fadeInUpVariants}
           initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
+          animate={isProcessInView ? 'visible' : 'hidden'}
           className="mb-16 sm:mb-20"
         >
           <h3 className="text-2xl sm:text-3xl font-bold text-[#003E5C] mb-8 sm:mb-12 text-center">
             Process Steps
           </h3>
 
-          <motion.div
-            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
-            variants={containerVariants}
-            initial="hidden"
-            animate={isInView ? 'visible' : 'hidden'}
-          >
-            {processSteps.map((step) => (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {processSteps.map((step, index) => (
               <motion.div
                 key={step.number}
-                variants={cardVariants}
-                whileHover={{ y: -8 }}
-                className="bg-white rounded-2xl shadow-xl border border-[#B3E5FC] p-6 sm:p-8 hover:shadow-2xl transition-all duration-500 flex flex-col"
+                initial={{ opacity: 0, y: getDirection() * 50, rotateX: getDirection() * 15 }}
+                animate={isProcessInView ? {
+                  opacity: 1,
+                  y: 0,
+                  rotateX: 0
+                } : {}}
+                transition={{
+                  duration: 0.7,
+                  delay: index * 0.15,
+                  ease: EASE_CUBIC
+                }}
+                whileHover={{
+                  y: -12,
+                  rotateY: 5,
+                  transition: { duration: 0.3 }
+                }}
+                className="bg-white rounded-2xl shadow-xl border border-[#B3E5FC] p-6 sm:p-8 hover:shadow-2xl transition-all duration-500 flex flex-col perspective-1000"
+                style={{ transformStyle: 'preserve-3d' }}
               >
-                {/* Number and Title in one line */}
                 <div className="flex items-center gap-4">
                   <motion.div
                     className="flex-shrink-0 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r from-[#4DC4F5] to-[#00A0E3] text-white text-xl font-bold shadow-lg"
-                    variants={stepBadgeVariants}
-                    initial="hidden"
-                    animate={isInView ? 'visible' : 'hidden'}
-                    whileHover={{ rotate: 360 }}
-                    transition={{ duration: 0.6 }}
+                    initial={{ scale: 0, rotate: -180 }}
+                    animate={isProcessInView ? {
+                      scale: 1,
+                      rotate: 0
+                    } : {}}
+                    transition={{
+                      duration: 0.6,
+                      delay: index * 0.15 + 0.3,
+                      type: 'spring',
+                      stiffness: 200
+                    }}
+                    whileHover={{
+                      rotate: 360,
+                      scale: 1.1,
+                      transition: { duration: 0.6 }
+                    }}
                   >
                     {step.number}
                   </motion.div>
@@ -394,63 +429,119 @@ export function TechnicalDeepDive() {
                   </h4>
                 </div>
 
-                {/* Bigger Image */}
-                <div className="relative w-full h-[200px] rounded-xl overflow-hidden bg-white">
+                <motion.div
+                  className="relative w-full h-[200px] rounded-xl overflow-hidden bg-white my-4"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={isProcessInView ? {
+                    opacity: 1,
+                    scale: 1
+                  } : {}}
+                  transition={{
+                    duration: 0.5,
+                    delay: index * 0.15 + 0.4
+                  }}
+                >
                   <Image
                     src={step.image}
                     alt={`${step.title} step illustration`}
                     fill
                     className="object-contain"
                   />
-                </div>
+                </motion.div>
 
-                <p className="text-sm sm:text-base text-[#334155] leading-relaxed flex-1">
+                <p className="text-sm sm:text-base text-[#334155] text-center leading-relaxed flex-1">
                   {step.description}
                 </p>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
         </motion.div>
 
         {/* Equipment Requirements */}
         <motion.div
+          ref={equipmentRef}
           variants={fadeInUpVariants}
           initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
+          animate={isEquipmentInView ? 'visible' : 'hidden'}
         >
           <h3 className="text-2xl sm:text-3xl font-bold text-[#003E5C] mb-8 sm:mb-12 text-center">
             Equipment Requirements
           </h3>
 
-          <motion.div
-            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8"
-            variants={containerVariants}
-            initial="hidden"
-            animate={isInView ? 'visible' : 'hidden'}
-          >
-            {equipment.map((item) => (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            {equipment.map((item, index) => (
               <motion.div
                 key={item.title}
-                variants={cardVariants}
-                whileHover={{ y: -8 }}
+                initial={{
+                  opacity: 0,
+                  y: getDirection() * 60,
+                  scale: 0.8,
+                  rotateY: getDirection() * 20
+                }}
+                animate={isEquipmentInView ? {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  rotateY: 0
+                } : {}}
+                transition={{
+                  duration: 0.7,
+                  delay: index * 0.12,
+                  ease: EASE_CUBIC
+                }}
+                whileHover={{
+                  y: -12,
+                  scale: 1.05,
+                  rotateZ: 2,
+                  transition: { duration: 0.3 }
+                }}
                 className="bg-white rounded-2xl shadow-xl border border-[#B3E5FC] p-6 text-center hover:shadow-2xl transition-all duration-500 flex flex-col items-center"
+                style={{ transformStyle: 'preserve-3d' }}
               >
-                <div className="relative w-20 h-20 mb-6">
+                <motion.div
+                  className="relative w-20 h-20 mb-6"
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={isEquipmentInView ? {
+                    scale: 1,
+                    rotate: 0
+                  } : {}}
+                  transition={{
+                    duration: 0.6,
+                    delay: index * 0.12 + 0.3,
+                    type: 'spring',
+                    stiffness: 180
+                  }}
+                  whileHover={{
+                    rotate: 360,
+                    scale: 1.15,
+                    transition: { duration: 0.7 }
+                  }}
+                >
                   <div className={`absolute inset-0 bg-gradient-to-br ${item.color} rounded-xl opacity-20`} />
                   <div className={`absolute inset-0 bg-gradient-to-br ${item.color} rounded-xl flex items-center justify-center`}>
                     <item.icon className="w-10 h-10 text-white" />
                   </div>
-                </div>
+                </motion.div>
 
-                <h4 className="text-lg sm:text-xl font-bold text-[#003E5C] mb-3">
+                <motion.h4
+                  className="text-lg sm:text-xl font-bold text-[#003E5C] mb-3"
+                  initial={{ opacity: 0 }}
+                  animate={isEquipmentInView ? { opacity: 1 } : {}}
+                  transition={{ delay: index * 0.12 + 0.5 }}
+                >
                   {item.title}
-                </h4>
-                <p className="text-sm sm:text-base text-[#334155] flex-1">
+                </motion.h4>
+                <motion.p
+                  className="text-sm sm:text-base text-[#334155] flex-1"
+                  initial={{ opacity: 0 }}
+                  animate={isEquipmentInView ? { opacity: 1 } : {}}
+                  transition={{ delay: index * 0.12 + 0.6 }}
+                >
                   {item.description}
-                </p>
+                </motion.p>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
         </motion.div>
 
       </div>

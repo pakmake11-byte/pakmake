@@ -17,6 +17,91 @@ type SlipSheetVariant =
 
 const EASE_CUBIC = [0.65, 0, 0.35, 1] as const
 
+const variants = [
+  { id: 'single-lip', title: 'Single-Lip', description: 'Access from one side' },
+  {
+    id: 'double-lip-opposite',
+    title: 'Double-Lip (Opposite)',
+    description: 'Access from two opposite sides',
+  },
+  {
+    id: 'double-lip-adjacent',
+    title: 'Double-Lip (Adjacent)',
+    description: 'Access from two adjacent sides',
+  },
+  {
+    id: 'multi-lip',
+    title: 'Multi-Lip',
+    description: 'Access from all four sides',
+  },
+]
+
+const dimensionsTable = [
+  { label: 'Length (L) - Standard', value: '1000/1200/800 mm' },
+  { label: 'Length (L) - Alternative', value: 'Optional up to 1500 mm' },
+  { label: 'Channelling (CL) - Standard', value: '50/75/100 mm' },
+  { label: 'Width (W) - Standard', value: '1000/1200/800 mm' },
+  { label: 'Width (W) - Alternative', value: 'Optional up to 1500 mm' },
+  { label: 'Channelling (CW) - Standard', value: '50/75/100 mm' },
+]
+
+const thicknessTable = [
+  { thickness: '0.8 mm', pulling: 'Up to 800 kg' },
+  { thickness: '0.9 mm', pulling: 'Up to 1,200 kg' },
+  { thickness: '1.0 mm', pulling: 'Up to 1,500 kg' },
+  { thickness: '1.2 mm', pulling: 'Up to 1,900 kg' },
+  { thickness: '1.5 mm', pulling: 'Up to 2,200 kg' },
+  { thickness: '1.8 mm', pulling: 'Up to 2,700 kg' },
+  { thickness: '2.0 mm', pulling: 'Up to 3,200 kg' },
+]
+
+const comparisonData: {
+  attribute: string
+  kraft: string
+  plastic: string
+}[] = [
+  {
+    attribute: 'Primary Use',
+    kraft: 'Export Shipments',
+    plastic: 'Export & Internal Warehouse',
+  },
+  {
+    attribute: 'Cost Range',
+    kraft: '₹250-400 per sheet',
+    plastic: '₹300-500 per sheet',
+  },
+  {
+    attribute: 'Load Capacity',
+    kraft: '800-2000 Kg',
+    plastic: '800-3500 Kg',
+  },
+  {
+    attribute: 'Reusability',
+    kraft: '4 - 5 Times',
+    plastic: '50-100 times',
+  },
+  {
+    attribute: 'Moisture Resistance',
+    kraft: 'Limited',
+    plastic: 'Excellent',
+  },
+  {
+    attribute: 'Storage Duration',
+    kraft: 'Up to 3 Months',
+    plastic: 'Unlimited',
+  },
+  {
+    attribute: 'Cost Saving',
+    kraft: '60-65%',
+    plastic: '70-75%',
+  },
+  {
+    attribute: 'Recyclable',
+    kraft: '100% Recyclable',
+    plastic: '100% Recyclable',
+  },
+]
+
 export function ProductVariants() {
   const { ref, isInView } = useInViewAnimation({ once: false, margin: '-100px' })
   const scrollDirection = useScrollDirection()
@@ -27,44 +112,8 @@ export function ProductVariants() {
         ? 1
         : -1
 
-  const [selectedVariant, setSelectedVariant] = useState<SlipSheetVariant>('multi-lip')
-
-  const variants = [
-    { id: 'single-lip', title: 'Single-Lip', description: 'Access from one side' },
-    { id: 'double-lip-opposite', title: 'Double-Lip (Opposite)', description: 'Access from two opposite sides' },
-    { id: 'double-lip-adjacent', title: 'Double-Lip (Adjacent)', description: 'Access from two adjacent sides' },
-    { id: 'multi-lip', title: 'Multi-Lip', description: 'Access from all four sides' },
-  ]
-
-  const dimensionsTable = [
-    { label: 'Length (L) - Standard', value: '1000/1200/800 mm' },
-    { label: 'Length (L) - Alternative', value: 'Optional up to 1500 mm' },
-    { label: 'Channelling (CL) - Standard', value: '50/75/100 mm' },
-    { label: 'Width (W) - Standard', value: '1000/1200/800 mm' },
-    { label: 'Width (W) - Alternative', value: 'Optional up to 1500 mm' },
-    { label: 'Channelling (CW) - Standard', value: '50/75/100 mm' },
-  ]
-
-  const thicknessTable = [
-    { thickness: '0.8 mm', pulling: 'Up to 800 kg' },
-    { thickness: '0.9 mm', pulling: 'Up to 1,200 kg' },
-    { thickness: '1.0 mm', pulling: 'Up to 1,500 kg' },
-    { thickness: '1.2 mm', pulling: 'Up to 1,900 kg' },
-    { thickness: '1.5 mm', pulling: 'Up to 2,200 kg' },
-    { thickness: '1.8 mm', pulling: 'Up to 2,700 kg' },
-    { thickness: '2.0 mm', pulling: 'Up to 3,200 kg' },
-  ]
-
-  const comparisonData = [
-    { attribute: 'Primary Use', kraft: 'Export Shipments Only', plastic: 'Export & Internal Warehouse' },
-    { attribute: 'Cost Range', kraft: '₹250-400 per sheet', plastic: '₹300-500 per sheet' },
-    { attribute: 'Load Capacity', kraft: '800-2000 Kg', plastic: '800-3500 Kg' },
-    { attribute: 'Reusability', kraft: '4-5 times', plastic: '50-100 times' },
-    { attribute: 'Moisture Resistance', kraft: 'Limited', plastic: 'Excellent' },
-    { attribute: 'Storage Duration', kraft: '3 Months', plastic: 'Unlimited' },
-    { attribute: 'Cost Saving', kraft: '60-65%', plastic: '70-75%' },
-    { attribute: 'Recyclable', kraft: '100% Recyclable', plastic: '100% Recyclable' },
-  ]
+  const [selectedVariant, setSelectedVariant] =
+    useState<SlipSheetVariant>('multi-lip')
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -90,26 +139,28 @@ export function ProductVariants() {
     },
   })
 
-  const comparisonTableRef = useRef<HTMLTableElement | null>(null)
+  const comparisonTableRef = useRef<HTMLDivElement | null>(null)
   const dimensionsTableRef = useRef<HTMLTableElement | null>(null)
   const thicknessTableRef = useRef<HTMLTableElement | null>(null)
 
-  const isComparisonInView = useInView(comparisonTableRef, { once: false, margin: '-40px' })
-  const isDimensionsInView = useInView(dimensionsTableRef, { once: false, margin: '-40px' })
-  const isThicknessInView = useInView(thicknessTableRef, { once: false, margin: '-40px' })
-
-  const rowContainerVariant = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.2, when: 'beforeChildren' } },
-  }
-
-  const rowItemVariant = {
-    hidden: { opacity: 0, x: -20 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: EASE_CUBIC } },
-  }
+  const isComparisonInView = useInView(comparisonTableRef, {
+    once: false,
+    margin: '-40px',
+  })
+  const isDimensionsInView = useInView(dimensionsTableRef, {
+    once: false,
+    margin: '-40px',
+  })
+  const isThicknessInView = useInView(thicknessTableRef, {
+    once: false,
+    margin: '-40px',
+  })
 
   return (
-    <section ref={ref} className="relative overflow-hidden py-20 sm:py-24 lg:py-32">
+    <section
+      ref={ref}
+      className="relative overflow-hidden py-20 sm:py-24 lg:py-32"
+    >
       <BackgroundElements isInView={isInView} />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -133,59 +184,66 @@ export function ProductVariants() {
             Material Comparison
           </h3>
 
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-[#B3E5FC]">
-            <div className="overflow-x-auto no-scrollbar min-w-0">
-              {/* Use motion.table & tbody with staggered children */}
-              <motion.table className="w-full" ref={comparisonTableRef}>
+          <div 
+            ref={comparisonTableRef}
+            className="bg-white rounded-2xl shadow-xl overflow-hidden border border-[#B3E5FC]"
+          >
+            <div className="overflow-x-auto no-scrollbar">
+              <table className="w-full min-w-[640px]">
                 <thead>
-                  <tr>
-                    <th className="px-6 py-4 text-left font-bold text-[#003E5C] text-sm sm:text-base">
+                  <tr className="bg-[#00A0E3]">
+                    <th className=" w-1/3 px-4 sm:px-6 py-3 sm:py-4 text-center font-bold text-white text-sm sm:text-base">
                       Specifications
                     </th>
-                    <th className="px-6 py-4 text-center font-bold text-sm sm:text-base text-white">
-                      <div className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#80D4F8] to-[#4DC4F5]">
-                        Kraft Paper Slip Sheet
-                      </div>
+                    <th className="w-1/3 px-4 sm:px-6 py-3 sm:py-4 text-center font-bold text-white text-sm sm:text-base">
+                      Kraft Paper Slip Sheet
                     </th>
-                    <th className="px-6 py-4 text-center font-bold text-sm sm:text-base text-white">
-                      <div className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#4DC4F5] to-[#00A0E3]">
-                        PP Plastic Slip Sheet
-                      </div>
+                    <th className="w-1/3 px-4 sm:px-6 py-3 sm:py-4 text-center font-bold text-white text-sm sm:text-base">
+                      PP Plastic Slip Sheet
                     </th>
                   </tr>
                 </thead>
 
-                <motion.tbody
-                  variants={rowContainerVariant}
-                  initial="hidden"
-                  animate={isComparisonInView ? 'visible' : 'hidden'}
-                >
-                  {comparisonData.map((row) => (
+                <tbody>
+                  {comparisonData.map((row, index) => (
                     <motion.tr
                       key={row.attribute}
-                      variants={rowItemVariant}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={isComparisonInView ? {
+                        opacity: 1,
+                        x: 0
+                      } : { opacity: 0, x: -20 }}
+                      transition={{
+                        duration: 0.6,
+                        delay: 0.08 * index,
+                        ease: EASE_CUBIC
+                      }}
+                      whileHover={{ 
+                        backgroundColor: '#F0FBFF',
+                        transition: { duration: 0.2 }
+                      }}
                       className={`border-t border-[#E6F7FF] ${
-                        comparisonData.indexOf(row) % 2 === 0 ? 'bg-white' : 'bg-[#FAFDFF]'
-                      } hover:bg-[#F0FBFF] transition-colors duration-200`}
+                        index % 2 === 0 ? 'bg-white' : 'bg-[#FAFDFF]'
+                      } transition-colors duration-200`}
                       style={{ willChange: 'transform, opacity' }}
                     >
-                      <td className="px-6 py-4 font-semibold text-[#334155] text-sm">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 text-center font-semibold text-[#334155] text-xs sm:text-sm">
                         {row.attribute}
                       </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className="inline-block px-5 py-1.5 bg-transparent hover:bg-amber-50 text-amber-800 rounded-lg font-medium text-xs sm:text-sm border border-amber-200">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 text-center">
+                        <span className="inline-block font-bold text-[#005F8C] text-xs sm:text-sm bg-[#E6F7FF] px-2 py-1 rounded">
                           {row.kraft}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className="inline-block px-5 py-1.5 bg-transparent hover:bg-blue-100 text-blue-800 rounded-lg font-medium text-xs sm:text-sm border border-blue-200">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 text-center">
+                        <span className="inline-block font-medium text-slate-700 text-xs sm:text-sm">
                           {row.plastic}
                         </span>
                       </td>
                     </motion.tr>
                   ))}
-                </motion.tbody>
-              </motion.table>
+                </tbody>
+              </table>
             </div>
           </div>
         </motion.div>
@@ -215,7 +273,9 @@ export function ProductVariants() {
                     variants={getItemVariants(directionNum)}
                     whileHover={{ scale: 1.02, y: -4 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => setSelectedVariant(variant.id as SlipSheetVariant)}
+                    onClick={() =>
+                      setSelectedVariant(variant.id as SlipSheetVariant)
+                    }
                     className={`relative p-6 sm:p-8 rounded-2xl transition-all duration-300 group overflow-hidden ${
                       selectedVariant === variant.id
                         ? 'bg-gradient-to-br from-[#00A0E3] to-[#007CB8] text-white shadow-xl'
@@ -258,7 +318,9 @@ export function ProductVariants() {
                       </div>
                       <p
                         className={`text-sm mb-4 ${
-                          selectedVariant === variant.id ? 'text-[#E6F7FF]' : 'text-[#334155]'
+                          selectedVariant === variant.id
+                            ? 'text-[#E6F7FF]'
+                            : 'text-[#334155]'
                         }`}
                       >
                         {variant.description}
@@ -297,37 +359,58 @@ export function ProductVariants() {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="w-full bg-white rounded-2xl shadow-md border border-[#B3E5FC] p-4 sm:p-6"
+              className="w-full bg-white rounded-2xl shadow-xl border border-[#B3E5FC] overflow-hidden"
             >
-              <h4 className="text-lg font-semibold text-[#005F8C] mb-3">Dimensions</h4>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm" ref={dimensionsTableRef}>
-                  <thead>
-                    <tr className="bg-gradient-to-r from-[#80D4F8] to-[#4DC4F5] text-white">
-                      <th className="px-3 py-2 text-left font-semibold">Specification</th>
-                      <th className="px-3 py-2 text-left font-semibold">Measurement</th>
-                    </tr>
-                  </thead>
+              <div className="p-4 sm:p-6">
+                <h4 className="text-lg font-semibold text-[#005F8C] mb-4">
+                  Dimensions
+                </h4>
+                <div className="overflow-x-auto -mx-4 sm:mx-0">
+                  <table className="w-full text-sm min-w-[400px]" ref={dimensionsTableRef}>
+                    <thead>
+                      <tr className="bg-gradient-to-r from-[#80D4F8] to-[#4DC4F5] text-white">
+                        <th className="px-3 sm:px-4 py-3 text-left font-semibold">
+                          Specification
+                        </th>
+                        <th className="px-3 sm:px-4 py-3 text-left font-semibold">
+                          Measurement
+                        </th>
+                      </tr>
+                    </thead>
 
-                  <motion.tbody
-                    variants={rowContainerVariant}
-                    initial="hidden"
-                    animate={isDimensionsInView ? 'visible' : 'hidden'}
-                  >
-                    {dimensionsTable.map((row) => (
-                      <motion.tr
-                        key={row.label}
-                        variants={rowItemVariant}
-                        className={`border-t border-[#E6F7FF] ${
-                          dimensionsTable.indexOf(row) % 2 === 0 ? 'bg-white' : 'bg-[#FAFDFF]'
-                        } hover:bg-[#F8FDFF] transition-colors duration-200`}
-                      >
-                        <td className="px-3 py-3 font-medium text-[#334155]">{row.label}</td>
-                        <td className="px-3 py-3 text-[#334155]">{row.value}</td>
-                      </motion.tr>
-                    ))}
-                  </motion.tbody>
-                </table>
+                    <tbody>
+                      {dimensionsTable.map((row, index) => (
+                        <motion.tr
+                          key={row.label}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={isDimensionsInView ? {
+                            opacity: 1,
+                            x: 0
+                          } : { opacity: 0, x: -20 }}
+                          transition={{
+                            duration: 0.6,
+                            delay: 0.08 * index,
+                            ease: EASE_CUBIC
+                          }}
+                          whileHover={{ 
+                            backgroundColor: '#F0FBFF',
+                            transition: { duration: 0.2 }
+                          }}
+                          className={`border-t border-[#E6F7FF] ${
+                            index % 2 === 0 ? 'bg-white' : 'bg-[#FAFDFF]'
+                          } transition-colors duration-200`}
+                        >
+                          <td className="px-3 sm:px-4 py-3 font-medium text-[#334155] text-xs sm:text-sm">
+                            {row.label}
+                          </td>
+                          <td className="px-3 sm:px-4 py-3 text-[#334155] text-xs sm:text-sm">
+                            {row.value}
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </motion.div>
 
@@ -336,39 +419,58 @@ export function ProductVariants() {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.45 }}
-              className="w-full bg-white rounded-2xl shadow-md border border-[#B3E5FC] p-4 sm:p-6"
+              className="w-full bg-white rounded-2xl shadow-xl border border-[#B3E5FC] overflow-hidden"
             >
-              <h4 className="text-lg font-semibold text-[#005F8C] mb-3">
-                Thickness & Pulling Strength
-              </h4>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm" ref={thicknessTableRef}>
-                  <thead>
-                    <tr className="bg-gradient-to-r from-[#4DC4F5] to-[#00A0E3] text-white">
-                      <th className="px-3 py-2 text-left font-semibold">Thickness</th>
-                      <th className="px-3 py-2 text-left font-semibold">Pulling Strength</th>
-                    </tr>
-                  </thead>
+              <div className="p-4 sm:p-6">
+                <h4 className="text-lg font-semibold text-[#005F8C] mb-4">
+                  Thickness & Pulling Strength
+                </h4>
+                <div className="overflow-x-auto -mx-4 sm:mx-0">
+                  <table className="w-full text-sm min-w-[400px]" ref={thicknessTableRef}>
+                    <thead>
+                      <tr className="bg-gradient-to-r from-[#4DC4F5] to-[#00A0E3] text-white">
+                        <th className="px-3 sm:px-4 py-3 text-left font-semibold">
+                          Thickness
+                        </th>
+                        <th className="px-3 sm:px-4 py-3 text-left font-semibold">
+                          Pulling Strength
+                        </th>
+                      </tr>
+                    </thead>
 
-                  <motion.tbody
-                    variants={rowContainerVariant}
-                    initial="hidden"
-                    animate={isThicknessInView ? 'visible' : 'hidden'}
-                  >
-                    {thicknessTable.map((row) => (
-                      <motion.tr
-                        key={row.thickness}
-                        variants={rowItemVariant}
-                        className={`border-t border-[#E6F7FF] ${
-                          thicknessTable.indexOf(row) % 2 === 0 ? 'bg-white' : 'bg-[#FAFDFF]'
-                        } hover:bg-[#F8FDFF] transition-colors duration-200`}
-                      >
-                        <td className="px-3 py-3 font-medium text-[#334155]">{row.thickness}</td>
-                        <td className="px-3 py-3 text-[#334155]">{row.pulling}</td>
-                      </motion.tr>
-                    ))}
-                  </motion.tbody>
-                </table>
+                    <tbody>
+                      {thicknessTable.map((row, index) => (
+                        <motion.tr
+                          key={row.thickness}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={isThicknessInView ? {
+                            opacity: 1,
+                            x: 0
+                          } : { opacity: 0, x: -20 }}
+                          transition={{
+                            duration: 0.6,
+                            delay: 0.08 * index,
+                            ease: EASE_CUBIC
+                          }}
+                          whileHover={{ 
+                            backgroundColor: '#F0FBFF',
+                            transition: { duration: 0.2 }
+                          }}
+                          className={`border-t border-[#E6F7FF] ${
+                            index % 2 === 0 ? 'bg-white' : 'bg-[#FAFDFF]'
+                          } transition-colors duration-200`}
+                        >
+                          <td className="px-3 sm:px-4 py-3 font-medium text-[#334155] text-xs sm:text-sm">
+                            {row.thickness}
+                          </td>
+                          <td className="px-3 sm:px-4 py-3 text-[#334155] text-xs sm:text-sm">
+                            {row.pulling}
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </motion.div>
           </div>

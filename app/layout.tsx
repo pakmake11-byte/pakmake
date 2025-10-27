@@ -6,7 +6,21 @@ import { Footer } from '@/components/layout/Footer'
 export const metadata: Metadata = {
   title: 'PakMake Packaging Inc® - Move More Products More Economically',
   description:
-    'Sustainable slip sheet solutions replacing traditional wooden pallets. 80% cost reduction, 100% recyclable, ISPM 15 exempt.',
+    'Sustainable slip sheet solutions replacing traditional wooden pallets. 80% cost reduction, 100% recyclable.',
+
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'none',
+      'max-snippet': -1,
+    },
+  },
 
   icons: {
     icon: [
@@ -32,6 +46,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="robots" content="noindex, nofollow, nocache" />
+        <meta name="googlebot" content="noindex, nofollow" />
+        <meta name="bingbot" content="noindex, nofollow" />
+      </head>
       <body>
         <Navigation />
         <main>{children}</main>

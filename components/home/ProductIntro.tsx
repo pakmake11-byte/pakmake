@@ -3,23 +3,20 @@
 import { motion, useInView, Variants } from 'framer-motion'
 import { useRef } from 'react'
 import {
-  fadeInUpVariants,
-  createContainerVariants,
   connectorLineVariants,
 } from '@/lib/animations/variants'
 import { SlipSheetModel } from '@/components/three/SlipSheetModel'
 import { BackgroundElements } from '../ui/BackgroundElements'
+import { Boxes } from 'lucide-react'
+import { SectionHeader } from '@/components/ui/SectionHeader'
 
+// === FeaturePoint Component ===
 const FeaturePoint = ({
   label,
   align,
-  delay,
-  isInView,
 }: {
   label: string
   align: 'left' | 'right'
-  delay: number
-  isInView: boolean
 }) => {
   const variants: Variants = {
     hidden: { opacity: 0, x: align === 'right' ? -30 : 30 },
@@ -27,8 +24,7 @@ const FeaturePoint = ({
       opacity: 1,
       x: 0,
       transition: {
-        duration: 0.5,
-        delay,
+        duration: 0.6,
         ease: [0.65, 0, 0.35, 1],
       },
     },
@@ -36,8 +32,6 @@ const FeaturePoint = ({
 
   return (
     <motion.div
-      initial="hidden"
-      animate={isInView ? 'visible' : 'hidden'}
       variants={variants}
       className={`relative flex items-center gap-4 w-full ${
         align === 'right' ? 'flex-row-reverse text-right' : 'text-left'
@@ -64,13 +58,12 @@ const FeaturePoint = ({
             : 'left-full bg-gradient-to-r from-[#80D4F8] to-transparent'
         } w-8 lg:w-16`}
         variants={connectorLineVariants(align)}
-        initial="hidden"
-        animate={isInView ? 'visible' : 'hidden'}
       />
     </motion.div>
   )
 }
 
+// === ProductIntro Section ===
 export const ProductIntro = function ProductIntro() {
   const sectionRef = useRef(null)
   const isInView = useInView(sectionRef, { once: false, margin: '-100px' })
@@ -92,7 +85,16 @@ export const ProductIntro = function ProductIntro() {
   const leftFeatures = features.slice(0, midIndex)
   const rightFeatures = features.slice(midIndex)
 
-  const containerVariants = createContainerVariants()
+  // === Master container with global stagger ===
+  const masterContainer: Variants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.25, // 👈 Controls spacing between point animations
+        delayChildren: 0.2,    // 👈 Delay before first point
+      },
+    },
+  }
 
   return (
     <section
@@ -105,42 +107,26 @@ export const ProductIntro = function ProductIntro() {
       {/* Foreground Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
-        <motion.div
-          variants={fadeInUpVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
-          className="text-center mb-12 lg:mb-16"
-        >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#003E5C] mb-6">
-            Why Choose{' '}
-            <span className="bg-gradient-to-r from-[#00A0E3] to-[#007CB8] bg-clip-text text-transparent">
-              Slip Sheets
-            </span>
-            ?
-          </h2>
-          <p className="text-base sm:text-lg lg:text-xl text-[#334155] max-w-3xl mx-auto leading-relaxed text-center">
-            Experience a paradigm shift in logistics. Our slip sheets outperform
-            traditional pallets in every key metric.
-          </p>
-        </motion.div>
+        <SectionHeader
+          icon={Boxes}
+          title="Why Choose"
+          highlightedText="Slip Sheets?"
+          subtitle="Experience a paradigm shift in logistics. Our slip sheets outperform traditional pallets in every key metric."
+          isInView={isInView}
+          iconGradient="from-[#E0F7FA] to-[#B3E5FC]"
+        />
 
-        {/* 3-Column Layout */}
+        {/* Master animation container */}
         <motion.div
-          className="relative grid grid-cols-[1fr_auto_1fr] md:grid-cols-[2fr_3fr_2fr] gap-x-4 lg:gap-x-8 items-center"
-          variants={containerVariants}
+          variants={masterContainer}
           initial="hidden"
           animate={isInView ? 'visible' : 'hidden'}
+          className="relative grid grid-cols-[1fr_auto_1fr] md:grid-cols-[2fr_3fr_2fr] gap-x-4 lg:gap-x-8 items-center"
         >
           {/* Left Feature List */}
           <div className="space-y-6 lg:space-y-8">
-            {leftFeatures.map((feature, index) => (
-              <FeaturePoint
-                key={feature.label}
-                {...feature}
-                align="left"
-                delay={index * 0.1}
-                isInView={isInView}
-              />
+            {leftFeatures.map((feature) => (
+              <FeaturePoint key={feature.label} {...feature} align="left" />
             ))}
           </div>
 
@@ -151,14 +137,8 @@ export const ProductIntro = function ProductIntro() {
 
           {/* Right Feature List */}
           <div className="space-y-6 lg:space-y-8">
-            {rightFeatures.map((feature, index) => (
-              <FeaturePoint
-                key={feature.label}
-                {...feature}
-                align="right"
-                delay={index * 0.1}
-                isInView={isInView}
-              />
+            {rightFeatures.map((feature) => (
+              <FeaturePoint key={feature.label} {...feature} align="right" />
             ))}
           </div>
         </motion.div>

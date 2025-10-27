@@ -45,7 +45,6 @@ export const MapLegend = React.memo(function MapLegend({ items }: MapLegendProps
     { color: 'bg-[#ef4444]', label: 'Office', type: 'circle' as const, size: 'large' as const },
     { color: 'bg-[#00A0E3]', label: 'Service Locations', type: 'circle' as const, size: 'medium' as const },
     { color: 'bg-[#00A0E3]', label: 'Distribution Network', type: 'line' as const },
-    { color: 'bg-[#B3E5FC]', label: 'Countries Served', type: 'circle' as const, size: 'small' as const }
   ]
 
   return (

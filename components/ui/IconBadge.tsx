@@ -23,7 +23,7 @@ export function IconBadge({
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
       transition={{ delay }}
-      className={`inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br ${gradient} rounded-2xl shadow-lg`}
+      className={`inline-flex items-center justify-center w-17 h-17 bg-gradient-to-br ${gradient} rounded-2xl shadow-lg`}
     >
       <Icon className="w-8 h-8 text-primary-600" />
     </motion.div>

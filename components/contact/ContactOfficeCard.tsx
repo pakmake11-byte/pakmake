@@ -188,90 +188,111 @@ function ContactInfoList({
 }) {
   return (
     <div className="space-y-3">
-      {contactInfo.map((info, idx) => {
-        const Icon = info.icon
-        const [itemHovered, setItemHovered] = useState(false)
-        const isCopied = copiedField === info.label
-
-        return (
-          <motion.div
-            key={idx}
-            variants={infoItemVariants}
-            className="group/item"
-            onHoverStart={() => setItemHovered(true)}
-            onHoverEnd={() => setItemHovered(false)}
-            animate={{
-              x: isHovered ? 6 : 0,
-            }}
-            transition={{ duration: 0.3, delay: idx * 0.05 }}
-          >
-            <div className="flex items-start gap-3 relative">
-              <motion.div
-                className="p-2 rounded-md border border-gray-200 flex-shrink-0"
-                animate={{
-                  scale: itemHovered ? 1.1 : 1,
-                }}
-                transition={{ duration: 0.2 }}
-              >
-                <Icon className="w-4 h-4 text-gray-600" />
-              </motion.div>
-
-              <div className="flex-1 min-w-0 relative">
-                <p className="font-semibold text-gray-600 text-xs mb-0.5 uppercase tracking-wide">
-                  {info.label}
-                </p>
-                <div className="flex items-center gap-2">
-                  {info.href ? (
-                    <motion.a
-                      href={info.href}
-                      className="text-gray-800 hover:text-primary-600 transition-colors text-sm font-medium flex items-center gap-1"
-                      whileHover={{ x: 2 }}
-                    >
-                      <span className="truncate">{info.value}</span>
-                    </motion.a>
-                  ) : (
-                    <p className="text-gray-800 text-sm leading-snug line-clamp-2">
-                      {info.value}
-                    </p>
-                  )}
-
-                  {info.copyable && (
-                    <motion.button
-                      onClick={() => onCopy(info.value, info.label)}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      className="p-1.5 rounded-md border border-gray-200 hover:bg-gray-100 transition-colors"
-                      title="Copy to clipboard"
-                    >
-                      <AnimatePresence mode="wait">
-                        {isCopied ? (
-                          <motion.div
-                            key="check"
-                            initial={{ scale: 0, rotate: -180 }}
-                            animate={{ scale: 1, rotate: 0 }}
-                            exit={{ scale: 0, rotate: 180 }}
-                          >
-                            <Check className="w-3.5 h-3.5 text-green-600" />
-                          </motion.div>
-                        ) : (
-                          <motion.div
-                            key="copy"
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            exit={{ scale: 0 }}
-                          >
-                            <Copy className="w-3.5 h-3.5 text-gray-700" />
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </motion.button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )
-      })}
+      {contactInfo.map((info, idx) => (
+        <ContactInfoItem
+          key={idx}
+          info={info}
+          idx={idx}
+          isHovered={isHovered}
+          onCopy={onCopy}
+          copiedField={copiedField}
+        />
+      ))}
     </div>
+  )
+}
+
+// Contact Info Item Component (Fixes useState in map)
+function ContactInfoItem({
+  info,
+  idx,
+  isHovered,
+  onCopy,
+  copiedField,
+}: {
+  info: ContactInfo
+  idx: number
+  isHovered: boolean
+  onCopy: (text: string, field: string) => void
+  copiedField: string | null
+}) {
+  const [itemHovered, setItemHovered] = useState(false)
+  const isCopied = copiedField === info.label
+  const Icon = info.icon
+
+  return (
+    <motion.div
+      variants={infoItemVariants}
+      className="group/item"
+      onHoverStart={() => setItemHovered(true)}
+      onHoverEnd={() => setItemHovered(false)}
+      animate={{
+        x: isHovered ? 6 : 0,
+      }}
+      transition={{ duration: 0.3, delay: idx * 0.05 }}
+    >
+      <div className="flex items-start gap-3 relative">
+        <motion.div
+          className="p-2 rounded-md border border-gray-200 flex-shrink-0"
+          animate={{
+            scale: itemHovered ? 1.1 : 1,
+          }}
+          transition={{ duration: 0.2 }}
+        >
+          <Icon className="w-4 h-4 text-gray-600" />
+        </motion.div>
+
+        <div className="flex-1 min-w-0 relative">
+          <p className="font-semibold text-gray-600 text-xs mb-0.5 uppercase tracking-wide">
+            {info.label}
+          </p>
+          <div className="flex items-center gap-2">
+            {info.href ? (
+              <motion.a
+                href={info.href}
+                className="text-gray-800 hover:text-primary-600 transition-colors text-sm font-medium flex items-center gap-1"
+                whileHover={{ x: 2 }}
+              >
+                <span className="truncate">{info.value}</span>
+              </motion.a>
+            ) : (
+              <p className="text-gray-800 text-sm leading-snug line-clamp-2">{info.value}</p>
+            )}
+
+            {info.copyable && (
+              <motion.button
+                onClick={() => onCopy(info.value, info.label)}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="p-1.5 rounded-md border border-gray-200 hover:bg-gray-100 transition-colors"
+                title="Copy to clipboard"
+              >
+                <AnimatePresence mode="wait">
+                  {isCopied ? (
+                    <motion.div
+                      key="check"
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      exit={{ scale: 0, rotate: 180 }}
+                    >
+                      <Check className="w-3.5 h-3.5 text-green-600" />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="copy"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                    >
+                      <Copy className="w-3.5 h-3.5 text-gray-700" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.button>
+            )}
+          </div>
+        </div>
+      </div>
+    </motion.div>
   )
 }

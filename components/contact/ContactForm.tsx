@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, type Variants } from 'framer-motion'
 import { Mail, User, Building2, MessageSquare, CheckCircle } from 'lucide-react'
 import { useInViewAnimation } from '@/lib/hooks/useInViewAnimation'
 import { useScrollDirection } from '@/lib/hooks/useScrollDirection'
@@ -110,7 +110,7 @@ export function ContactForm() {
   )
 }
 
-// Success Message Component
+// ✅ Success Message Component
 function SuccessMessage({ onReset }: { onReset: () => void }) {
   return (
     <motion.section
@@ -197,10 +197,10 @@ function SuccessMessage({ onReset }: { onReset: () => void }) {
   )
 }
 
-// Form Content Component
+// ✅ Form Content Component (fixed typing)
 interface FormContentProps {
   isInView: boolean
-  containerVariants: any
+  containerVariants: Variants
   formData: FormData
   error: string
   isSubmitting: boolean

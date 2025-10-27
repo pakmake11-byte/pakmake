@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, Variants } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { EASE_CUBIC } from '@/lib/animations/variants'
 import { SectionHeader } from '@/components/ui/SectionHeader'
@@ -29,7 +29,7 @@ const industries: Industry[] = [
   { name: 'Electronics', icon: '📱', description: 'Tech components', color: 'from-violet-400 to-violet-600' },
   { name: 'Beverage', icon: '🥤', description: 'Drinks & beverages', color: 'from-rose-400 to-rose-600' },
   { name: 'Spice', icon: '🌶️', description: 'Spice products', color: 'from-orange-500 to-red-600' },
-  { name: 'Dairy', icon: '🧀', description: 'Milk & dairy products', color: 'from-blue-300 to-blue-500' }
+  { name: 'Dairy', icon: '🧀', description: 'Milk & dairy products', color: 'from-blue-300 to-blue-500' },
 ]
 
 function useResponsiveColumns() {
@@ -51,73 +51,129 @@ function useResponsiveColumns() {
   return cols
 }
 
-function IndustryCard({ industry, index, scrollDirection, columns }: { 
+function IndustryCard({
+  industry,
+  index,
+  scrollDirection,
+  columns,
+  sectionVisible,
+}: {
   industry: Industry
   index: number
   scrollDirection: number
   columns: number
+  sectionVisible: boolean
 }) {
   const cardRef = useRef(null)
-  const isInView = useInView(cardRef, { once: false, margin: '-10% 0px -10% 0px', amount: 0.3 })
-  const rowIndex = Math.floor(index / columns)
+  const isInView = useInView(cardRef, { once: false, margin: '-150px 0px -150px 0px' })
+  const [shouldAnimate, setShouldAnimate] = useState(false)
 
-  const variants = {
-    hidden: { opacity: 0, y: scrollDirection > 0 ? 80 : -80, z: -120, scale: 0.9 },
-    visible: { 
+  // Reset cards when section leaves view
+  useEffect(() => {
+    if (!sectionVisible) setShouldAnimate(false)
+  }, [sectionVisible])
+
+  // Trigger animation when card re-enters view (and section is visible)
+  useEffect(() => {
+    if (isInView && sectionVisible) setShouldAnimate(true)
+  }, [isInView, sectionVisible])
+
+  const cardVariants = {
+    hidden: {
+      opacity: 0,
+      y: scrollDirection > 0 ? 60 : -60,
+      scale: 0.9,
+      rotateX: scrollDirection > 0 ? 10 : -10,
+    },
+    visible: {
       opacity: 1,
       y: 0,
-      z: 0,
       scale: 1,
-      transition: { duration: 0.6, delay: rowIndex * 0.1 + (index % columns) * 0.04, ease: EASE_CUBIC }
-    }
+      rotateX: 0,
+      transition: {
+        duration: 0.7,
+        delay: (index % columns) * 0.4,
+        ease: EASE_CUBIC,
+      },
+    },
+  }
+
+  const shineVariants: Variants = {
+    hidden: { backgroundPosition: '150% 50%' },
+    visible: {
+      backgroundPosition: '-50% 50%',
+      transition: {
+        duration: 4,
+        delay: (index % columns) * 0.4,
+        ease: 'easeIn',
+      },
+    },
   }
 
   return (
     <motion.div
       ref={cardRef}
-      variants={variants}
+      variants={cardVariants}
       initial="hidden"
-      animate={isInView ? 'visible' : 'hidden'}
-      whileHover={{ y: -8, scale: 1.02, z: 20 }}
-      className="bg-white rounded-2xl p-4 sm:p-6 text-center shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer border border-[#B3E5FC] group perspective-1200"
+      animate={shouldAnimate ? 'visible' : 'hidden'}
+      whileHover={{
+        y: -10,
+        scale: 1.03,
+        rotateY: 3,
+        transition: { duration: 0.3 },
+      }}
+      className="bg-white rounded-2xl p-4 sm:p-6 text-center shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer border border-[#B3E5FC] group"
+      style={{ transformStyle: 'preserve-3d' }}
     >
       <motion.div
-        className="relative mx-auto w-22 h-22 mb-4"
-        whileHover={{ rotate: 360, scale: 1.1 }}
-        transition={{ duration: 0.6 }}
+        className="relative mx-auto w-16 h-16 sm:w-20 sm:h-20 mb-4"
+        whileHover={{
+          rotate: 360,
+          scale: 1.15,
+          transition: { duration: 0.6 },
+        }}
       >
-        <div className={`absolute inset-0 bg-gradient-to-br ${industry.color} rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity`} />
+        <div
+          className={`absolute inset-0 bg-gradient-to-br ${industry.color} rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity`}
+        />
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-5xl">{industry.icon}</span>
+          <span className="text-4xl sm:text-5xl">{industry.icon}</span>
         </div>
       </motion.div>
 
-      <h3 className="text-lg sm:text-xl font-bold text-[#003E5C] group-hover:text-[#00A0E3] transition-colors">
+      <motion.h3
+        variants={shineVariants}
+        className="text-base sm:text-lg lg:text-xl font-bold mb-2 
+                   bg-clip-text text-transparent bg-[length:250%_100%] 
+                   bg-[linear-gradient(90deg,_#003E5C_40%,_white_50%,_#003E5C_60%)] 
+                   group-hover:bg-[linear-gradient(90deg,_#00A0E3,_#00A0E3)] 
+                   transition-all duration-300"
+      >
         {industry.name}
-      </h3>
-      <p className="text-sm sm:text-base text-[#334155]">{industry.description}</p>
+      </motion.h3>
+      <p className="text-xs sm:text-sm text-[#334155]">{industry.description}</p>
     </motion.div>
   )
 }
 
 export function IndustriesServed() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: false, margin: '-100px' })
+  const sectionRef = useRef(null)
+  const sectionInView = useInView(sectionRef, { once: false, margin: '-100px' })
   const scrollDirection = useScrollDirection()
   const columns = useResponsiveColumns()
 
   return (
-    <section ref={ref} className="py-20 sm:py-24 lg:py-32 bg-paper-texture">
+    <section ref={sectionRef} className="py-20 sm:py-24 lg:py-32 bg-paper-texture">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
           icon={Building2}
           title="Industries We"
           highlightedText="Serve"
           subtitle="Our slip sheet solutions are trusted across diverse industries worldwide"
-          isInView={isInView}
+          isInView={sectionInView}
         />
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 sm:gap-8">
           {industries.map((industry, index) => (
             <IndustryCard
               key={industry.name}
@@ -125,6 +181,7 @@ export function IndustriesServed() {
               index={index}
               scrollDirection={scrollDirection}
               columns={columns}
+              sectionVisible={sectionInView}
             />
           ))}
         </div>

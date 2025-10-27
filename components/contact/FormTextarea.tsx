@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { MessageSquare } from 'lucide-react'
 import { itemVariants, EASE_CUBIC } from '@/lib/animations/variants'
 

@@ -26,7 +26,7 @@ export function StatsDisplay({ stats, isInView, scrollDirection }: StatsDisplayP
       animate={isInView ? "visible" : "hidden"}
       className="flex flex-wrap justify-center items-center gap-6 sm:gap-8 mt-8"
     >
-      {stats.map((stat, index) => (
+      {stats.map((stat) => (
         <motion.div
           key={stat.label}
           variants={itemVariants}

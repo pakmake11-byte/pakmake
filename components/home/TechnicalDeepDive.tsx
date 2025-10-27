@@ -22,6 +22,16 @@ export function TechnicalDeepDive() {
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
 
+    useEffect(() => {
+    if (typeof window !== 'undefined' && window.__pageAudioControl) {
+      if (isInView && isPlaying && !isMuted) {
+        window.__pageAudioControl.pause()
+      } else if (!isInView && window.__pageAudioControl) {
+        window.__pageAudioControl.play()
+      }
+    }
+  }, [isInView, isPlaying, isMuted])
+
   const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const time = parseFloat(e.target.value)
     if (videoRef.current && !isNaN(time) && isFinite(time)) {
@@ -148,7 +158,7 @@ export function TechnicalDeepDive() {
   const equipmentRef = useRef(null)
   const isProcessInView = useInView(processStepsRef, { once: false, margin: '-100px' })
   const isEquipmentInView = useInView(equipmentRef, { once: false, margin: '-100px' })
-
+  
   useEffect(() => {
     const video = videoRef.current
     if (!video) return

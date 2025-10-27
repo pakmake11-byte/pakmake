@@ -1,11 +1,14 @@
 import { ContactForm } from '@/components/contact/ContactForm'
 import { ContactInfo } from '@/components/contact/ContactInfo'
+import { PageAudioWrapper } from '@/components/ui/PageAudioWrapper'
 
 export default function Contact() {
   return (
-    <div className="min-h-screen pt-16">
-      <ContactForm />
-      <ContactInfo />
-    </div>
+    <PageAudioWrapper>
+      <div className="min-h-screen pt-16">
+        <ContactForm />
+        <ContactInfo />
+      </div>
+    </PageAudioWrapper>
   )
 }

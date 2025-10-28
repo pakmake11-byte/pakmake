@@ -98,18 +98,6 @@ function IndustryCard({
     },
   }
 
-  const shineVariants: Variants = {
-    hidden: { backgroundPosition: '50% 50%' },
-    visible: {
-      backgroundPosition: '-50% 50%',
-      transition: {
-        duration: 4,
-        delay: (index % columns) * 3,
-        ease: 'easeIn',
-      },
-    },
-  }
-
   return (
     <motion.div
       ref={cardRef}
@@ -141,16 +129,11 @@ function IndustryCard({
         </div>
       </motion.div>
 
-      <motion.h3
-        variants={shineVariants}
-        className="text-base sm:text-lg lg:text-xl font-bold mb-2 
-                   bg-clip-text text-transparent bg-[length:250%_100%] 
-                   bg-[linear-gradient(90deg,_#003E5C_40%,_white_50%,_#003E5C_60%)] 
-                   group-hover:bg-[linear-gradient(90deg,_#00A0E3,_#00A0E3)] 
-                   transition-all duration-300"
+      <h3
+        className="text-base sm:text-lg lg:text-xl font-bold mb-2 transition-all duration-300"
       >
         {industry.name}
-      </motion.h3>
+      </h3>
       <p className="text-xs sm:text-sm text-[#334155]">{industry.description}</p>
     </motion.div>
   )

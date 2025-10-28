@@ -104,7 +104,7 @@ function IndustryCard({
       backgroundPosition: '-50% 50%',
       transition: {
         duration: 4,
-        delay: (index % columns) * 5,
+        delay: (index % columns) * 3,
         ease: 'easeIn',
       },
     },

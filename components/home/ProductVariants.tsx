@@ -254,15 +254,15 @@ export function ProductVariants() {
   const thicknessTableRef = useRef<HTMLTableElement | null>(null)
 
   const isComparisonInView = useInView(comparisonTableRef, {
-    once: false,
+    once: true,
     margin: '-40px',
   })
   const isDimensionsInView = useInView(dimensionsTableRef, {
-    once: false,
+    once: true,
     margin: '-40px',
   })
   const isThicknessInView = useInView(thicknessTableRef, {
-    once: false,
+    once: true,
     margin: '-40px',
   })
 

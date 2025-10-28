@@ -126,7 +126,6 @@ const CombinationLockCell = memo(function CombinationLockCell({
   )
 })
 
-
 export function ComparisonSection() {
   const ref = useRef<HTMLDivElement | null>(null)
   const isInView = useInView(ref, { once: false, margin: '-100px' })
@@ -134,7 +133,7 @@ export function ComparisonSection() {
 
   const tableRef = useRef<HTMLDivElement | null>(null)
   const videoRef = useRef<HTMLDivElement | null>(null)
-  const isTableInView = useInView(tableRef, { once: false, margin: '-50px' })
+  const isTableInView = useInView(tableRef, { once: true, margin: '-50px' })
   const isVideoInView = useInView(videoRef, { once: false, margin: '-50px' })
 
   const getDirection = () => (scrollDirection === 1 ? 1 : -1)

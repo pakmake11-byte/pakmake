@@ -123,7 +123,7 @@ export function SocialProof() {
           className="relative bg-white rounded-2xl shadow-xl border border-[#B3E5FC] p-8 sm:p-10 lg:p-12 mb-12 overflow-hidden"
         >
           {/* Gradient accent line */}
-          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#00A0E3] via-[#4DC4F5] to-[#007CB8]" />
+          <div className="absolute top-0 left-0 w-full h-2 bg-linear-to-r from-[#00A0E3] via-[#4DC4F5] to-[#007CB8]" />
 
           {/* Faint background quote icon */}
           <motion.div
@@ -153,7 +153,7 @@ export function SocialProof() {
                   <p className="text-lg sm:text-xl font-bold text-[#003E5C] mb-1">
                     {active.author}
                   </p>
-                  <p className="text-base sm:text-lg font-semibold bg-gradient-to-r from-[#00A0E3] to-[#007CB8] bg-clip-text text-transparent mb-1">
+                  <p className="text-base sm:text-lg font-semibold bg-linear-to-r from-[#00A0E3] to-[#007CB8] bg-clip-text text-transparent mb-1">
                     {active.role}
                   </p>
                   <p className="text-sm sm:text-base text-[#334155]">
@@ -172,7 +172,7 @@ export function SocialProof() {
                 onClick={() => handleChange(i)}
                 className={`transition-all duration-300 rounded-full ${
                   i === current
-                    ? 'w-12 h-3 bg-gradient-to-r from-[#00A0E3] to-[#007CB8]'
+                    ? 'w-12 h-3 bg-linear-to-r from-[#00A0E3] to-[#007CB8]'
                     : 'w-3 h-3 bg-[#B3E5FC] hover:bg-[#80D4F8]'
                 }`}
                 aria-label={`Go to testimonial ${i + 1}`}

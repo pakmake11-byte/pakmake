@@ -31,20 +31,6 @@
   }
 }
 
-@utility text-balance {
-  text-wrap: balance;
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px) translateZ(0);
-  }
-  50% {
-    transform: translateY(-20px) translateZ(0);
-  }
-}
-
 @theme inline {
   --animate-scroll: scroll var(--animation-duration, 40s)
     var(--animation-direction, forwards) linear infinite;

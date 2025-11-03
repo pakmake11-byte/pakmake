@@ -120,17 +120,6 @@ export const createSlideVariants = (from: 'left' | 'right' = 'left') => ({
   }
 })
 
-export const countryBadgeVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.8 },
-  visible: { 
-    opacity: 1, 
-    scale: 1,
-    transition: { 
-      duration: 0.6, 
-      ease: EASE_CUBIC 
-    }
-  }
-}
 
 export const infoItemVariants: Variants = {
   hidden: { opacity: 0, x: -20 },
@@ -160,19 +149,6 @@ export const createGradientAnimation = (delay: number = 0.3) => ({
     delay 
   }
 })
-
-export const tableRowVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (index: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      delay: 0.3 + index * 0.1,
-      ease: EASE_CUBIC
-    }
-  })
-}
 
 export const mediaRevealVariants: Variants = {
   hidden: { opacity: 0, scale: 0.95 },
@@ -210,20 +186,6 @@ export const testimonialVariants: Variants = {
   })
 }
 
-export const stepBadgeVariants: Variants = {
-  hidden: { scale: 0, rotate: -180 },
-  visible: {
-    scale: 1,
-    rotate: 0,
-    transition: {
-      type: "spring",
-      stiffness: 200,
-      damping: 15,
-      delay: 0.2
-    }
-  }
-}
-
 export const statsPulseVariants: Variants = {
   hidden: { scale: 0.95, opacity: 0 },
   visible: {
@@ -235,76 +197,6 @@ export const statsPulseVariants: Variants = {
       damping: 12
     }
   }
-}
-
-export const industryIconHover = {
-  rest: { rotate: 0, scale: 1 },
-  hover: { 
-    rotate: 360, 
-    scale: 1.1,
-    transition: { 
-      duration: 0.6,
-      ease: EASE_CUBIC
-    }
-  }
-}
-
-export const connectorLineVariants = (align: 'left' | 'right'): Variants => ({
-  hidden: { 
-    scaleX: 0,
-    originX: align === 'right' ? 1 : 0
-  },
-  visible: {
-    scaleX: 1,
-    transition: {
-      duration: 0.4,
-      delay: 0.3,
-      ease: EASE_CUBIC
-    }
-  }
-})
-
-export const ctaButtonVariants: Variants = {
-  rest: { scale: 1 },
-  hover: {
-    scale: 1.05,
-    transition: {
-      duration: 0.2,
-      ease: EASE_CUBIC
-    }
-  },
-  tap: {
-    scale: 0.95,
-    transition: {
-      duration: 0.1
-    }
-  }
-}
-
-export const infoBoxVariants: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.8,
-      delay: 0.6,
-      ease: EASE_CUBIC
-    }
-  }
-}
-
-export const certBadgeVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.8 },
-  visible: (index: number) => ({
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.5,
-      delay: 0.6 + index * 0.1,
-      ease: EASE_CUBIC
-    }
-  })
 }
 
 export const cardHoverVariants = {

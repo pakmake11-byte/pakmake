@@ -1,102 +1,132 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 
 interface UseAudioManagerOptions {
   src: string
   volume?: number
   loop?: boolean
-  autoPlay?: boolean
 }
 
 export function useAudioManager({
   src,
   volume = 0.3,
   loop = true,
-  autoPlay = true
 }: UseAudioManagerOptions) {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [isMuted, setIsMuted] = useState(false)
+
+  const [isMuted, setIsMuted] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('audioMuted')
+      return saved ? JSON.parse(saved) : true
+    }
+    return true
+  })
 
   useEffect(() => {
     const audio = new Audio(src)
-    audio.volume = volume
     audio.loop = loop
+    audio.volume = Math.max(0, Math.min(1, volume))
+    audio.muted = isMuted
     audioRef.current = audio
 
-    const playAudio = async (): Promise<void> => {
-      if (autoPlay && audioRef.current) {
-        try {
-          await audioRef.current.play()
-          setIsPlaying(true)
-        } catch (error) {
-          if (error instanceof DOMException && error.name === 'NotAllowedError') {
-            // Suppress autoplay restriction errors
-            return
+    const onPlay = () => {
+      setIsPlaying(true)
+      try { localStorage.setItem('audioPlaying', 'true') } catch {}
+    }
+    const onPause = () => {
+      setIsPlaying(false)
+      try { localStorage.setItem('audioPlaying', 'false') } catch {}
+    }
+
+    audio.addEventListener('play', onPlay)
+    audio.addEventListener('pause', onPause)
+
+    try {
+      const savedPlaying = localStorage.getItem('audioPlaying')
+      if (savedPlaying === 'true' && !audio.muted) {
+        audio.play().catch((err) => {
+          if (!(err instanceof DOMException && err.name === 'NotAllowedError')) {
+            console.error('Audio play error while restoring state:', err)
           }
-          console.error('Unexpected audio error:', error)
-        }
+        })
       }
+    } catch {
     }
-
-    const enableAudio = async (): Promise<void> => {
-      await playAudio()
-      document.removeEventListener('click', enableAudio)
-      document.removeEventListener('keydown', enableAudio)
-      document.removeEventListener('scroll', enableAudio)
-    }
-
-    document.addEventListener('click', enableAudio, { once: true })
-    document.addEventListener('keydown', enableAudio, { once: true })
-    document.addEventListener('scroll', enableAudio, { once: true })
-
-    // Attempt autoplay once
-    void playAudio()
 
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause()
-        audioRef.current = null
-      }
-      document.removeEventListener('click', enableAudio)
-      document.removeEventListener('keydown', enableAudio)
-      document.removeEventListener('scroll', enableAudio)
+      audio.pause()
+      audio.removeEventListener('play', onPlay)
+      audio.removeEventListener('pause', onPause)
+      audioRef.current = null
     }
-  }, [src, volume, loop, autoPlay])
+  }, [src, loop])
 
-  const pause = (): void => {
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.muted = isMuted
+    }
+    try { localStorage.setItem('audioMuted', JSON.stringify(isMuted)) } catch {}
+  }, [isMuted])
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = Math.max(0, Math.min(1, volume))
+    }
+  }, [volume])
+
+  const pause = useCallback((): void => {
     const audio = audioRef.current
     if (audio) {
       audio.pause()
       setIsPlaying(false)
+      try { localStorage.setItem('audioPlaying', 'false') } catch {}
     }
-  }
+  }, [])
 
-  const play = (): void => {
+  const play = useCallback(async (): Promise<void> => {
     const audio = audioRef.current
     if (audio) {
-      audio
-        .play()
-        .then(() => setIsPlaying(true))
-        .catch((error) => {
-          if (!(error instanceof DOMException && error.name === 'NotAllowedError')) {
-            console.error('Unexpected play() error:', error)
-          }
-        })
+      try {
+        await audio.play()
+        setIsPlaying(true)
+        try { localStorage.setItem('audioPlaying', 'true') } catch {}
+      } catch (error) {
+        if (!(error instanceof DOMException && error.name === 'NotAllowedError')) {
+          console.error('Unexpected play() error:', error)
+        }
+      }
     }
-  }
+  }, [])
 
-  const toggleMute = (): void => {
+  const toggleMute = useCallback(async (): Promise<void> => {
     const audio = audioRef.current
+    const newMutedState = !isMuted
+    setIsMuted(newMutedState)
+
     if (audio) {
-      audio.muted = !audio.muted
-      setIsMuted(audio.muted)
+      audio.muted = newMutedState
     }
-  }
+
+    if (!newMutedState && audio && !isPlaying) {
+      try {
+        await audio.play()
+        setIsPlaying(true)
+        try { localStorage.setItem('audioPlaying', 'true') } catch {}
+      } catch (error) {
+        if (!(error instanceof DOMException && error.name === 'NotAllowedError')) {
+          console.error('Error playing after unmute:', error)
+        }
+      }
+    }
+
+    try { localStorage.setItem('audioMuted', JSON.stringify(newMutedState)) } catch {}
+  }, [isMuted, isPlaying])
 
   const setVolume = (vol: number): void => {
     const audio = audioRef.current
+    const clamped = Math.max(0, Math.min(1, vol))
     if (audio) {
-      audio.volume = Math.max(0, Math.min(1, vol))
+      audio.volume = clamped
     }
   }
 
@@ -107,6 +137,6 @@ export function useAudioManager({
     setVolume,
     isPlaying,
     isMuted,
-    audioRef
+    audioRef,
   }
 }

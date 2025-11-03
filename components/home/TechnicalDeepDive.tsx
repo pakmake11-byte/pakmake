@@ -16,18 +16,41 @@ export function TechnicalDeepDive() {
   const isInView = useInView(ref, { once: false, margin: "-100px" })
   const scrollDirection = useScrollDirection()
 
-  const [isPlaying, setIsPlaying] = useState(true)
-  const [isMuted, setIsMuted] = useState(false)
-  const [volume, setVolume] = useState(1)
+  const [isPlaying, setIsPlaying] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('videoPlaying')
+      return saved ? JSON.parse(saved) : false
+    }
+    return false
+  })
+  
+  const [isMuted, setIsMuted] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('videoMuted')
+      return saved ? JSON.parse(saved) : false
+    }
+    return false
+  })
+  
+  const [volume, setVolume] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('videoVolume')
+      return saved ? parseFloat(saved) : 1
+    }
+    return 1
+  })
+  
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
 
-    useEffect(() => {
+  useEffect(() => {
     if (typeof window !== 'undefined' && window.__pageAudioControl) {
       if (isInView && isPlaying && !isMuted) {
         window.__pageAudioControl.pause()
-      } else if (!isInView && window.__pageAudioControl) {
-        window.__pageAudioControl.play()
+      } else if (!isInView || !isPlaying || isMuted) {
+        if (!window.__pageAudioControl.isMuted) {
+          window.__pageAudioControl.play()
+        }
       }
     }
   }, [isInView, isPlaying, isMuted])
@@ -44,10 +67,21 @@ export function TechnicalDeepDive() {
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause()
+        setIsPlaying(false)
+        localStorage.setItem('videoPlaying', 'false')
+        
+        if (typeof window !== 'undefined' && window.__pageAudioControl && !window.__pageAudioControl.isMuted) {
+          window.__pageAudioControl.play()
+        }
       } else {
         videoRef.current.play()
+        setIsPlaying(true)
+        localStorage.setItem('videoPlaying', 'true')
+        
+        if (typeof window !== 'undefined' && window.__pageAudioControl && !isMuted) {
+          window.__pageAudioControl.pause()
+        }
       }
-      setIsPlaying(!isPlaying)
     }
   }
 
@@ -56,10 +90,21 @@ export function TechnicalDeepDive() {
       const newMutedState = !isMuted
       videoRef.current.muted = newMutedState
       setIsMuted(newMutedState)
+      localStorage.setItem('videoMuted', JSON.stringify(newMutedState))
+      
       if (newMutedState) {
         setVolume(0)
+        if (typeof window !== 'undefined' && window.__pageAudioControl && !window.__pageAudioControl.isMuted) {
+          window.__pageAudioControl.play()
+        }
       } else {
-        setVolume(videoRef.current.volume || 1)
+        const savedVolume = localStorage.getItem('videoVolume')
+        const vol = savedVolume ? parseFloat(savedVolume) : 1
+        setVolume(vol)
+        videoRef.current.volume = vol
+        if (isPlaying && typeof window !== 'undefined' && window.__pageAudioControl) {
+          window.__pageAudioControl.pause()
+        }
       }
     }
   }
@@ -67,14 +112,18 @@ export function TechnicalDeepDive() {
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(e.target.value)
     setVolume(newVolume)
+    localStorage.setItem('videoVolume', newVolume.toString())
+    
     if (videoRef.current) {
       videoRef.current.volume = newVolume
       if (newVolume === 0) {
         setIsMuted(true)
         videoRef.current.muted = true
+        localStorage.setItem('videoMuted', 'true')
       } else if (isMuted) {
         setIsMuted(false)
         videoRef.current.muted = false
+        localStorage.setItem('videoMuted', 'false')
       }
     }
   }
@@ -204,25 +253,24 @@ export function TechnicalDeepDive() {
 
   useEffect(() => {
     if (videoRef.current) {
-      if (isInView && isPlaying) {
-        videoRef.current.play().catch(() => { })
-      } else if (!isInView) {
+      if (!isInView && isPlaying) {
         videoRef.current.pause()
         setIsPlaying(false)
+        localStorage.setItem('videoPlaying', 'false')
       }
     }
-  }, [isPlaying, isInView])
+  }, [isInView, isPlaying])
 
   useEffect(() => {
-    if (isInView && videoRef.current) {
-      setIsPlaying(true)
-      videoRef.current.muted = false
-      setIsMuted(false)
-      videoRef.current.volume = 1
-      setVolume(1)
-      videoRef.current.play().catch(() => { })
+    if (videoRef.current) {
+      videoRef.current.muted = isMuted
+      videoRef.current.volume = volume
+      
+      if (isPlaying && isInView) {
+        videoRef.current.play().catch(() => { })
+      }
     }
-  }, [isInView])
+  }, [])
 
   const getDirection = () => (scrollDirection === 1 ? 1 : -1)
 
@@ -413,7 +461,7 @@ export function TechnicalDeepDive() {
               >
                 <div className="flex items-center gap-4">
                   <motion.div
-                    className="flex-shrink-0 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r from-[#4DC4F5] to-[#00A0E3] text-white text-xl font-bold shadow-lg"
+                    className="shrink-0 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-linear-to-r from-[#4DC4F5] to-[#00A0E3] text-white text-xl font-bold shadow-lg"
                     initial={{ scale: 0, rotate: -180 }}
                     animate={isProcessInView ? {
                       scale: 1,
@@ -527,8 +575,8 @@ export function TechnicalDeepDive() {
                     transition: { duration: 0.7 }
                   }}
                 >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${item.color} rounded-xl opacity-20`} />
-                  <div className={`absolute inset-0 bg-gradient-to-br ${item.color} rounded-xl flex items-center justify-center`}>
+                  <div className={`absolute inset-0 bg-linear-to-br ${item.color} rounded-xl opacity-20`} />
+                  <div className={`absolute inset-0 bg-linear-to-br ${item.color} rounded-xl flex items-center justify-center`}>
                     <item.icon className="w-10 h-10 text-white" />
                   </div>
                 </motion.div>

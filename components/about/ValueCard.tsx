@@ -41,7 +41,7 @@ export const ValueCard = React.memo(function ValueCard({
             rotate: 5,
             transition: { duration: 0.2 }
           }}
-          className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-[#80D4F8] to-[#00A0E3] rounded-xl flex items-center justify-center shadow-lg"
+          className="shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-linear-to-br from-[#80D4F8] to-[#00A0E3] rounded-xl flex items-center justify-center shadow-lg"
         >
           <Icon className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
         </motion.div>

@@ -80,7 +80,7 @@ export function ContactForm() {
       ref={ref}
       className="relative py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-paper-texture"
     >
-      <div className="relative z-10 max-w-5xl mx-auto text-center mb-12 sm:mb-16">
+      <div className="relative z-10 pt-8 sm:pt-12 lg:pt-18 max-w-5xl mx-auto text-center mb-12 sm:mb-16">
         <SectionHeader
           icon={Mail}
           title="Get in"
@@ -179,10 +179,10 @@ function SuccessMessage({ onReset }: { onReset: () => void }) {
             onClick={onReset}
             whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(0,160,227,0.3)' }}
             whileTap={{ scale: 0.95 }}
-            className="relative bg-gradient-to-r from-primary-500 to-primary-600 text-white px-8 py-3 rounded-full font-semibold transition-all shadow-lg overflow-hidden group"
+            className="relative bg-linear-to-r from-primary-500 to-primary-600 text-white px-8 py-3 rounded-full font-semibold transition-all shadow-lg overflow-hidden group"
           >
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-700"
+              className="absolute inset-0 bg-linear-to-r from-primary-600 to-primary-700"
               initial={{ x: '-100%' }}
               whileHover={{ x: 0 }}
               transition={{ duration: 0.3 }}

@@ -19,16 +19,15 @@ export function PageAudioWrapper({ children }: { children: React.ReactNode }) {
     src: audioSrc,
     volume: 0.3,
     loop: true,
-    autoPlay: true
   })
 
-  // Expose audio control globally for TechnicalDeepDive
   useEffect(() => {
     if (typeof window !== 'undefined') {
       window.__pageAudioControl = {
         pause,
         play,
-        isPlaying
+        isPlaying,
+        isMuted
       }
     }
 
@@ -37,7 +36,7 @@ export function PageAudioWrapper({ children }: { children: React.ReactNode }) {
         delete window.__pageAudioControl
       }
     }
-  }, [pause, play, isPlaying])
+  }, [pause, play, isPlaying, isMuted])
 
   return (
     <>
@@ -46,7 +45,7 @@ export function PageAudioWrapper({ children }: { children: React.ReactNode }) {
       {/* Audio Control Button */}
       <button
         onClick={toggleMute}
-        className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-[#00A0E3] to-[#007CB8] text-white p-4 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110"
+        className="fixed bottom-6 right-6 z-50 bg-linear-to-r from-[#00A0E3] to-[#007CB8] text-white p-4 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110"
         aria-label={isMuted ? 'Unmute background music' : 'Mute background music'}
       >
         {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
@@ -62,6 +61,7 @@ declare global {
       pause: () => void
       play: () => void
       isPlaying: boolean
+      isMuted: boolean
     }
   }
 }

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Home, ArrowLeft, Package, Search } from 'lucide-react'
+import { Home, ArrowLeft, Package } from 'lucide-react'
 
 export default function NotFound() {
   const [mounted, setMounted] = useState(false)
@@ -129,7 +129,7 @@ export default function NotFound() {
                 Page Not Found
               </h2>
               <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
-                Looks like this package got lost in transit. The page you're looking for doesn't exist or has been moved.
+                Looks like this package got lost in transit. The page you&apos;re looking for doesn&apos;t exist or has been moved.
               </p>
             </motion.div>
 

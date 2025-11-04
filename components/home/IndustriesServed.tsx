@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, useInView, Variants } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { EASE_CUBIC } from '@/lib/animations/variants'
 import { SectionHeader } from '@/components/ui/SectionHeader'

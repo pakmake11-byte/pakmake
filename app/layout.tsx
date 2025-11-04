@@ -51,10 +51,10 @@ export default function RootLayout({
         <meta name="googlebot" content="noindex, nofollow" />
         <meta name="bingbot" content="noindex, nofollow" />
       </head>
-      <body>
-        <Navigation />
-        <main>{children}</main>
-        <Footer />
+      <body suppressHydrationWarning>
+          <Navigation />
+          <main>{children}</main>
+          <Footer />
       </body>
     </html>
   )

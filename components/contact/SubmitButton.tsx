@@ -20,13 +20,13 @@ export function SubmitButton({ isSubmitting, text = 'Send Message', disabled }: 
         disabled={isDisabled}
         whileHover={!isDisabled ? { scale: 1.05 } : {}}
         whileTap={!isDisabled ? { scale: 0.95 } : {}}
-        className="relative w-full sm:w-auto bg-gradient-to-r from-primary-500 to-primary-600 text-white px-10 sm:px-12 py-4 rounded-full text-lg font-semibold hover:from-primary-600 hover:to-primary-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-2xl inline-flex items-center justify-center gap-3 overflow-hidden group"
+        className="relative w-full sm:w-auto bg-linear-to-r from-primary-500 to-primary-600 text-white px-10 sm:px-12 py-4 rounded-full text-lg font-semibold hover:from-primary-600 hover:to-primary-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-2xl inline-flex items-center justify-center gap-3 overflow-hidden group"
       >
         {/* Animated background shine */}
         {!isDisabled && (
           <>
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+              className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent"
               initial={{ x: '-100%' }}
               animate={{ x: '200%' }}
               transition={{
@@ -53,7 +53,6 @@ export function SubmitButton({ isSubmitting, text = 'Send Message', disabled }: 
           </>
         )}
 
-        {/* Floating particles when hovering */}
         {!isDisabled && !isSubmitting && (
           <>
             {[...Array(5)].map((_, i) => (

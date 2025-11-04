@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import { useAudioManager } from '@/lib/hooks/useAudioManager'
 import { Volume2, VolumeX } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 const PAGE_AUDIO_MAP: Record<string, string> = {
   '/': '/music/home.wav',
@@ -15,7 +16,7 @@ export function PageAudioWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const audioSrc = PAGE_AUDIO_MAP[pathname] || '/music/home.wav'
   
-  const { pause, play, toggleMute, isPlaying, isMuted } = useAudioManager({
+  const { pause, play, toggleMute, setVolume, isPlaying, isMuted } = useAudioManager({
     src: audioSrc,
     volume: 0.3,
     loop: true,
@@ -26,6 +27,8 @@ export function PageAudioWrapper({ children }: { children: React.ReactNode }) {
       window.__pageAudioControl = {
         pause,
         play,
+        toggleMute,
+        setVolume,
         isPlaying,
         isMuted
       }
@@ -36,30 +39,32 @@ export function PageAudioWrapper({ children }: { children: React.ReactNode }) {
         delete window.__pageAudioControl
       }
     }
-  }, [pause, play, isPlaying, isMuted])
+  }, [pause, play, toggleMute, setVolume, isPlaying, isMuted])
 
   return (
     <>
       {children}
       
-      {/* Audio Control Button */}
-      <button
+      <motion.button
         onClick={toggleMute}
-        className="fixed bottom-6 right-6 z-50 bg-linear-to-r from-[#00A0E3] to-[#007CB8] text-white p-4 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        className="fixed bottom-6 right-6 z-50 bg-linear-to-r from-[#00A0E3] to-[#007CB8] text-white p-4 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300"
         aria-label={isMuted ? 'Unmute background music' : 'Mute background music'}
       >
         {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
-      </button>
+      </motion.button>
     </>
   )
 }
 
-// Type declaration for global audio control
 declare global {
   interface Window {
     __pageAudioControl?: {
       pause: () => void
-      play: () => void
+      play: () => Promise<void>
+      toggleMute: () => Promise<void>
+      setVolume: (vol: number) => void
       isPlaying: boolean
       isMuted: boolean
     }

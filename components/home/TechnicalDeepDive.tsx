@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, useInView } from 'framer-motion'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import Image from 'next/image'
 import { Wrench, Truck, DollarSign, TrendingUp, Play, Pause, Volume2, VolumeX, Maximize, SkipBack, SkipForward } from 'lucide-react'
 import { fadeInUpVariants, itemVariants, mediaRevealVariants } from '@/lib/animations/variants'
@@ -16,44 +16,118 @@ export function TechnicalDeepDive() {
   const isInView = useInView(ref, { once: false, margin: "-100px" })
   const scrollDirection = useScrollDirection()
 
-  const [isPlaying, setIsPlaying] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('videoPlaying')
-      return saved ? JSON.parse(saved) : false
-    }
-    return false
-  })
-  
+  const [isVideoInView, setIsVideoInView] = useState(false)
+  const hasAutoplayAttempted = useRef(false)
+  const previousVolumeRef = useRef(1)
+  const volumeTimeoutRef = useRef<NodeJS.Timeout>(null)
+  const [autoplayMuted, setAutoplayMuted] = useState(false)
+
+  const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('videoMuted')
-      return saved ? JSON.parse(saved) : false
+      return saved ? JSON.parse(saved) : true
     }
-    return false
+    return true
   })
-  
+
   const [volume, setVolume] = useState(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('videoVolume')
-      return saved ? parseFloat(saved) : 1
+      const vol = saved ? parseFloat(saved) : 1
+      previousVolumeRef.current = vol
+      return vol
     }
     return 1
   })
-  
+
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
 
   useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVideoInView(entry.isIntersecting)
+      },
+      { threshold: 0.5 }
+    )
+
+    observer.observe(video)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    video.volume = volume
+    video.muted = isMuted
+  }, [isMuted, volume])
+
+  useEffect(() => {
+    if (volumeTimeoutRef.current) {
+      clearTimeout(volumeTimeoutRef.current)
+    }
+
+    volumeTimeoutRef.current = setTimeout(() => {
+      localStorage.setItem('videoVolume', volume.toString())
+    }, 250)
+
+    return () => {
+      if (volumeTimeoutRef.current) {
+        clearTimeout(volumeTimeoutRef.current)
+      }
+    }
+  }, [volume])
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video || !isVideoInView || hasAutoplayAttempted.current) return
+
+    hasAutoplayAttempted.current = true
+
+    video.muted = true
+    setIsMuted(true)
+
+    video.play().then(() => {
+      setIsPlaying(true)
+      setAutoplayMuted(true)
+    }).catch(() => {
+      setAutoplayMuted(false)
+    })
+  }, [isVideoInView])
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    if (!isVideoInView && isPlaying) {
+      video.pause()
+      setIsPlaying(false)
+
+      if (typeof window !== 'undefined' && window.__pageAudioControl && !window.__pageAudioControl.isMuted) {
+        window.__pageAudioControl.play()
+      }
+    }
+  }, [isVideoInView, isPlaying])
+
+  useEffect(() => {
     if (typeof window !== 'undefined' && window.__pageAudioControl) {
-      if (isInView && isPlaying && !isMuted) {
+      if (isPlaying && !isMuted) {
         window.__pageAudioControl.pause()
-      } else if (!isInView || !isPlaying || isMuted) {
+      } else {
         if (!window.__pageAudioControl.isMuted) {
           window.__pageAudioControl.play()
         }
       }
     }
-  }, [isInView, isPlaying, isMuted])
+  }, [isPlaying, isMuted])
 
   const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const time = parseFloat(e.target.value)
@@ -63,90 +137,95 @@ export function TechnicalDeepDive() {
     }
   }
 
-  const togglePlay = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause()
-        setIsPlaying(false)
-        localStorage.setItem('videoPlaying', 'false')
-        
-        if (typeof window !== 'undefined' && window.__pageAudioControl && !window.__pageAudioControl.isMuted) {
-          window.__pageAudioControl.play()
-        }
-      } else {
-        videoRef.current.play()
-        setIsPlaying(true)
-        localStorage.setItem('videoPlaying', 'true')
-        
-        if (typeof window !== 'undefined' && window.__pageAudioControl && !isMuted) {
-          window.__pageAudioControl.pause()
-        }
+  const togglePlay = useCallback(() => {
+    if (!videoRef.current) return
+
+    if (isPlaying) {
+      videoRef.current.pause()
+      setIsPlaying(false)
+
+      if (typeof window !== 'undefined' && window.__pageAudioControl && !window.__pageAudioControl.isMuted) {
+        window.__pageAudioControl.play()
+      }
+    } else {
+      videoRef.current.play()
+      setIsPlaying(true)
+
+      if (typeof window !== 'undefined' && window.__pageAudioControl && !isMuted) {
+        window.__pageAudioControl.pause()
       }
     }
-  }
+  }, [isPlaying, isMuted])
 
-  const toggleMute = () => {
-    if (videoRef.current) {
-      const newMutedState = !isMuted
-      videoRef.current.muted = newMutedState
-      setIsMuted(newMutedState)
-      localStorage.setItem('videoMuted', JSON.stringify(newMutedState))
-      
-      if (newMutedState) {
-        setVolume(0)
-        if (typeof window !== 'undefined' && window.__pageAudioControl && !window.__pageAudioControl.isMuted) {
-          window.__pageAudioControl.play()
-        }
-      } else {
-        const savedVolume = localStorage.getItem('videoVolume')
-        const vol = savedVolume ? parseFloat(savedVolume) : 1
-        setVolume(vol)
-        videoRef.current.volume = vol
-        if (isPlaying && typeof window !== 'undefined' && window.__pageAudioControl) {
-          window.__pageAudioControl.pause()
-        }
+  const toggleMute = useCallback(() => {
+    if (!videoRef.current) return
+
+    const newMutedState = !isMuted
+
+    if (newMutedState) {
+      previousVolumeRef.current = volume
+      setIsMuted(true)
+      localStorage.setItem('videoMuted', 'true')
+      setAutoplayMuted(false)
+
+      if (typeof window !== 'undefined' && window.__pageAudioControl && !window.__pageAudioControl.isMuted) {
+        window.__pageAudioControl.play()
+      }
+    } else {
+      const restoredVolume = previousVolumeRef.current || 1
+      setVolume(restoredVolume)
+      setIsMuted(false)
+      localStorage.setItem('videoMuted', 'false')
+      setAutoplayMuted(false)
+
+      if (isPlaying && typeof window !== 'undefined' && window.__pageAudioControl) {
+        window.__pageAudioControl.pause()
       }
     }
-  }
+  }, [isMuted, volume, isPlaying])
 
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVolumeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(e.target.value)
     setVolume(newVolume)
-    localStorage.setItem('videoVolume', newVolume.toString())
-    
-    if (videoRef.current) {
-      videoRef.current.volume = newVolume
-      if (newVolume === 0) {
-        setIsMuted(true)
-        videoRef.current.muted = true
-        localStorage.setItem('videoMuted', 'true')
-      } else if (isMuted) {
-        setIsMuted(false)
-        videoRef.current.muted = false
-        localStorage.setItem('videoMuted', 'false')
-      }
-    }
-  }
 
-  const toggleFullscreen = () => {
-    if (videoRef.current) {
-      if (videoRef.current.requestFullscreen) {
-        videoRef.current.requestFullscreen()
-      }
-    }
-  }
+    if (newVolume === 0 && !isMuted) {
+      previousVolumeRef.current = 0.5
+      setIsMuted(true)
+      localStorage.setItem('videoMuted', 'true')
 
-  const skipBackward = () => {
+      if (typeof window !== 'undefined' && window.__pageAudioControl && !window.__pageAudioControl.isMuted) {
+        window.__pageAudioControl.play()
+      }
+    } else if (newVolume > 0 && isMuted) {
+      previousVolumeRef.current = newVolume
+      setIsMuted(false)
+      localStorage.setItem('videoMuted', 'false')
+
+      if (isPlaying && typeof window !== 'undefined' && window.__pageAudioControl) {
+        window.__pageAudioControl.pause()
+      }
+    } else if (newVolume > 0) {
+      previousVolumeRef.current = newVolume
+    }
+  }, [isMuted, isPlaying])
+
+  const toggleFullscreen = useCallback(() => {
+    if (videoRef.current && videoRef.current.requestFullscreen) {
+      videoRef.current.requestFullscreen()
+    }
+  }, [])
+
+  const skipBackward = useCallback(() => {
     if (videoRef.current) {
       videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 5)
     }
-  }
+  }, [])
 
-  const skipForward = () => {
+  const skipForward = useCallback(() => {
     if (videoRef.current) {
       videoRef.current.currentTime = Math.min(videoRef.current.duration, videoRef.current.currentTime + 5)
     }
-  }
+  }, [])
 
   const formatTime = (time: number) => {
     if (!time || isNaN(time) || !isFinite(time)) return '0:00'
@@ -207,7 +286,7 @@ export function TechnicalDeepDive() {
   const equipmentRef = useRef(null)
   const isProcessInView = useInView(processStepsRef, { once: false, margin: '-100px' })
   const isEquipmentInView = useInView(equipmentRef, { once: false, margin: '-100px' })
-  
+
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
@@ -248,27 +327,6 @@ export function TechnicalDeepDive() {
       video.removeEventListener('durationchange', handleDurationChange)
       video.removeEventListener('loadedmetadata', handleLoadedMetadata)
       video.removeEventListener('canplay', handleCanPlay)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (videoRef.current) {
-      if (!isInView && isPlaying) {
-        videoRef.current.pause()
-        setIsPlaying(false)
-        localStorage.setItem('videoPlaying', 'false')
-      }
-    }
-  }, [isInView, isPlaying])
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.muted = isMuted
-      videoRef.current.volume = volume
-      
-      if (isPlaying && isInView) {
-        videoRef.current.play().catch(() => { })
-      }
     }
   }, [])
 
@@ -334,7 +392,6 @@ export function TechnicalDeepDive() {
                 playsInline
                 className="rounded-xl shadow-lg w-full object-cover flex-1"
               />
-
               <div className="mt-4 flex items-center gap-3">
                 <span className="text-[#003E5C] text-sm font-medium min-w-[45px]">
                   {formatTime(currentTime)}
@@ -347,6 +404,7 @@ export function TechnicalDeepDive() {
                   value={currentTime}
                   onChange={handleProgressChange}
                   disabled={duration === 0}
+                  aria-label="Video progress"
                   className="flex-1 h-2 bg-[#B3E5FC] rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#00A0E3] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:hover:bg-[#007CB8] [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#00A0E3] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-lg [&::-moz-range-thumb]:hover:bg-[#007CB8]"
                   style={{
                     background: duration
@@ -368,13 +426,15 @@ export function TechnicalDeepDive() {
                   <SkipBack className="w-5 h-5" />
                 </button>
 
-                <button
+                <motion.button
                   onClick={togglePlay}
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.85 }}
                   className="text-white hover:text-[#00A0E3] transition-colors p-2 hover:bg-white/10 rounded-lg"
                   aria-label={isPlaying ? 'Pause' : 'Play'}
                 >
                   {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-                </button>
+                </motion.button>
 
                 <button
                   onClick={skipForward}
@@ -386,13 +446,19 @@ export function TechnicalDeepDive() {
 
                 <div className="w-px h-6 bg-white/20 mx-1" />
 
-                <button
+                <motion.button
                   onClick={toggleMute}
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.85 }}
                   className="text-white hover:text-[#00A0E3] transition-colors p-2 hover:bg-white/10 rounded-lg"
                   aria-label={isMuted ? 'Unmute' : 'Mute'}
                 >
-                  {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-                </button>
+                  {isMuted ? (
+                    <VolumeX className={`w-5 h-5 ${autoplayMuted ? 'animate-pulse' : ''}`} />
+                  ) : (
+                    <Volume2 className="w-5 h-5" />
+                  )}
+                </motion.button>
 
                 <div className="hidden sm:flex items-center gap-2">
                   <input
@@ -402,11 +468,11 @@ export function TechnicalDeepDive() {
                     step="0.01"
                     value={volume}
                     onChange={handleVolumeChange}
+                    aria-label="Volume"
                     className="w-20 h-1.5 bg-white/20 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:hover:bg-[#00A0E3] [&::-moz-range-thumb]:w-3 [&::-moz-range-thumb]:h-3 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:hover:bg-[#00A0E3]"
                     style={{
                       background: `linear-gradient(to right, #00A0E3 0%, #00A0E3 ${volume * 100}%, rgba(255,255,255,0.2) ${volume * 100}%, rgba(255,255,255,0.2) 100%)`
                     }}
-                    aria-label="Volume control"
                   />
                 </div>
 
@@ -424,7 +490,6 @@ export function TechnicalDeepDive() {
           </motion.div>
         </div>
 
-        {/* Process Steps */}
         <motion.div
           ref={processStepsRef}
           variants={fadeInUpVariants}
@@ -515,7 +580,6 @@ export function TechnicalDeepDive() {
           </div>
         </motion.div>
 
-        {/* Equipment Requirements */}
         <motion.div
           ref={equipmentRef}
           variants={fadeInUpVariants}
@@ -601,7 +665,6 @@ export function TechnicalDeepDive() {
             ))}
           </div>
         </motion.div>
-
       </div>
     </section>
   )

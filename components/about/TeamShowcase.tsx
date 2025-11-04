@@ -49,14 +49,18 @@ export function TeamShowcase() {
           isInView={isInView}
         />
 
-        <motion.div 
+        <motion.div
           className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto"
           variants={containerVariants}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
         >
           {TEAM_MEMBERS.map((member, index) => (
-            <motion.div key={`${member.name}-${index}`} variants={itemVariants}>
+            <motion.div
+              key={`${member.name}-${index}`}
+              variants={itemVariants}
+              className={member.role === 'Founder' ? 'order-first lg:order-0' : ''}
+            >
               <TeamMemberCard
                 {...member}
                 index={index}

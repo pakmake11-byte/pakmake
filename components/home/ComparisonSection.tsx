@@ -161,9 +161,9 @@ export function ComparisonSection() {
             transition={{ duration: 0.8, ease: EASE_CUBIC }}
             className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border border-[#B3E5FC] flex flex-col justify-center"
           >
-            <div className="overflow-x-auto sm:overflow-x-hidden -mx-4 sm:mx-0">
+            <div className="overflow-x-hidden -mx-4 sm:mx-0">
               <table
-                className="w-full min-w-[500px] table-fixed"
+                className="w-full table-fixed"
                 style={{ tableLayout: 'fixed' }}
               >
                 <colgroup>
@@ -178,13 +178,13 @@ export function ComparisonSection() {
                     </th>
 
                     <th className="text-center py-2 px-3 sm:px-4 font-bold text-sm sm:text-base">
-                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#DC2626] to-[#991B1B] font-extrabold tracking-wide">
+                      <span className="bg-clip-text text-transparent bg-linear-to-r from-[#DC2626] to-[#991B1B] font-extrabold tracking-wide">
                         Wooden Pallet
                       </span>
                     </th>
 
                     <th className="text-center py-2 px-3 sm:px-4 font-bold text-sm sm:text-base">
-                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#509ec0] to-[#227294] font-extrabold tracking-wide">
+                      <span className="bg-clip-text text-transparent bg-linear-to-r from-[#509ec0] to-[#227294] font-extrabold tracking-wide">
                         Slip Sheet
                       </span>
                     </th>

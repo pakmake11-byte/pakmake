@@ -223,7 +223,7 @@ export function ProductVariants() {
         : -1
 
   const [selectedVariant, setSelectedVariant] =
-    useState<SlipSheetVariant>('multi-lip')
+    useState<SlipSheetVariant>('single-lip')
 
   const containerVariants = {
     hidden: { opacity: 0 },

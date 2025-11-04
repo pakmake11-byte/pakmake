@@ -46,7 +46,7 @@ export function SectionHeader({
                 initial={{ scale: 0, opacity: 0 }}
                 animate={isInView ? { scale: 1, opacity: 1 } : {}}
                 transition={{ duration: 0.4, ease: 'easeOut' }}
-                className="flex-shrink-0 p-1"
+                className="shrink-0 p-1"
               >
                 <IconBadge Icon={icon} isInView={isInView} gradient={iconGradient} />
               </motion.div>

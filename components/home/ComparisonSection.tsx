@@ -7,16 +7,47 @@ import { Truck } from 'lucide-react'
 import { useScrollDirection } from '@/lib/hooks/useScrollDirection'
 
 const comparisonData = [
-  { metric: 'Savings', slipSheet: '80%', pallet: 'Standard' },
-  { metric: 'Storage space (1000 units)', slipSheet: '1m³', pallet: '70m³' },
-  { metric: 'Weight', slipSheet: '<1kg', pallet: '15-25kg' },
-  { metric: 'Loading speed', slipSheet: '60% faster', pallet: 'Standard' },
-  { metric: 'Material handling containers', slipSheet: '12-15% more products', pallet: 'Standard capacity' },
-  { metric: 'Maintenance required', slipSheet: 'None', pallet: 'Regular upkeep' },
-  { metric: 'Environmental impact', slipSheet: '100% recyclable', pallet: 'Limited recyclability' },
-  { metric: 'Phytosanitary restrictions', slipSheet: 'Exempt', pallet: 'Subject to restrictions' },
+  {
+    metric: 'Material Cost Savings',
+    slipSheet: 'Can be 80% or more',
+    pallet: 'Standard cost',
+  },
+  {
+    metric: 'Storage (1,000 units)',
+    slipSheet: '1m³',
+    pallet: '70m³',
+  },
+  {
+    metric: 'Container Space',
+    slipSheet: '12-15% more product',
+    pallet: 'Standard capacity',
+  },
+  {
+    metric: 'Weight Ratio',
+    slipSheet: '1/20th of wood',
+    pallet: '20x heavier',
+  },
+  {
+    metric: 'Loading/Unloading Time',
+    slipSheet: 'Up to 60% faster',
+    pallet: 'Standard time',
+  },
+  {
+    metric: 'Maintenance',
+    slipSheet: 'None required',
+    pallet: 'Requires regular upkeep/repair',
+  },
+  {
+    metric: 'Environmental',
+    slipSheet: '100% Recyclable',
+    pallet: 'Limited recyclability',
+  },
+  {
+    metric: 'Sanitary Restrictions',
+    slipSheet: 'Exempt from phytosanitary rules',
+    pallet: 'Subject to phytosanitary rules',
+  },
 ]
-
 const EASE_CUBIC = [0.65, 0, 0.35, 1] as const
 
 type CombinationLockCellProps = {

@@ -3,55 +3,39 @@ import React from 'react'
 interface LegendItemProps {
   color: string
   label: string
-  type?: 'circle' | 'line'
-  size?: 'small' | 'medium' | 'large'
 }
 
-const LegendItem = React.memo(function LegendItem({ 
-  color, 
-  label, 
-  type = 'circle', 
-  size = 'medium' 
-}: LegendItemProps) {
-  const sizeClasses = {
-    small: 'w-3 h-3',
-    medium: 'w-4 h-4',
-    large: 'w-5 h-5'
-  }
-
-  if (type === 'line') {
-    return (
-      <div className="flex items-center gap-3">
-        <div className={`w-10 h-0.5 ${color} opacity-70`}></div>
-        <span className="text-[#334155] font-semibold text-sm">{label}</span>
-      </div>
-    )
-  }
-
+const LegendItem = React.memo(function LegendItem({ color, label }: LegendItemProps) {
   return (
     <div className="flex items-center gap-3">
-      <div className={`${sizeClasses[size]} rounded-full ${color} shadow-sm`} />
+      <div className={`w-4 h-4 rounded-full ${color} shadow-sm`} />
       <span className="text-[#334155] font-semibold text-sm">{label}</span>
     </div>
   )
 })
 
+interface MapLegendItem {
+  color: string
+  label: string
+}
+
 interface MapLegendProps {
-  items?: Array<{ color: string; label: string; type?: 'circle' | 'line'; size?: 'small' | 'medium' | 'large' }>
+  items?: MapLegendItem[]
 }
 
 export const MapLegend = React.memo(function MapLegend({ items }: MapLegendProps) {
-  const defaultItems = items || [
-    { color: 'bg-[#ef4444]', label: 'Office', type: 'circle' as const, size: 'large' as const },
-    { color: 'bg-[#00A0E3]', label: 'Service Locations', type: 'circle' as const, size: 'medium' as const },
-    { color: 'bg-[#00A0E3]', label: 'Distribution Network', type: 'line' as const },
+  const defaultItems: MapLegendItem[] = [
+    { color: 'bg-[#ef4444]', label: 'Office' },
+    { color: 'bg-[#00A0E3]', label: 'Service Locations' },
   ]
+
+  const legendItems = items ?? defaultItems
 
   return (
     <div className="mt-8">
       <div className="flex flex-wrap justify-center gap-6 sm:gap-8">
-        {defaultItems.map((item, index) => (
-          <LegendItem key={`${item.label}-${index}`} {...item} />
+        {legendItems.map((item) => (
+          <LegendItem key={item.label} {...item} />
         ))}
       </div>
     </div>

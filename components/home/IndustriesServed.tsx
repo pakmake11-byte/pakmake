@@ -1,5 +1,7 @@
 'use client'
 
+import React from 'react'
+import Image from "next/image"
 import { motion, useInView } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { EASE_CUBIC } from '@/lib/animations/variants'
@@ -12,6 +14,11 @@ type Industry = {
   icon: string
   description: string
   color: string
+}
+
+type ClientLogo = {
+  name: string
+  filename: string
 }
 
 const industries: Industry[] = [
@@ -30,6 +37,29 @@ const industries: Industry[] = [
   { name: 'Beverage', icon: '🥤', description: 'Drinks & beverages', color: 'from-rose-400 to-rose-600' },
   { name: 'Spice', icon: '🌶️', description: 'Spice products', color: 'from-orange-500 to-red-600' },
   { name: 'Dairy', icon: '🧀', description: 'Milk & dairy products', color: 'from-blue-300 to-blue-500' },
+]
+
+const clientLogos: ClientLogo[] = [
+  { name: 'BRC', filename: 'BRC_low-wh.png' },
+  { name: 'ITC', filename: 'itc.png' },
+  { name: 'Kohinoor', filename: 'kohinor-logo.png' },
+  { name: 'Olam Agri', filename: 'olamagri-primary-logo.webp' },
+  { name: 'HOS', filename: 'hos_logo.5a9ee2a14f1eff257da8.png' },
+
+  { name: 'ASDA', filename: 'ASDA.png' },
+  { name: 'Costco', filename: 'Costco_1.png' },
+  { name: 'Morrisons', filename: 'Morrisions.png' },
+  { name: 'Sainsbury’s', filename: 'Sainsbury.png' },
+  { name: 'Tesco', filename: 'Tesco_2.png' },
+  { name: 'Walmart', filename: 'walmart_2.png' },
+  { name: 'Woolworth', filename: 'Woolworth_2.png' },
+
+  // Generic / unknown ones
+  { name: 'Client Logo', filename: 'logo.png' },
+  { name: 'Client Logo Alt', filename: 'logo (1).png' },
+  { name: 'Client SVG', filename: 'logo (1).svg' },
+  { name: 'Client SVG', filename: 'svgviewer-output.svg' },
+  { name: 'Client SVG Alt', filename: 'svgviewer-output (1).svg' },
 ]
 
 function useResponsiveColumns() {
@@ -51,6 +81,52 @@ function useResponsiveColumns() {
   return cols
 }
 
+function ClientMarquee() {
+  const duplicatedLogos = [...clientLogos, ...clientLogos]
+
+  return (
+    <div className="relative bg-primary-200/30 overflow-hidden py-8">
+      <div className="flex animate-marquee hover:[animation-play-state:paused]">
+        {duplicatedLogos.map((logo, index) => (
+          <motion.div
+            key={`${logo.filename}-${index}`}
+            className="shrink-0 mx-4 sm:mx-6 lg:mx-8"
+            whileHover={{ scale: 1.1 }}
+            transition={{ duration: 0.7 }}
+          >
+            <div className="relative w-28 h-16 sm:w-36 sm:h-20 lg:w-44 lg:h-24 flex items-center justify-center">
+              <Image
+                src={`/client/${logo.filename}`}
+                alt={logo.name}
+                fill
+                className="object-contain duration-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"
+                sizes="(max-width: 768px) 120px, (max-width: 1200px) 160px, 200px"
+              />
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      <style jsx>{`
+        @keyframes marquee {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+
+        .animate-marquee {
+          display: flex;
+          animation: marquee 40s linear infinite;
+          width: max-content;
+        }
+      `}</style>
+    </div>
+  )
+}
+
 function IndustryCard({
   industry,
   index,
@@ -68,12 +144,10 @@ function IndustryCard({
   const isInView = useInView(cardRef, { once: false, margin: '-150px 0px -150px 0px' })
   const [shouldAnimate, setShouldAnimate] = useState(false)
 
-  // Reset cards when section leaves view
   useEffect(() => {
     if (!sectionVisible) setShouldAnimate(false)
   }, [sectionVisible])
 
-  // Trigger animation when card re-enters view (and section is visible)
   useEffect(() => {
     if (isInView && sectionVisible) setShouldAnimate(true)
   }, [isInView, sectionVisible])
@@ -82,8 +156,8 @@ function IndustryCard({
     hidden: {
       opacity: 0,
       y: scrollDirection > 0 ? 60 : -60,
-      scale: 0.9,
-      rotateX: scrollDirection > 0 ? 10 : -10,
+      scale: 0.95,
+      rotateX: scrollDirection > 0 ? 8 : -8,
     },
     visible: {
       opacity: 1,
@@ -91,8 +165,8 @@ function IndustryCard({
       scale: 1,
       rotateX: 0,
       transition: {
-        duration: 0.7,
-        delay: (index % columns) * 0.4,
+        duration: 0.6,
+        delay: (index % columns) * 0.18,
         ease: EASE_CUBIC,
       },
     },
@@ -104,36 +178,21 @@ function IndustryCard({
       variants={cardVariants}
       initial="hidden"
       animate={shouldAnimate ? 'visible' : 'hidden'}
-      whileHover={{
-        y: -10,
-        scale: 1.03,
-        rotateY: 3,
-        transition: { duration: 0.3 },
-      }}
-      className="bg-white rounded-2xl p-4 sm:p-6 text-center shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer border border-[#B3E5FC] group"
+      whileHover={{ y: -8, scale: 1.02, rotateY: 2, transition: { duration: 0.25 } }}
+      className="bg-white rounded-2xl p-4 sm:p-6 text-center shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer border border-[#E1F3FB] group"
       style={{ transformStyle: 'preserve-3d' }}
     >
       <motion.div
         className="relative mx-auto w-16 h-16 sm:w-20 sm:h-20 mb-4"
-        whileHover={{
-          rotate: 360,
-          scale: 1.15,
-          transition: { duration: 0.6 },
-        }}
+        whileHover={{ rotate: 360, scale: 1.12, transition: { duration: 0.6 } }}
       >
-        <div
-          className={`absolute inset-0 bg-gradient-to-br ${industry.color} rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity`}
-        />
+        <div className={`absolute inset-0 bg-gradient-to-br ${industry.color} rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity`} />
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="text-4xl sm:text-5xl">{industry.icon}</span>
         </div>
       </motion.div>
 
-      <h3
-        className="text-base sm:text-lg lg:text-xl font-bold mb-2 transition-all duration-300"
-      >
-        {industry.name}
-      </h3>
+      <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-2 transition-all duration-300">{industry.name}</h3>
       <p className="text-xs sm:text-sm text-[#334155]">{industry.description}</p>
     </motion.div>
   )
@@ -169,6 +228,17 @@ export function IndustriesServed() {
           ))}
         </div>
       </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={sectionInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={{ duration: 0.6, delay: 0.2, ease: EASE_CUBIC }}
+      >
+        <h3 className="text-2xl sm:text-3xl font-bold text-[#005F8C] mb-16 mt-24 text-center">
+          Our Major Clients
+        </h3>
+        <ClientMarquee />
+      </motion.div>
+
     </section>
   )
 }

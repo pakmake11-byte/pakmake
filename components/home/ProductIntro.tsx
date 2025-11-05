@@ -83,45 +83,61 @@ export const ProductIntro = function ProductIntro() {
 
   const features = useMemo(
     () => [
+
+      // Group 1: Cost & Efficiency Savings
       {
-        label: 'Durable & Puncture Resistant',
-        description: 'Engineered to withstand rough handling and repeated use without tearing.',
+        label: '80%+ Material Cost Savings',
+        description:
+          'Material-handling costs can be reduced by 80% or more compared to traditional wooden pallets.',
       },
       {
-        label: '100% Virgin Kraft Board',
-        description: 'Made from high-quality virgin fibers for superior strength and reliability.',
+        label: '12-15% More Products per Load',
+        description:
+          'Ultra-thin design lets you load 12–15% more items into every container, improving freight efficiency.',
       },
       {
-        label: 'No Maintenance Required',
-        description: 'Completely maintenance-free—no repairs, no treatments, no hassle.',
+        label: 'Up to 60% Faster Loading & Unloading',
+        description:
+          'Streamline your logistics by decreasing loading and unloading times by up to 60%.',
       },
       {
-        label: 'High Tensile Strength',
-        description: 'Built to handle heavy loads without deformation or failure.',
+        label: '1/20th the Weight of Wood Pallets',
+        description:
+          'Much lighter than wooden pallets — significantly reducing freight weight costs.',
       },
       {
-        label: 'Custom Sizes Available',
-        description: 'Tailor-made to suit your specific packaging and logistics needs.',
+        label: '90%+ Less Storage Space Required',
+        description:
+          'Requires minimal space for storage (1,000 sheets ≈ 1m³ vs. 1,000 pallets ≈ 70m³), freeing up valuable warehouse area.',
+      },
+
+      // Group 2: Core Performance & Material
+      {
+        label: 'Durable & High Tensile Strength',
+        description:
+          'Engineered to be puncture-resistant and withstand heavy loads without deformation or failure during rough handling.',
       },
       {
-        label: '12–15% More Products per Load',
-        description: 'Optimize space and efficiency in every shipment with thinner profiles.',
+        label: '100% Virgin Kraft Liner Board',
+        description:
+          'Made from multiple plies of premium, 100% virgin kraft board for superior strength and absolute reliability.',
+      },
+
+      // Group 3: Logistical & Sustainable Benefits
+      {
+        label: 'Custom Sizes & Thicknesses',
+        description:
+          'Tailor-made to fit any load size, style, or thickness. Custom-designed to meet your specific product footprint.',
       },
       {
-        label: '60–75% Cost Reduction',
-        description: 'Save drastically on material, transport, and storage costs.',
+        label: 'Zero Maintenance Required',
+        description:
+          "Simply replace after use — no maintenance, nails, heat-treatment, or repairs like wood.",
       },
       {
-        label: '100% Recyclable Material',
-        description: 'Sustainably sourced and fully recyclable, supporting circular logistics.',
-      },
-      {
-        label: '60% Faster Loading Time',
-        description: 'Simplified handling processes mean faster turnaround at every step.',
-      },
-      {
-        label: '1/20th Weight of Wood Pallets',
-        description: 'Lightweight yet strong—reducing freight costs and improving safety.',
+        label: 'Fully Recyclable & Export-Ready',
+        description:
+          'A sustainable, wood-free solution that is 100% recyclable and avoids all phytosanitary restrictions.',
       },
     ],
     []
@@ -154,9 +170,9 @@ export const ProductIntro = function ProductIntro() {
         >
           <SectionHeader
             icon={Boxes}
-            title="Why Choose"
+            title="Why Choose PakMake"
             highlightedText="Slip Sheets?"
-            subtitle="Experience a paradigm shift in logistics. Our slip sheets outperform traditional pallets in every key metric."
+            subtitle="Transform your supply chain with lightweight, durable, and fully recyclable slip sheets designed for performance and savings."
             isInView={isHeaderInView}
             iconGradient="from-[#E0F7FA] to-[#B3E5FC]"
           />

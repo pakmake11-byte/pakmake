@@ -77,23 +77,9 @@ export async function initializeMap(mapRef: HTMLDivElement | null) {
     const chart = createMapChart(root, am5Module, am5mapModule)
     const polygonSeries = createPolygonSeries(root, chart, am5Module, am5mapModule, am5geodataModule)
 
-    const lineSeries = createLineSeries(root, chart, am5Module, am5mapModule)
     createServiceSeries(root, chart, am5Module, am5mapModule)
+    createLineSeries(root, chart, am5Module, am5mapModule)
     createOfficeSeries(root, chart, am5Module, am5mapModule)
-
-    if (MAP_OFFICES && MAP_OFFICES.length >= 2) {
-      const a = MAP_OFFICES[0]
-      const b = MAP_OFFICES[1]
-      lineSeries.data.push({
-        geometry: {
-          type: 'LineString',
-          coordinates: [
-            [a.lng, a.lat],
-            [b.lng, b.lat]
-          ]
-        }
-      })
-    }
 
     chart.appear(1000, 100)
 
@@ -101,91 +87,7 @@ export async function initializeMap(mapRef: HTMLDivElement | null) {
       chart.zoomToGeoPoint({ longitude: 78.9629, latitude: 22.5937 }, 3.2, true)
     })
 
-    // Track current position properly
-    type GeoPoint = { longitude: number; latitude: number }
-    let currentCenter: GeoPoint = { longitude: 78.9629, latitude: 22.5937 }
-
-    // Update center whenever map moves
-    const updateCenter = () => {
-      const centerPoint = chart.get('centerMapOnZoomOut') !== false
-        ? chart.get('centerGeoPoint' as keyof am5map.IMapChartSettings)
-        : chart.get('geoPoint' as keyof am5map.IMapChartSettings)
-
-      if (centerPoint && typeof centerPoint.longitude === 'number' && typeof centerPoint.latitude === 'number') {
-        currentCenter = {
-          longitude: centerPoint.longitude,
-          latitude: centerPoint.latitude
-        }
-      }
-    }
-
-    chart.events.on('zoomended' as keyof am5map.IMapChartEvents, updateCenter)
-    chart.events.on('panended' as keyof am5map.IMapChartEvents, updateCenter)
-
-    const seriesContainer = chart.seriesContainer
-
-    if (seriesContainer?.events) {
-      seriesContainer.events.on('positionchanged', updateCenter)
-    }
-
-    const controls: MapControlHandlers = {
-      zoomIn: () => {
-        updateCenter()
-        const currentZoom = (chart.get('zoomLevel') as number) ?? 1
-        chart.zoomToGeoPoint(currentCenter, currentZoom * 1.5, true)
-      },
-      zoomOut: () => {
-        updateCenter()
-        const currentZoom = (chart.get('zoomLevel') as number) ?? 1
-        chart.zoomToGeoPoint(currentCenter, currentZoom / 1.5, true)
-      },
-      reset: () => {
-        currentCenter = { longitude: 78.9629, latitude: 22.5937 }
-        chart.goHome()
-      },
-      moveUp: () => {
-        updateCenter()
-        const currentZoom = (chart.get('zoomLevel') as number) ?? 1
-        const delta = Math.max(2, 8 / Math.sqrt(currentZoom))
-        currentCenter = {
-          longitude: currentCenter.longitude,
-          latitude: currentCenter.latitude + delta
-        }
-        chart.zoomToGeoPoint(currentCenter, currentZoom, true)
-      },
-      moveDown: () => {
-        updateCenter()
-        const currentZoom = (chart.get('zoomLevel') as number) ?? 1
-        const delta = Math.max(2, 8 / Math.sqrt(currentZoom))
-        currentCenter = {
-          longitude: currentCenter.longitude,
-          latitude: currentCenter.latitude - delta
-        }
-        chart.zoomToGeoPoint(currentCenter, currentZoom, true)
-      },
-      moveLeft: () => {
-        updateCenter()
-        const currentZoom = (chart.get('zoomLevel') as number) ?? 1
-        const delta = Math.max(2, 8 / Math.sqrt(currentZoom))
-        currentCenter = {
-          longitude: currentCenter.longitude - delta,
-          latitude: currentCenter.latitude
-        }
-        chart.zoomToGeoPoint(currentCenter, currentZoom, true)
-      },
-      moveRight: () => {
-        updateCenter()
-        const currentZoom = (chart.get('zoomLevel') as number) ?? 1
-        const delta = Math.max(2, 8 / Math.sqrt(currentZoom))
-        currentCenter = {
-          longitude: currentCenter.longitude + delta,
-          latitude: currentCenter.latitude
-        }
-        chart.zoomToGeoPoint(currentCenter, currentZoom, true)
-      },
-      getZoomLevel: () => (chart.get('zoomLevel') as number) ?? 1
-    }
-
+    const controls = createMapControls(chart)
     return { root, controls }
   } catch (error) {
     console.error('Failed to initialize map:', error)
@@ -229,10 +131,14 @@ function createPolygonSeries(
     })
   )
 
+  const servedCountryColor = am5.color(0xB3E5FC)
+  const defaultColor = am5.color(0xF5F7FA)
+  const borderColor = am5.color(0xB3E5FC)
+
   polygonSeries.mapPolygons.template.setAll({
     tooltipText: '{name}',
-    fill: am5.color(0xF5F7FA),
-    stroke: am5.color(0xB3E5FC),
+    fill: defaultColor,
+    stroke: borderColor,
     strokeWidth: 0.8,
     interactive: true,
     fillOpacity: 1,
@@ -245,12 +151,15 @@ function createPolygonSeries(
     stroke: am5.color(0x80D4F8)
   })
 
+  // Highlight served countries including India
+  const servedCountriesWithIndia = [...SERVED_COUNTRIES, 'IN']
+  
   polygonSeries.events.on('datavalidated', () => {
     polygonSeries.mapPolygons.each((polygon) => {
       const data = polygon.dataItem?.dataContext as CountryDataContext | undefined
-      if (data && SERVED_COUNTRIES.includes(data.id)) {
+      if (data && servedCountriesWithIndia.includes(data.id)) {
         polygon.setAll({
-          fill: am5.color(0xB3E5FC),
+          fill: servedCountryColor,
           fillOpacity: 0.7
         })
       }
@@ -270,17 +179,50 @@ function createLineSeries(
   const lineSeries = chart.series.push(am5map.MapLineSeries.new(root, {}))
 
   lineSeries.mapLines.template.setAll({
-    stroke: am5.color(0x00A0E3),
-    strokeOpacity: 0.45,
-    strokeWidth: 1.5,
-    cursorOverStyle: 'pointer'
+    stroke: am5.color(0xef4444),
+    strokeOpacity: 0.8,
+    strokeWidth: 3,
+    strokeDasharray: [4, 4]
   })
 
   lineSeries.mapLines.template.states.create('hover', {
-    strokeOpacity: 0.9,
-    strokeWidth: 2.5
+    strokeOpacity: 1,
+    strokeWidth: 4
   })
 
+  console.log('MAP_OFFICES:', MAP_OFFICES)
+  
+  // Find India and UAE offices
+  const indiaOffice = MAP_OFFICES.find(office => 
+    office.title.toLowerCase().includes('india') || 
+    office.title.toLowerCase().includes('jaipur')
+  )
+  const uaeOffice = MAP_OFFICES.find(office => 
+    office.title.toLowerCase().includes('uae') || 
+    office.title.toLowerCase().includes('dubai') ||
+    office.title.toLowerCase().includes('united arab')
+  )
+  
+  console.log('India Office:', indiaOffice)
+  console.log('UAE Office:', uaeOffice)
+  
+  // Add line between India and UAE offices if both exist
+  if (indiaOffice && uaeOffice) {
+    lineSeries.data.push({
+      geometry: {
+        type: 'LineString',
+        coordinates: [
+          [indiaOffice.lng, indiaOffice.lat],
+          [uaeOffice.lng, uaeOffice.lat]
+        ]
+      }
+    })
+    console.log('India-UAE line added')
+  } else {
+    console.warn('Could not find both India and UAE offices')
+  }
+
+  // Add lines from service locations to nearest offices
   SERVICE_LOCATIONS.forEach((service) => {
     const nearestOffice = getNearestOffice(service, MAP_OFFICES)
 
@@ -309,34 +251,27 @@ function createServiceSeries(
     am5map.MapPointSeries.new(root, {})
   )
 
-  serviceSeries.bullets.push((root) => {
-    const container = am5.Container.new(root, {
-      interactive: true,
-      tooltipText: '{name}',
-      cursorOverStyle: 'pointer',
-      focusable: true
-    })
-
-    container.set('tooltip', am5.Tooltip.new(root, {}))
+  serviceSeries.bullets.push(function() {
+    const container = am5.Container.new(root, {})
 
     const circle = container.children.push(
       am5.Circle.new(root, {
         radius: 5,
         fill: am5.color(0x00A0E3),
         stroke: am5.color(0xFFFFFF),
-        strokeWidth: 2
+        strokeWidth: 2,
+        tooltipText: '{name}',
+        cursorOverStyle: 'pointer'
       })
     )
 
-    container.events.on('pointerover', () => {
-      circle.hover()
+    circle.states.create('hover', {
+      radius: 7,
+      strokeWidth: 3,
+      fill: am5.color(0x0080C0)
     })
 
-    container.events.on('pointerout', () => {
-      circle.unhover()
-    })
-
-    return am5.Bullet.new(root, { sprite: container })
+    return am5.Bullet.new(root, { sprite: circle })
   })
 
   SERVICE_LOCATIONS.forEach((loc) => {
@@ -345,6 +280,8 @@ function createServiceSeries(
       name: loc.name
     })
   })
+
+  return serviceSeries
 }
 
 // -------------------- Office Series --------------------
@@ -358,25 +295,18 @@ function createOfficeSeries(
     am5map.MapPointSeries.new(root, {})
   )
 
-  officeSeries.bullets.push((root) => {
-    const container = am5.Container.new(root, {
-      interactive: true,
-      tooltipText: '{title}',
-      cursorOverStyle: 'pointer',
-      focusable: true
-    })
-
-    container.set('tooltip', am5.Tooltip.new(root, {}))
+  officeSeries.bullets.push(function() {
+    const container = am5.Container.new(root, {})
 
     // Pulsing effect
     const pulse = container.children.push(
       am5.Circle.new(root, {
         radius: 18,
         fill: am5.color(0xef4444),
-        fillOpacity: 0.25,
-        interactive: false
+        fillOpacity: 0.25
       })
     )
+    
     pulse.animate({
       key: 'scale',
       from: 0.8,
@@ -385,6 +315,7 @@ function createOfficeSeries(
       easing: am5.ease.out(am5.ease.cubic),
       loops: Infinity
     })
+    
     pulse.animate({
       key: 'opacity',
       from: 0.5,
@@ -399,16 +330,17 @@ function createOfficeSeries(
         radius: 7,
         fill: am5.color(0xef4444),
         stroke: am5.color(0xFFFFFF),
-        strokeWidth: 2.5
+        strokeWidth: 2.5,
+        tooltipText: '{title}',
+        cursorOverStyle: 'pointer',
+        interactive: true
       })
     )
 
-    container.events.on('pointerover', () => {
-      circle.hover()
-    })
-
-    container.events.on('pointerout', () => {
-      circle.unhover()
+    circle.states.create('hover', {
+      radius: 9,
+      strokeWidth: 3.5,
+      fill: am5.color(0xdc2626)
     })
 
     return am5.Bullet.new(root, { sprite: container })
@@ -420,4 +352,116 @@ function createOfficeSeries(
       title: office.title
     })
   })
+
+  return officeSeries
+}
+
+// -------------------- Map Controls --------------------
+function createMapControls(chart: am5map.MapChart): MapControlHandlers {
+  type GeoPoint = { longitude: number; latitude: number }
+  
+  // Store the chart reference for controls
+  const chartRef = chart
+
+  const getZoom = (): number => {
+    const levelMaybe = chartRef.get('zoomLevel') as number | undefined
+    return typeof levelMaybe === 'number' ? levelMaybe : 3.2
+  }
+
+  const getCurrentGeoPoint = (): GeoPoint => {
+    try {
+      // Get the chart's current center point in pixels
+      const chartWidth = chartRef.width()
+      const chartHeight = chartRef.height()
+      const centerX = chartWidth / 2
+      const centerY = chartHeight / 2
+      
+      // Convert to geo coordinates
+      const geoPoint = chartRef.invert({ x: centerX, y: centerY })
+      
+      if (geoPoint && typeof geoPoint.longitude === 'number' && typeof geoPoint.latitude === 'number') {
+        return geoPoint
+      }
+    } catch (e) {
+      console.warn('Could not get current geo point:', e)
+    }
+    
+    // Fallback to home position
+    return { longitude: 78.9629, latitude: 22.5937 }
+  }
+
+  const getPanStep = (zoomLevel: number): number => {
+    // Adjust pan step based on zoom level
+    return Math.max(1.5, 10 / zoomLevel)
+  }
+
+  return {
+    zoomIn: () => {
+      const currentZoom = getZoom()
+      const currentCenter = getCurrentGeoPoint()
+      const newZoom = Math.min(currentZoom * 1.4, 8)
+      chartRef.zoomToGeoPoint(currentCenter, newZoom, true, 300)
+    },
+    
+    zoomOut: () => {
+      const currentZoom = getZoom()
+      const currentCenter = getCurrentGeoPoint()
+      const newZoom = Math.max(currentZoom / 1.4, 1.5)
+      chartRef.zoomToGeoPoint(currentCenter, newZoom, true, 300)
+    },
+    
+    reset: () => {
+      chartRef.goHome(300)
+    },
+    
+    moveUp: () => {
+      const currentZoom = getZoom()
+      const currentCenter = getCurrentGeoPoint()
+      const step = getPanStep(currentZoom)
+      chartRef.zoomToGeoPoint(
+        { longitude: currentCenter.longitude, latitude: currentCenter.latitude + step },
+        currentZoom,
+        true,
+        200
+      )
+    },
+    
+    moveDown: () => {
+      const currentZoom = getZoom()
+      const currentCenter = getCurrentGeoPoint()
+      const step = getPanStep(currentZoom)
+      chartRef.zoomToGeoPoint(
+        { longitude: currentCenter.longitude, latitude: currentCenter.latitude - step },
+        currentZoom,
+        true,
+        200
+      )
+    },
+    
+    moveLeft: () => {
+      const currentZoom = getZoom()
+      const currentCenter = getCurrentGeoPoint()
+      const step = getPanStep(currentZoom)
+      chartRef.zoomToGeoPoint(
+        { longitude: currentCenter.longitude - step, latitude: currentCenter.latitude },
+        currentZoom,
+        true,
+        200
+      )
+    },
+    
+    moveRight: () => {
+      const currentZoom = getZoom()
+      const currentCenter = getCurrentGeoPoint()
+      const step = getPanStep(currentZoom)
+      chartRef.zoomToGeoPoint(
+        { longitude: currentCenter.longitude + step, latitude: currentCenter.latitude },
+        currentZoom,
+        true,
+        200
+      )
+    },
+    
+    getZoomLevel: getZoom
+  }
 }

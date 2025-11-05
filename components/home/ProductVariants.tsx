@@ -201,11 +201,6 @@ const comparisonData: {
     plastic: 'Unlimited',
   },
   {
-    attribute: 'Cost Saving',
-    kraft: '60-65%',
-    plastic: '70-75%',
-  },
-  {
     attribute: 'Recyclable',
     kraft: '100% Recyclable',
     plastic: '100% Recyclable',

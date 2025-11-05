@@ -52,9 +52,9 @@ export const HeroSection = memo(function HeroSection() {
         const response = await fetch('/api/stats', {
           next: { revalidate: 86400 } // 24 hours
         })
-        
+
         if (!response.ok) throw new Error('Failed to fetch stats')
-        
+
         const data = await response.json()
         if (data.stats) {
           setStatsData(data.stats)
@@ -86,7 +86,7 @@ export const HeroSection = memo(function HeroSection() {
               <motion.h1
                 key={line}
                 className={`text-3xl sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl font-bold text-[#003E5C] ${index && 'mb-4 sm:mb-6'} ${index === 0 ? 'mt-4 sm:mt-3 md:mt-4' : 'xl:mt-2'
-                  } ${index === 1 ? 'bg-gradient-to-r from-[#00A0E3] to-[#007CB8] bg-clip-text text-transparent block' : ''
+                  } ${index === 1 ? 'bg-linear-to-r from-[#00A0E3] to-[#007CB8] bg-clip-text text-transparent block' : ''
                   }`}
                 variants={textItemVariants}
               >
@@ -98,10 +98,9 @@ export const HeroSection = memo(function HeroSection() {
               className="text-sm sm:text-lg md:text-xl lg:text-xl text-[#334155] mb-4 sm:mb-6 max-w-full sm:max-w-xl leading-relaxed text-justify"
               variants={textItemVariants}
             >
-              Revolutionary slip sheet solutions that replace traditional wooden pallets,
-              delivering 80% cost reduction and 100% sustainability.
+              Revolutionize your logistics with pallet-free slip sheet technology that replaces traditional wooden pallets,
+              cutting costs by up to 80% and delivering 100% sustainable operations.
             </motion.p>
-
             <motion.div
               className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4 sm:mb-6 lg:mb-8 xl:mt-6"
               variants={textItemVariants}
@@ -113,7 +112,7 @@ export const HeroSection = memo(function HeroSection() {
                   whileTap={{ scale: 0.95 }}
                   variants={scaleInVariants}
                 >
-                  Request Quote
+                  Request a Quote
                   <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                 </motion.div>
               </Link>
@@ -127,7 +126,7 @@ export const HeroSection = memo(function HeroSection() {
                 variants={scaleInVariants}
               >
                 <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
-                Get Brochure
+                Download Brochure
               </motion.a>
             </motion.div>
           </motion.div>
@@ -140,7 +139,7 @@ export const HeroSection = memo(function HeroSection() {
 
         {/* Stats */}
         <motion.div
-          className="sm:mt-2 lg:mt-4 xl:mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6 lg:gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6 lg:gap-8"
           variants={containerVariants}
           initial="hidden"
           animate={isInView ? 'visible' : 'hidden'}

@@ -25,14 +25,58 @@ export function EnvironmentalImpact() {
 
   const impactStats = useMemo(
     () => [
-      { title: 'Freight Cost Savings', value: 40, suffix: '%', icon: '🚛', description: 'Reduced shipping costs due to lighter weight', gradient: 'from-[#6EC1E4] to-[#0077B6]' },
-      { title: 'CO₂ Reduction vs Plastic', value: 65, suffix: '%', icon: '🌱', description: 'Lower carbon footprint than plastic alternatives', gradient: 'from-[#34D399] to-[#059669]' },
-      { title: 'CO₂ Reduction vs Wood', value: 85, suffix: '%', icon: '🌳', description: 'Significant reduction compared to wooden pallets', gradient: 'from-[#10B981] to-[#047857]' },
-      { title: 'Recycling Rate', value: 100, suffix: '%', icon: '♻️', description: 'Fully recyclable kraft paper material', gradient: 'from-[#60A5FA] to-[#2563EB]' },
-      { title: 'Container Space Saved', value: 70, suffix: '%', icon: '📦', description: 'More products per container shipment', gradient: 'from-[#38BDF8] to-[#0284C7]' },
-      { title: 'Weight Reduction', value: 95, suffix: '%', icon: '⚖️', description: 'Dramatically lighter than wooden pallets', gradient: 'from-[#67256a] to-[#3F172A]' },],
+      {
+        title: 'Recycling Rate',
+        value: 100,
+        suffix: '%',
+        icon: '♻️',
+        description: 'Made from 100% recyclable kraft paper material.',
+        gradient: 'from-[#60A5FA] to-[#2563EB]',
+      },
+      {
+        title: 'Weight Reduction',
+        value: 95,
+        suffix: '%',
+        icon: '🪶',
+        description: 'Weighs 1/20th as much as wood pallets, reducing freight costs.',
+        gradient: 'from-[#30A5CA] to-[#2563EB]',
+      },
+      {
+        title: 'Increased Product Load',
+        value: 15,
+        suffix: '%',
+        icon: '📦',
+        description: 'Fit 12-15% more products per shipping container.',
+        gradient: 'from-[#38BDF8] to-[#0284C7]',
+      },
+      {
+        title: 'Warehouse Space Saved',
+        value: 98,
+        suffix: '%',
+        icon: '🏢',
+        description: 'Requires 98% less storage (1m³ for 1000 sheets vs 70m³ for 1000 pallets).',
+        gradient: 'from-[#6EC1E4] to-[#0077B6]',
+      },
+      {
+        title: 'Faster Loading Time',
+        value: 60,
+        suffix: '%',
+        icon: '⏱️',
+        description: 'Decrease loading and unloading times by up to 60%.',
+        gradient: 'from-[#34D399] to-[#059669]',
+      },
+      {
+        title: 'Chemical & Pest Free',
+        value: 100,
+        suffix: '%',
+        icon: '🛡️',
+        description: 'Exempt from phytosanitary restrictions. No fumigation or chemical treatment required.',
+        gradient: 'from-[#10B981] to-[#047857]',
+      },
+    ],
     []
   )
+
   const cardVariants = {
     hidden: { opacity: 0, y: directionY, scale: 0.96, rotateX: directionRotate, filter: 'blur(4px)' },
     visible: { opacity: 1, y: 0, scale: 1, rotateX: 0, filter: 'blur(0px)' },

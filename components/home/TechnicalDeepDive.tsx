@@ -368,7 +368,7 @@ export function TechnicalDeepDive() {
                 <p className="text-base sm:text-lg">
                   The <strong>total cost is ₹7.5 lakh (including installation)</strong>, with <strong>taxes and transportation charges applicable separately</strong>.
                 </p>
-                <p className="text-base sm:text-lg italic">
+                <p className="text-base text-[#4f5f75] sm:text-lg italic">
                   <strong>Note:</strong> This attachment is essential for all material lifting and handling operations. Without it, accessing or moving materials will not be possible.
                 </p>
               </div>

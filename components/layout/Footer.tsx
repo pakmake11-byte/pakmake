@@ -89,13 +89,12 @@ export function Footer() {
               PakMake Packaging Inc®
             </motion.h3>
             <motion.p
-              className="text-gray-400 text-sm leading-relaxed mb-6"
+              className="text-gray-400 text-sm text-justify leading-relaxed mb-6"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              Leading provider of sustainable slip sheet solutions, helping businesses
-              reduce costs and environmental impact while improving logistics efficiency.
+              Revolutionize your logistics with pallet-free slip sheet technology that replaces traditional wooden pallets, cutting costs by up to 80% and delivering 100% sustainable operations.
             </motion.p>
 
             <motion.a

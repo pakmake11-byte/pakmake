@@ -85,7 +85,7 @@ export function ContactForm() {
           icon={Mail}
           title="Get in"
           highlightedText="Touch"
-          subtitle="Ready to transform your logistics? Contact our team for a customized slip sheet solution."
+          subtitle="Contact our team to get a tailored slip sheet solution that lowers costs, saves space, and improves operational efficiency."
           isInView={isInView}
         />
       </div>

@@ -61,8 +61,10 @@ export const TeamMemberCard = React.memo(function TeamMemberCard({
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: scrollDirection > 0 ? 20 : -20 }}
           transition={{ delay: 0.3 + index * 0.15, duration: 0.5 }}
         >
-          <h3 className="text-2xl font-bold text-gray-900">{name}</h3>
-          <p className="text-[#00A0E3] font-semibold text-base">{role}</p>
+          <div>
+            <h3 className="text-2xl font-bold text-gray-900">{name}</h3>
+            <p className="text-[#00A0E3] font-semibold text-base">{role}</p>
+          </div>
 
           {/* Bio */}
           <p className="text-[#334155] text-sm leading-relaxed max-w-xs pt-2">

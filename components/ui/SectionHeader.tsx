@@ -53,7 +53,7 @@ export function SectionHeader({
             )}
 
             <motion.h2
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center lg:text-left overflow-hidden"
+              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center lg:text-left "
             >
               <AnimatedTextFromIcon
                 text={`${title} ${highlightedText}`}

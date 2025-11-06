@@ -53,6 +53,7 @@ const clientLogos: ClientLogo[] = [
   { name: 'Tesco', filename: 'Tesco_2.png' },
   { name: 'Walmart', filename: 'walmart_2.png' },
   { name: 'Woolworth', filename: 'Woolworth_2.png' },
+  { name: 'ebro', filename: 'ebro.gif' },
 
   // Generic / unknown ones
   { name: 'Client Logo', filename: 'logo.png' },

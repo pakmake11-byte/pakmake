@@ -19,7 +19,6 @@ export function TechnicalDeepDive() {
   const [isVideoInView, setIsVideoInView] = useState(false)
   const hasAutoplayAttempted = useRef(false)
   const previousVolumeRef = useRef(1)
-  const volumeTimeoutRef = useRef<NodeJS.Timeout>(null)
   const [autoplayMuted, setAutoplayMuted] = useState(false)
 
   const [isPlaying, setIsPlaying] = useState(false)

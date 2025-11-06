@@ -6,55 +6,68 @@ interface UseAudioManagerOptions {
   loop?: boolean
 }
 
+const audioState = {
+  isMuted: true,
+  isPlaying: false,
+  volume: 0.4
+}
+
 export function useAudioManager({
   src,
-  volume = 0.3,
+  volume = 0.4,
   loop = true,
 }: UseAudioManagerOptions) {
   const audioRef = useRef<HTMLAudioElement | null>(null)
-  const [isPlaying, setIsPlaying] = useState(false)
-
-  const [isMuted, setIsMuted] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('audioMuted')
-      return saved ? JSON.parse(saved) : true
-    }
-    return true
-  })
+  const playPromiseRef = useRef<Promise<void> | null>(null)
+  const [isPlaying, setIsPlaying] = useState(audioState.isPlaying)
+  const [isMuted, setIsMuted] = useState(audioState.isMuted)
 
   useEffect(() => {
     const audio = new Audio(src)
     audio.loop = loop
-    audio.volume = Math.max(0, Math.min(1, volume))
-    audio.muted = isMuted
+    audio.volume = Math.max(0, Math.min(1, audioState.volume))
+    audio.muted = audioState.isMuted
     audioRef.current = audio
 
     const onPlay = () => {
       setIsPlaying(true)
-      try { localStorage.setItem('audioPlaying', 'true') } catch {}
+      audioState.isPlaying = true
     }
     const onPause = () => {
       setIsPlaying(false)
-      try { localStorage.setItem('audioPlaying', 'false') } catch {}
+      audioState.isPlaying = false
     }
 
     audio.addEventListener('play', onPlay)
     audio.addEventListener('pause', onPause)
 
-    try {
-      const savedPlaying = localStorage.getItem('audioPlaying')
-      if (savedPlaying === 'true' && !audio.muted) {
-        audio.play().catch((err) => {
+    // Resume playing if it was playing before
+    if (audioState.isPlaying && !audioState.isMuted) {
+      const promise = audio.play()
+      if (promise !== undefined) {
+        playPromiseRef.current = promise
+        promise.catch((err) => {
           if (!(err instanceof DOMException && err.name === 'NotAllowedError')) {
             console.error('Audio play error while restoring state:', err)
           }
+        }).finally(() => {
+          if (playPromiseRef.current === promise) {
+            playPromiseRef.current = null
+          }
         })
       }
-    } catch {
     }
 
     return () => {
-      audio.pause()
+      if (playPromiseRef.current) {
+        playPromiseRef.current.then(() => {
+          audio.pause()
+        }).catch(() => {
+          audio.pause()
+        })
+      } else {
+        audio.pause()
+      }
       audio.removeEventListener('play', onPlay)
       audio.removeEventListener('pause', onPause)
       audioRef.current = null
@@ -65,35 +78,52 @@ export function useAudioManager({
     if (audioRef.current) {
       audioRef.current.muted = isMuted
     }
-    try { localStorage.setItem('audioMuted', JSON.stringify(isMuted)) } catch {}
+    audioState.isMuted = isMuted
   }, [isMuted])
 
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = Math.max(0, Math.min(1, volume))
     }
+    audioState.volume = volume
   }, [volume])
 
-  const pause = useCallback((): void => {
+  const pause = useCallback(async (): Promise<void> => {
     const audio = audioRef.current
     if (audio) {
+      // Wait for any pending play promise before pausing
+      if (playPromiseRef.current) {
+        await playPromiseRef.current.catch(() => {})
+        playPromiseRef.current = null
+      }
       audio.pause()
       setIsPlaying(false)
-      try { localStorage.setItem('audioPlaying', 'false') } catch {}
+      audioState.isPlaying = false
     }
   }, [])
 
   const play = useCallback(async (): Promise<void> => {
     const audio = audioRef.current
     if (audio) {
+      // Wait for any pending play promise before starting a new one
+      if (playPromiseRef.current) {
+        await playPromiseRef.current.catch(() => {})
+      }
+      
       try {
-        await audio.play()
-        setIsPlaying(true)
-        try { localStorage.setItem('audioPlaying', 'true') } catch {}
+        const promise = audio.play()
+        if (promise !== undefined) {
+          playPromiseRef.current = promise
+          await promise
+          setIsPlaying(true)
+          audioState.isPlaying = true
+        }
       } catch (error) {
         if (!(error instanceof DOMException && error.name === 'NotAllowedError')) {
           console.error('Unexpected play() error:', error)
         }
+      } finally {
+        playPromiseRef.current = null
       }
     }
   }, [])
@@ -102,24 +132,34 @@ export function useAudioManager({
     const audio = audioRef.current
     const newMutedState = !isMuted
     setIsMuted(newMutedState)
+    audioState.isMuted = newMutedState
 
     if (audio) {
       audio.muted = newMutedState
     }
 
     if (!newMutedState && audio && !isPlaying) {
+      // Wait for any pending play promise
+      if (playPromiseRef.current) {
+        await playPromiseRef.current.catch(() => {})
+      }
+      
       try {
-        await audio.play()
-        setIsPlaying(true)
-        try { localStorage.setItem('audioPlaying', 'true') } catch {}
+        const promise = audio.play()
+        if (promise !== undefined) {
+          playPromiseRef.current = promise
+          await promise
+          setIsPlaying(true)
+          audioState.isPlaying = true
+        }
       } catch (error) {
         if (!(error instanceof DOMException && error.name === 'NotAllowedError')) {
           console.error('Error playing after unmute:', error)
         }
+      } finally {
+        playPromiseRef.current = null
       }
     }
-
-    try { localStorage.setItem('audioMuted', JSON.stringify(newMutedState)) } catch {}
   }, [isMuted, isPlaying])
 
   const setVolume = (vol: number): void => {
@@ -128,6 +168,7 @@ export function useAudioManager({
     if (audio) {
       audio.volume = clamped
     }
+    audioState.volume = clamped
   }
 
   return {

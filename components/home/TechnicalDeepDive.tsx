@@ -23,26 +23,15 @@ export function TechnicalDeepDive() {
   const [autoplayMuted, setAutoplayMuted] = useState(false)
 
   const [isPlaying, setIsPlaying] = useState(false)
-  const [isMuted, setIsMuted] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('videoMuted')
-      return saved ? JSON.parse(saved) : true
-    }
-    return true
-  })
-
-  const [volume, setVolume] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('videoVolume')
-      const vol = saved ? parseFloat(saved) : 1
-      previousVolumeRef.current = vol
-      return vol
-    }
-    return 1
-  })
+  const [isMuted, setIsMuted] = useState(true)
+  const [volume, setVolume] = useState(1)
 
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
+
+  useEffect(() => {
+    previousVolumeRef.current = volume
+  }, [volume])
 
   useEffect(() => {
     const video = videoRef.current
@@ -69,22 +58,6 @@ export function TechnicalDeepDive() {
     video.volume = volume
     video.muted = isMuted
   }, [isMuted, volume])
-
-  useEffect(() => {
-    if (volumeTimeoutRef.current) {
-      clearTimeout(volumeTimeoutRef.current)
-    }
-
-    volumeTimeoutRef.current = setTimeout(() => {
-      localStorage.setItem('videoVolume', volume.toString())
-    }, 250)
-
-    return () => {
-      if (volumeTimeoutRef.current) {
-        clearTimeout(volumeTimeoutRef.current)
-      }
-    }
-  }, [volume])
 
   useEffect(() => {
     const video = videoRef.current
@@ -165,7 +138,6 @@ export function TechnicalDeepDive() {
     if (newMutedState) {
       previousVolumeRef.current = volume
       setIsMuted(true)
-      localStorage.setItem('videoMuted', 'true')
       setAutoplayMuted(false)
 
       if (typeof window !== 'undefined' && window.__pageAudioControl && !window.__pageAudioControl.isMuted) {
@@ -175,7 +147,6 @@ export function TechnicalDeepDive() {
       const restoredVolume = previousVolumeRef.current || 1
       setVolume(restoredVolume)
       setIsMuted(false)
-      localStorage.setItem('videoMuted', 'false')
       setAutoplayMuted(false)
 
       if (isPlaying && typeof window !== 'undefined' && window.__pageAudioControl) {
@@ -191,7 +162,6 @@ export function TechnicalDeepDive() {
     if (newVolume === 0 && !isMuted) {
       previousVolumeRef.current = 0.5
       setIsMuted(true)
-      localStorage.setItem('videoMuted', 'true')
 
       if (typeof window !== 'undefined' && window.__pageAudioControl && !window.__pageAudioControl.isMuted) {
         window.__pageAudioControl.play()
@@ -199,7 +169,6 @@ export function TechnicalDeepDive() {
     } else if (newVolume > 0 && isMuted) {
       previousVolumeRef.current = newVolume
       setIsMuted(false)
-      localStorage.setItem('videoMuted', 'false')
 
       if (isPlaying && typeof window !== 'undefined' && window.__pageAudioControl) {
         window.__pageAudioControl.pause()

@@ -15,7 +15,7 @@ const PAGE_AUDIO_MAP: Record<string, string> = {
 export function PageAudioWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const audioSrc = PAGE_AUDIO_MAP[pathname] || '/music/home.wav'
-  
+
   const { pause, play, toggleMute, setVolume, isPlaying, isMuted } = useAudioManager({
     src: audioSrc,
     volume: 0.3,
@@ -44,7 +44,7 @@ export function PageAudioWrapper({ children }: { children: React.ReactNode }) {
   return (
     <>
       {children}
-      
+
       <motion.button
         onClick={toggleMute}
         whileHover={{ scale: 1.1 }}

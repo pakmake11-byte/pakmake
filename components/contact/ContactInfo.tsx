@@ -15,8 +15,8 @@ const OFFICES = [
     city: 'Jaipur, Rajasthan',
     icon: '🇮🇳',
     email: 'sandeepjaju@yahoo.com',
-    phone: '+91 98291-87167',
-    address: 'Plt. 52, Soni Ka Bagh, Behind Alka Cinema, Sikar Road, Jaipur-302039 (Rajasthan)',
+    phone: '+91 9829187167',
+    address: 'Plot No. H-109A, Badharna, V.K.I. Area, JAIPUR-302013(Rajasthan)',
     mapSrc: 'https://www.google.com/maps/embed?pb=!1m13!1m8!1m3!1d7109.60643387844!2d75.782192!3d27.004774!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMjfCsDAwJzE3LjIiTiA3NcKwNDcnMDUuMiJF!5e0!3m2!1sen!2sin!4v1761550644936!5m2!1sen!2sin'
   },
   {
